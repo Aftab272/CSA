@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", sans-serif;
+  --color-primary: #0B1120;
+  --color-secondary: #111827;
+  --color-accent: #00D4FF;
+  --color-surface: #1e293b;
+  --color-text: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.7);
+  --color-border: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] {
+  --color-primary: #f8fafc;
+  --color-secondary: #e2e8f0;
+  --color-surface: #ffffff;
+  --color-text: #0B1120;
+  --color-text-muted: #64748b;
+  --color-border: rgba(15, 17, 32, 0.12);
+}
+
+html, body {
+  scroll-behavior: smooth;
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+[data-theme="light"] .text-white {
+  color: var(--color-text) !important;
+}
+
+[data-theme="light"] .text-white\/60,
+[data-theme="light"] .text-white\/20,
+[data-theme="light"] .text-white\/70 {
+  color: var(--color-text-muted) !important;
+}
+
+[data-theme="light"] .text-gray-300,
+[data-theme="light"] .text-gray-400,
+[data-theme="light"] .text-gray-500 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .bg-black\/60 {
+  background-color: rgba(15, 17, 32, 0.4);
+}
+
+[data-theme="light"] .bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/20 {
+  border-color: var(--color-border);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
