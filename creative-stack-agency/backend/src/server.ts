@@ -1,13 +1,16 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import { connectDB } from './config/database';
-import { securityHeaders, rateLimiter, authRateLimiter, corsConfig, sanitizeInput } from './middleware/security';
+import { securityHeaders, rateLimiter, authRateLimiter, inquiryRateLimiter, corsConfig, sanitizeInput } from './middleware/security';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import { requestLogger, errorLogger } from './middleware/logger';
 import authRoutes from './routes/auth';
 import projectsRoutes from './routes/projects';
 import servicesRoutes from './routes/services';
+import inquiriesRoutes from './routes/inquiries';
+import { authenticate, authorize } from './middleware/auth';
 
 const app = express();
 
@@ -22,6 +25,7 @@ app.use(sanitizeInput);
 app.use(requestLogger);
 app.use('/api/', rateLimiter);
 app.use('/api/auth/login', authRateLimiter);
+app.use('/api/inquiries', inquiryRateLimiter);
 
 app.get('/health', (req, res) => {
   res.json({ 
@@ -32,12 +36,12 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.get('/api/logs', (req, res) => {
+app.get('/api/logs', authenticate, authorize('admin', 'super_admin'), (req, res) => {
   const { getLogs } = require('./middleware/logger');
   res.json({ success: true, logs: getLogs() });
 });
 
-app.delete('/api/logs', (req, res) => {
+app.delete('/api/logs', authenticate, authorize('admin', 'super_admin'), (req, res) => {
   const { clearLogs } = require('./middleware/logger');
   clearLogs();
   res.json({ success: true, message: 'Logs cleared' });
@@ -46,6 +50,7 @@ app.delete('/api/logs', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectsRoutes);
 app.use('/api/services', servicesRoutes);
+app.use('/api/inquiries', inquiriesRoutes);
 
 app.use(notFound);
 app.use(errorLogger);

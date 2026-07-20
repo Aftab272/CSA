@@ -13,6 +13,8 @@ export default function ContactSection() {
     message: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     const handleSelectService = (e: Event) => {
@@ -53,9 +55,35 @@ export default function ContactSection() {
     }));
   }, [location.search]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setSubmitError('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          honeypot: '',
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        setSubmitError(data.message || 'Unable to submit form right now.');
+        return;
+      }
+
+      setIsSubmitted(true);
+    } catch {
+      setSubmitError('Network error. Please try again in a moment.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -66,6 +94,7 @@ export default function ContactSection() {
       message: ''
     });
     setIsSubmitted(false);
+    setSubmitError('');
   };
 
   return (
@@ -194,9 +223,19 @@ export default function ContactSection() {
                     <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline mx-1">Terms of Service</a> apply.
                   </div>
 
-                  <button type="submit" className="w-full p-4 mt-6 bg-accent text-primary font-bold rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition flex items-center justify-center space-x-2 cursor-pointer">
+                  {submitError && (
+                    <p className="text-sm text-red-300 bg-red-500/10 border border-red-400/30 rounded-xl px-4 py-3">
+                      {submitError}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full p-4 mt-6 bg-accent text-primary font-bold rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
                     <Send size={20} />
-                    <span>Send Message</span>
+                    <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
                   </button>
                 </motion.form>
               ) : (

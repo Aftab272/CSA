@@ -40,6 +40,14 @@ export const authRateLimiter = rateLimit({
   skipSuccessfulRequests: true,
 });
 
+export const inquiryRateLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 10,
+  message: 'Too many inquiry submissions. Please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 export const corsConfig = {
   origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173'],
   credentials: true,

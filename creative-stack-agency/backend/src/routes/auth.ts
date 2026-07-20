@@ -37,8 +37,8 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
         role: user.role,
       },
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch {
+    res.status(500).json({ success: false, message: 'Unable to register user' });
   }
 });
 
@@ -96,8 +96,8 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
         role: user.role,
       },
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch {
+    res.status(500).json({ success: false, message: 'Unable to login' });
   }
 });
 
@@ -112,8 +112,8 @@ router.post('/refresh', validateRefreshToken, async (req: any, res: Response): P
       token,
       refreshToken,
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch {
+    res.status(500).json({ success: false, message: 'Unable to refresh token' });
   }
 });
 
@@ -137,8 +137,8 @@ router.post('/forgot-password', async (req: Request, res: Response): Promise<voi
       message: 'Password reset token sent',
       resetToken,
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch {
+    res.status(500).json({ success: false, message: 'Unable to process request' });
   }
 });
 
@@ -163,8 +163,8 @@ router.post('/reset-password/:token', async (req: Request, res: Response): Promi
     await user.save();
 
     res.json({ success: true, message: 'Password reset successful' });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch {
+    res.status(500).json({ success: false, message: 'Unable to reset password' });
   }
 });
 
@@ -181,8 +181,8 @@ router.get('/me', authenticate, async (req: AuthRequest, res: Response): Promise
         isVerified: req.user.isVerified,
       },
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch {
+    res.status(500).json({ success: false, message: 'Unable to fetch profile' });
   }
 });
 
