@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Mail, Phone, Clock, Send, CheckCircle2 } from 'lucide-react';
 import { SiWhatsapp } from '@icons-pack/react-simple-icons';
+import { useLocation } from 'react-router-dom';
 
 export default function ContactSection() {
+  const location = useLocation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,6 +31,27 @@ export default function ContactSection() {
       window.removeEventListener('select-service', handleSelectService);
     };
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const selectedService = params.get('service');
+    const selectedMessage = params.get('message');
+
+    if (!selectedService && !selectedMessage) {
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      service: selectedService || prev.service,
+      message:
+        selectedMessage ||
+        prev.message ||
+        (selectedService
+          ? `Hi, I am interested in your ${selectedService} service. Please share details.`
+          : prev.message),
+    }));
+  }, [location.search]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

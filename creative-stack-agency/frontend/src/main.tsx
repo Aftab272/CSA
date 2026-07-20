@@ -7,13 +7,27 @@ import './index.css';
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('Service Worker registered: ', registration);
-      })
-      .catch((registrationError) => {
-        console.log('Service Worker registration failed: ', registrationError);
+    const isLocalhost =
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1';
+
+    if (!isLocalhost) {
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered: ', registration);
+        })
+        .catch((registrationError) => {
+          console.log('Service Worker registration failed: ', registrationError);
+        });
+      return;
+    }
+
+    // Avoid stale cached assets while developing locally.
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => {
+        registration.unregister();
       });
+    });
   });
 }
 

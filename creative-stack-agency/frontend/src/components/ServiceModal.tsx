@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Service } from '../data/services';
 
 type ServiceModalProps = {
@@ -9,6 +10,8 @@ type ServiceModalProps = {
 };
 
 export default function ServiceModal({ service, onClose }: ServiceModalProps) {
+  const navigate = useNavigate();
+
   return (
     <AnimatePresence>
       <motion.div
@@ -43,7 +46,7 @@ export default function ServiceModal({ service, onClose }: ServiceModalProps) {
               <li>
                 <div className="flex items-center">
                   <span className="mx-2">/</span>
-                  <a href="#services" onClick={(e) => { e.preventDefault(); onClose(); }} className="hover:text-white">Services</a>
+                  <a href="/#services" onClick={(e) => { e.preventDefault(); onClose(); navigate('/#services'); }} className="hover:text-white">Services</a>
                 </div>
               </li>
               <li aria-current="page">
@@ -100,11 +103,8 @@ export default function ServiceModal({ service, onClose }: ServiceModalProps) {
               <button 
                 onClick={() => {
                   onClose();
-                  // Dispatch simple custom event to populate and scroll to contact
-                  window.dispatchEvent(new CustomEvent('select-service', { 
-                    detail: { service: service.title } 
-                  }));
-                  window.location.hash = 'contact';
+                  const query = new URLSearchParams({ service: service.title });
+                  navigate(`/?${query.toString()}#contact`);
                 }}
                 className="py-4 bg-accent text-primary font-bold rounded-xl hover:shadow-[0_0_15px_rgba(0,212,255,0.4)] transition text-center"
               >

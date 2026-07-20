@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Calendar, Clock, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { BlogPost } from '../data/blog';
 
 type BlogModalProps = {
@@ -9,6 +10,8 @@ type BlogModalProps = {
 };
 
 export default function BlogModal({ post, onClose }: BlogModalProps) {
+  const navigate = useNavigate();
+
   return (
     <AnimatePresence>
       <motion.div
@@ -65,11 +68,11 @@ export default function BlogModal({ post, onClose }: BlogModalProps) {
               <button 
                 onClick={() => {
                   onClose();
-                  // Dispatch simple custom event to populate and scroll to contact
-                  window.dispatchEvent(new CustomEvent('select-service', { 
-                    detail: { service: 'Website Development', message: `Hi, I read your blog post "${post.title}" and would like to learn how to integrate these solutions into my project.` } 
-                  }));
-                  window.location.hash = 'contact';
+                  const query = new URLSearchParams({
+                    service: 'Website Development',
+                    message: `Hi, I read your blog post "${post.title}" and would like to learn how to integrate these solutions into my project.`,
+                  });
+                  navigate(`/?${query.toString()}#contact`);
                 }}
                 className="w-full py-4 bg-accent text-primary font-bold rounded-xl hover:shadow-[0_0_15px_rgba(0,212,255,0.4)] transition"
               >

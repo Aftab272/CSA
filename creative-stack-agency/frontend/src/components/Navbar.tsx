@@ -5,7 +5,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
 const menuItems = [
-  'Home', 'About', 'Services', 'Projects', 'Team', 'Team4Stack', 'Courses', 'Blog', 'Reviews', 'Contact'
+  { label: 'Home', to: '/', kind: 'section', sectionId: 'home' },
+  { label: 'About', to: '/#about', kind: 'section', sectionId: 'about' },
+  { label: 'Services', to: '/#services', kind: 'section', sectionId: 'services' },
+  { label: 'Projects', to: '/#projects', kind: 'section', sectionId: 'projects' },
+  { label: 'Contact', to: '/#contact', kind: 'section', sectionId: 'contact' },
+  { label: 'Team', to: '/team', kind: 'page' },
+  { label: 'Courses', to: '/courses', kind: 'page' },
+  { label: 'Blog', to: '/blog', kind: 'page' },
 ];
 
 export default function Navbar() {
@@ -14,23 +21,15 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
 
   const location = useLocation();
-  const getHref = (item: string) => {
-    const slug = item.toLowerCase();
-    if (item === 'Blog') return '/blog';
-    if (item === 'About') return '/about';
-    if (item === 'Home') return '/';
-    
-    const target = slug === 'team4stack' ? 'team4stack' : slug;
-    
-    if (location.pathname === '/') return `#${target}`;
-    return `/#${target}`;
-  };
+  const isLinkActive = (item: (typeof menuItems)[number]) => {
+    if (item.kind === 'section') {
+      if (location.pathname !== '/') return false;
+      if (item.sectionId === 'home') return location.hash === '' || location.hash === '#home';
+      return location.hash === `#${item.sectionId}`;
+    }
 
-  const isLinkActive = (item: string) => {
-    if (item === 'Blog' && location.pathname.startsWith('/blog')) return true;
-    if (item === 'About' && location.pathname === '/about') return true;
-    if (item === 'Home' && location.pathname === '/') return true;
-    return false;
+    if (item.to === '/') return location.pathname === '/';
+    return location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
   };
 
 
@@ -46,30 +45,20 @@ export default function Navbar() {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 font-sans px-4 md:px-8 py-4 ${isScrolled ? 'bg-primary shadow-md' : 'bg-transparent'}`}>
         <div className="flex items-center justify-between">
-          <a href="/" className="text-white text-xl md:text-2xl font-bold font-display hover:text-accent transition">
+          <Link to="/" className="text-white text-xl md:text-2xl font-bold font-display hover:text-accent transition">
             CSA
-          </a>
+          </Link>
           
           {/* Desktop Menu */}
           <div className="hidden lg:flex gap-6 text-white font-medium text-sm">
-            {menuItems.map(item => (
-              item === 'Blog' ? (
-                <Link 
-                  key={item} 
-                  to="/blog" 
-                  className={`transition ${isLinkActive(item) ? 'text-accent font-bold' : 'hover:text-accent'}`}
-                >
-                  {item}
-                </Link>
-              ) : (
-                <a 
-                  key={item} 
-                  href={getHref(item)} 
-                  className={`transition ${isLinkActive(item) ? 'text-accent font-bold' : 'hover:text-accent'}`}
-                >
-                  {item}
-                </a>
-              )
+            {menuItems.map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                className={`transition ${isLinkActive(item) ? 'text-accent font-bold' : 'hover:text-accent'}`}
+              >
+                {item.label}
+              </Link>
             ))}
           </div>
 
@@ -82,9 +71,9 @@ export default function Navbar() {
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <a href="#contact" className="bg-gradient-to-r from-accent to-teal-500 text-primary px-6 py-2 rounded-full font-bold hover:shadow-[0_0_15px_rgba(0,212,255,0.5)] transition text-center">
+            <Link to="/#contact" className="bg-gradient-to-r from-accent to-teal-500 text-primary px-6 py-2 rounded-full font-bold hover:shadow-[0_0_15px_rgba(0,212,255,0.5)] transition text-center">
               Hire Us
-            </a>
+            </Link>
           </div>
 
           {/* Mobile Toggle */}
@@ -137,30 +126,19 @@ export default function Navbar() {
               <nav className="flex flex-col gap-6">
                 {menuItems.map((item, index) => (
                   <motion.div
-                    key={item}
+                    key={item.label}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 + index * 0.05 }}
                   >
-                    {item === 'Blog' ? (
-                      <Link 
-                        to="/blog" 
-                        onClick={() => setIsMenuOpen(false)}
-                        className={`text-2xl font-bold transition flex items-center gap-4 ${isLinkActive(item) ? 'text-accent' : 'text-white hover:text-accent'}`}
-                      >
-                        <span className="text-xs text-white/20 font-mono">0{index + 1}</span>
-                        {item}
-                      </Link>
-                    ) : (
-                      <a 
-                        href={getHref(item)} 
-                        onClick={() => setIsMenuOpen(false)} 
-                        className={`text-2xl font-bold transition flex items-center gap-4 ${isLinkActive(item) ? 'text-accent' : 'text-white hover:text-accent'}`}
-                      >
-                        <span className="text-xs text-white/20 font-mono">0{index + 1}</span>
-                        {item}
-                      </a>
-                    )}
+                    <Link
+                      to={item.to}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`text-2xl font-bold transition flex items-center gap-4 ${isLinkActive(item) ? 'text-accent' : 'text-white hover:text-accent'}`}
+                    >
+                      <span className="text-xs text-white/20 font-mono">0{index + 1}</span>
+                      {item.label}
+                    </Link>
                   </motion.div>
                 ))}
                 
@@ -170,13 +148,13 @@ export default function Navbar() {
                   transition={{ delay: 0.1 + menuItems.length * 0.05 }}
                   className="mt-8"
                 >
-                  <a 
-                    href="#contact" 
+                  <Link
+                    to="/#contact"
                     onClick={() => setIsMenuOpen(false)} 
                     className="block w-full bg-accent text-primary px-8 py-4 rounded-2xl font-black text-center hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition duration-300"
                   >
                     Hire Our Team
-                  </a>
+                  </Link>
                 </motion.div>
               </nav>
             </motion.div>

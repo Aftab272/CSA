@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { services, Service } from '../data/services';
 import ServiceModal from './ServiceModal';
 
 export default function Services() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const navigate = useNavigate();
 
   const handleHireUs = (serviceTitle: string) => {
-    window.dispatchEvent(new CustomEvent('select-service', { 
-      detail: { service: serviceTitle } 
-    }));
-    window.location.hash = 'contact';
+    const query = new URLSearchParams({ service: serviceTitle });
+    navigate(`/?${query.toString()}#contact`);
   };
 
   return (

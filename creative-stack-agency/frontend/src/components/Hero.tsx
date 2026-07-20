@@ -63,13 +63,13 @@ export default function Hero() {
 
         <div className="flex gap-4">
           <a 
-            href="#contact" 
+            href="/#contact" 
             className="bg-accent text-primary px-8 py-4 rounded-full font-bold hover:shadow-[0_0_15px_rgba(0,212,255,0.5)] transition text-center inline-block"
           >
             Hire Us
           </a>
           <a 
-            href="#projects" 
+            href="/#projects" 
             className="border-2 border-accent text-accent px-8 py-4 rounded-full font-bold hover:bg-accent/10 transition text-center inline-block"
           >
             View Portfolio

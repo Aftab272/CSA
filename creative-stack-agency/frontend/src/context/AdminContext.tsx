@@ -28,7 +28,7 @@ const defaultFooterData: FooterData = {
   description: "We are a creative digital agency providing modern web solutions to help your business grow online.",
   quickLinks: [
     { id: '1', label: 'Home', url: '/' },
-    { id: '2', label: 'About', url: '/about' },
+    { id: '2', label: 'About', url: '/#about' },
     { id: '3', label: 'Services', url: '/#services' },
     { id: '4', label: 'Projects', url: '/#projects' },
     { id: '5', label: 'Contact', url: '/#contact' },
@@ -41,16 +41,16 @@ const defaultFooterData: FooterData = {
     { id: '4', label: 'Branding', url: '/#services' },
   ],
   courses: [
-    { id: '1', label: 'Frontend Mastery', url: '#' },
-    { id: '2', label: 'Backend Architecture', url: '#' },
-    { id: '3', label: 'UI/UX Fundamentals', url: '#' },
-    { id: '4', label: 'Full Stack Development', url: '#' },
+    { id: '1', label: 'Frontend Mastery', url: '/courses' },
+    { id: '2', label: 'Backend Architecture', url: '/courses' },
+    { id: '3', label: 'UI/UX Fundamentals', url: '/courses' },
+    { id: '4', label: 'Full Stack Development', url: '/courses' },
   ],
   projects: [
-    { id: '1', label: 'E-commerce', url: '#' },
-    { id: '2', label: 'Corporate', url: '#' },
-    { id: '3', label: 'Startups', url: '#' },
-    { id: '4', label: 'Education', url: '#' },
+    { id: '1', label: 'E-commerce', url: '/#projects' },
+    { id: '2', label: 'Corporate', url: '/#projects' },
+    { id: '3', label: 'Startups', url: '/#projects' },
+    { id: '4', label: 'Education', url: '/#projects' },
   ],
   legalLinks: [
     { id: '1', label: 'Privacy Policy', url: '#privacy' },

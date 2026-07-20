@@ -350,7 +350,7 @@ export default function Footer() {
 
             <div className="mt-6">
               <a 
-                href="#courses" 
+                href="/courses" 
                 className="block text-center py-2 bg-accent text-primary font-bold text-xs rounded-xl hover:shadow-[0_4px_15px_rgba(0,212,255,0.3)] hover:scale-[1.03] active:scale-95 transition-all duration-300"
               >
                 View All Courses
@@ -391,7 +391,7 @@ export default function Footer() {
 
             <div className="mt-6">
               <a 
-                href="#projects" 
+                href="/#projects" 
                 className="block text-center py-2 bg-accent text-primary font-bold text-xs rounded-xl hover:shadow-[0_4px_15px_rgba(0,212,255,0.3)] hover:scale-[1.03] active:scale-95 transition-all duration-300"
               >
                 View Portfolio

@@ -8,19 +8,12 @@ import ProgressBar from './components/ProgressBar';
 import Hero from './components/Hero';
 import Services from './components/Services';
 import About from './components/About';
-import Mission from './components/Mission';
 import ReviewsSection from './components/ReviewsSection';
-import Team from './components/Team';
 import ContactSection from './components/ContactSection';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
 import Projects from './components/Projects';
-import Team4Stack from './components/Team4Stack';
-import Courses from './components/Courses';
-import SocialMedia from './components/SocialMedia';
-import SocialFeed from './components/SocialFeed';
 import FloatingContact from './components/FloatingContact';
-import FAQ from './components/FAQ';
 import LoadingScreen from './components/LoadingScreen';
 import BlogSection from './components/BlogSection';
 import ScrollToTop from './components/ScrollToTop';
@@ -43,7 +36,8 @@ import RefundPolicy from './pages/legal/RefundPolicy';
 import CancellationPolicy from './pages/legal/CancellationPolicy';
 import CopyrightPolicy from './pages/legal/CopyrightPolicy';
 import AcceptableUsePolicy from './pages/legal/AcceptableUsePolicy';
-import AboutPage from './pages/AboutPage';
+import TeamPage from './pages/TeamPage';
+import CoursesPage from './pages/CoursesPage';
 
 function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
@@ -83,7 +77,7 @@ function AppContent() {
           })}
         </script>
       </Helmet>
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isLoading && <LoadingScreen />}
       </AnimatePresence>
       <Analytics />
@@ -96,18 +90,10 @@ function AppContent() {
       <Services />
       <About />
       <div className="max-w-7xl mx-auto px-6"><AdContainer id="ad-between-sections-1" /></div>
-      <Mission />
       <Projects />
-      <Team4Stack />
-      <FAQ />
-      <Courses />
-      <SocialMedia />
-      <div className="max-w-7xl mx-auto px-6"><AdContainer id="ad-between-sections-2" /></div>
-      <SocialFeed />
-      <BlogSection />
       <ReviewsSection />
-      <Team />
       <ContactSection />
+      <BlogSection />
       {footerData.sections.newsletter && <Newsletter />}
       <Footer />
       <FloatingContact />
@@ -122,7 +108,8 @@ export default function App() {
         <Router>
           <Routes>
             <Route path="/" element={<AppContent />} />
-            <Route path="/about" element={<AboutPage />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/courses" element={<CoursesPage />} />
             <Route path="/blog" element={<BlogHome />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
