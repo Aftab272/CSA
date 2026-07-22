@@ -1,6 +1,7 @@
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { Request, Response, NextFunction } from 'express';
+import { env } from '../config/env';
 
 export const securityHeaders = helmet({
   contentSecurityPolicy: {
@@ -49,7 +50,7 @@ export const inquiryRateLimiter = rateLimit({
 });
 
 export const corsConfig = {
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173'],
+  origin: env.ALLOWED_ORIGINS,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],

@@ -2,10 +2,10 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Globe, Star } from 'lucide-react';
 import { SiGithub } from '@icons-pack/react-simple-icons';
-import { Project } from '../data/projects';
+import type { ProjectContent } from '../types/content';
 
 type ProjectModalProps = {
-  project: Project;
+  project: ProjectContent;
   onClose: () => void;
 };
 
@@ -15,7 +15,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-primary/90 backdrop-blur-md"
+      className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-primary/90 backdrop-blur-md"
       onClick={onClose}
     >
         <motion.div

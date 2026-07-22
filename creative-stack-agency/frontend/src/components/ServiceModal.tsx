@@ -2,10 +2,10 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Service } from '../data/services';
+import type { ServiceContent } from '../types/content';
 
 type ServiceModalProps = {
-  service: Service;
+  service: ServiceContent;
   onClose: () => void;
 };
 
@@ -84,16 +84,16 @@ export default function ServiceModal({ service, onClose }: ServiceModalProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {service.benefits.map((b, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-gray-200">
-                    <CheckCircle size={16} className="text-accent flex-shrink-0" />
+                    <CheckCircle size={16} className="text-accent shrink-0" />
                     <span>{b}</span>
                   </div>
                 ))}
                 <div className="flex items-center gap-2 text-sm text-gray-200">
-                  <CheckCircle size={16} className="text-accent flex-shrink-0" />
+                  <CheckCircle size={16} className="text-accent shrink-0" />
                   <span>24/7 Dedicated Support</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-200">
-                  <CheckCircle size={16} className="text-accent flex-shrink-0" />
+                  <CheckCircle size={16} className="text-accent shrink-0" />
                   <span>100% Mobile Responsive</span>
                 </div>
               </div>

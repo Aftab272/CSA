@@ -41,7 +41,7 @@ export default function BlogPostPage() {
     return (
       <div className="min-h-screen bg-primary flex flex-col">
         <div className="bg-primary pt-24 pb-4 px-4"><Navbar /></div>
-        <div className="flex-grow flex items-center justify-center">
+        <div className="grow flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
             <Link to="/blog" className="text-accent hover:underline">Return to Blog</Link>
@@ -91,7 +91,7 @@ export default function BlogPostPage() {
         <Navbar />
       </div>
 
-      <main className="max-w-4xl mx-auto px-6 py-12">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
         <Link to="/blog" className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition mb-8">
           <ArrowLeft size={16} /> Back to Blog
         </Link>
@@ -100,7 +100,7 @@ export default function BlogPostPage() {
           <span className="bg-accent/10 text-accent font-bold uppercase tracking-wider px-3 py-1 rounded-full text-sm">
             {category?.name}
           </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold font-display text-white mt-4 mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-display text-white mt-4 mb-6 leading-tight">
             {post.title}
           </h1>
           
@@ -123,7 +123,7 @@ export default function BlogPostPage() {
           </div>
         </div>
 
-        <img src={post.featuredImage} alt={post.title} className="w-full h-auto max-h-[500px] object-cover rounded-3xl mb-12 shadow-xl" />
+        <img src={post.featuredImage} alt={post.title} className="w-full h-auto max-h-125 object-cover rounded-3xl mb-12 shadow-xl" />
         
         <AdContainer id="ad-post-top" label="Advertisement - Story Start" />
 
@@ -131,7 +131,7 @@ export default function BlogPostPage() {
         
         <AdContainer id="ad-post-bottom" label="Advertisement - Related Content" />
         
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex flex-wrap gap-2">
             {postTags.map(tag => (
               <span key={tag.id} className="bg-secondary text-gray-300 px-3 py-1 rounded-full text-sm border border-white/10">
@@ -140,8 +140,8 @@ export default function BlogPostPage() {
             ))}
           </div>
           
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-bold text-white mr-2">Share:</span>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-bold text-white">Share:</span>
             <button onClick={() => handleShare('facebook')} className="p-2 bg-secondary hover:bg-[#1877F2] hover:text-white rounded-full transition text-gray-300"><Facebook size={18} /></button>
             <button onClick={() => handleShare('twitter')} className="p-2 bg-secondary hover:bg-[#1DA1F2] hover:text-white rounded-full transition text-gray-300"><Twitter size={18} /></button>
             <button onClick={() => handleShare('linkedin')} className="p-2 bg-secondary hover:bg-[#0A66C2] hover:text-white rounded-full transition text-gray-300"><Linkedin size={18} /></button>
@@ -150,7 +150,7 @@ export default function BlogPostPage() {
         </div>
         
         {author && (
-          <div className="mt-12 bg-secondary p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6">
+          <div className="mt-12 bg-secondary p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6">
             <img src={author.image} alt={author.name} className="w-24 h-24 rounded-full object-cover shadow-md" />
             <div>
               <h4 className="text-xl font-bold text-white mb-2">Written by {author.name}</h4>
@@ -163,7 +163,7 @@ export default function BlogPostPage() {
         {/* Related Articles */}
         <div className="mt-16 border-t border-white/10 pt-16">
           <h3 className="text-2xl font-bold font-display text-white mb-8">Related Articles</h3>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
             {posts.filter(p => p.id !== post.id && p.status === 'published' && p.categoryId === post.categoryId).slice(0, 3).map(related => (
               <div key={related.id} className="bg-secondary rounded-2xl overflow-hidden hover:shadow-md transition group">
                 <img src={related.featuredImage} alt={related.title} className="w-full h-40 object-cover group-hover:scale-105 transition duration-500" />
@@ -203,10 +203,10 @@ export default function BlogPostPage() {
             )}
             <form onSubmit={handleComment} className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
-                <input required type="text" placeholder="Name *" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-3 border border-white/10 rounded-xl focus:ring-2 focus:ring-accent outline-none" />
-                <input required type="email" placeholder="Email *" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-3 border border-white/10 rounded-xl focus:ring-2 focus:ring-accent outline-none" />
+                <input required type="text" placeholder="Name *" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-3 border border-white/10 rounded-xl focus:ring-2 focus:ring-accent outline-none bg-primary/50" />
+                <input required type="email" placeholder="Email *" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-3 border border-white/10 rounded-xl focus:ring-2 focus:ring-accent outline-none bg-primary/50" />
               </div>
-              <textarea required rows={5} placeholder="Your Comment *" value={content} onChange={e => setContent(e.target.value)} className="w-full px-4 py-3 border border-white/10 rounded-xl focus:ring-2 focus:ring-accent outline-none"></textarea>
+              <textarea required rows={5} placeholder="Your Comment *" value={content} onChange={e => setContent(e.target.value)} className="w-full px-4 py-3 border border-white/10 rounded-xl focus:ring-2 focus:ring-accent outline-none bg-primary/50"></textarea>
               <button type="submit" className="bg-accent text-primary px-8 py-3 rounded-full font-bold hover:shadow-lg transition">
                 Post Comment
               </button>

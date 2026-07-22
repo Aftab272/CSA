@@ -1,30 +1,58 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { projects, Project } from '../data/projects';
 import ProjectModal from './ProjectModal';
 import { Search } from 'lucide-react';
+import type { ProjectContent } from '../types/content';
 
 export default function Projects() {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectContent | null>(null);
+  const [projects, setProjects] = useState<ProjectContent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const apiBase =
+    (import.meta as { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL?.trim() || '';
+  const api = (path: string) => (apiBase ? `${apiBase.replace(/\/$/, '')}${path}` : path);
 
-  const filteredProjects = projects.filter(p => 
-    (filter === 'All' || p.category === filter) &&
-    (p.title.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase()))
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(api('/api/projects'));
+        const data = await response.json();
+        if (data.success) {
+          setProjects(data.projects || []);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void fetchProjects();
+  }, []);
+
+  const filteredProjects = useMemo(
+    () =>
+      projects.filter(
+        (p) =>
+          (filter === 'All' || p.category === filter) &&
+          (p.title.toLowerCase().includes(search.toLowerCase()) ||
+            p.category.toLowerCase().includes(search.toLowerCase()))
+      ),
+    [projects, filter, search]
   );
 
-  const categories = ['All', ...Array.from(new Set(projects.map(p => p.category)))];
+  const categories = ['All', ...Array.from(new Set(projects.map((p) => p.category)))];
 
   return (
-    <section id="projects" className="px-8 py-24 bg-primary text-white font-sans">
+    <section id="projects" className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 bg-primary text-white font-sans">
       <AnimatePresence>
         {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
       </AnimatePresence>
       
-      <h2 className="text-center text-4xl font-bold font-display text-white mb-12">Our Projects</h2>
+      <h2 className="text-center text-3xl sm:text-4xl font-bold font-display text-white mb-10 sm:mb-12">Our Projects</h2>
+      {isLoading && <p className="text-center text-sm text-gray-400 mb-8">Loading projects...</p>}
       
-      <div className="max-w-4xl mx-auto mb-12 flex flex-col md:flex-row gap-4 items-center justify-center">
+      <div className="max-w-4xl mx-auto mb-10 sm:mb-12 flex flex-col md:flex-row gap-4 items-center justify-center">
         <div className="relative w-full md:w-64">
           <Search className="absolute left-3 top-3 text-gray-400" size={20} />
           <input 
@@ -43,7 +71,7 @@ export default function Projects() {
         </div>
       </div>
 
-      <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <motion.div layout className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
         <AnimatePresence>
           {filteredProjects.map((project) => (
             <motion.div 
@@ -51,17 +79,22 @@ export default function Projects() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              key={project.id} 
+              key={project._id || project.title} 
               className="group bg-secondary rounded-3xl overflow-hidden border border-white/10 shadow-xl hover:shadow-[0_0_30px_rgba(0,212,255,0.15)] transition"
             >
               <div className="relative overflow-hidden h-64">
-                <img loading="eager" src={project.gallery[0]} alt={project.title} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                <img
+                  loading="eager"
+                  src={project.gallery?.[0]}
+                  alt={project.title}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                />
                 <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <div className="p-6">
                 <span className="text-accent text-xs font-bold uppercase tracking-wider">{project.category}</span>
                 <h3 className="text-xl font-bold font-display text-white mt-2 mb-4">{project.title}</h3>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   {project.liveUrl && (
                     <a 
                       href={project.liveUrl} 

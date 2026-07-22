@@ -24,7 +24,7 @@ import AdContainer from './components/AdContainer';
 import Analytics from './components/Analytics';
 
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { BlogProvider } from './context/BlogContext';
 import BlogHome from './pages/BlogHome';
 import BlogPostPage from './pages/BlogPostPage';
@@ -38,6 +38,17 @@ import CopyrightPolicy from './pages/legal/CopyrightPolicy';
 import AcceptableUsePolicy from './pages/legal/AcceptableUsePolicy';
 import TeamPage from './pages/TeamPage';
 import CoursesPage from './pages/CoursesPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+
+function RouteScrollReset() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
+  return null;
+}
 
 function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
@@ -106,10 +117,13 @@ export default function App() {
     <AdminProvider>
       <BlogProvider>
         <Router>
+          <RouteScrollReset />
           <Routes>
             <Route path="/" element={<AppContent />} />
             <Route path="/team" element={<TeamPage />} />
             <Route path="/courses" element={<CoursesPage />} />
+            <Route path="/admin/login/*" element={<AdminDashboardPage />} />
+            <Route path="/admin/*" element={<AdminDashboardPage />} />
             <Route path="/blog" element={<BlogHome />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />

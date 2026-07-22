@@ -34,6 +34,13 @@ body {
   overflow-x: hidden;
 }
 
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 [data-theme="light"] .text-white {
   color: var(--color-text) !important;
 }
@@ -61,6 +68,112 @@ body {
 [data-theme="light"] .border-white\/10,
 [data-theme="light"] .border-white\/20 {
   border-color: var(--color-border);
+}
+
+.admin-scope[data-admin-theme="light"] .text-slate-100,
+.admin-scope[data-admin-theme="light"] .text-slate-200,
+.admin-scope[data-admin-theme="light"] .text-slate-300 {
+  color: #334155 !important;
+}
+
+.admin-scope[data-admin-theme="light"] .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+.admin-scope[data-admin-theme="light"] .border-white\/10,
+.admin-scope[data-admin-theme="light"] .border-white\/15,
+.admin-scope[data-admin-theme="light"] .border-white\/20 {
+  border-color: rgba(15, 23, 42, 0.15) !important;
+}
+
+.admin-scope .admin-sidebar,
+.admin-scope .admin-main {
+  backdrop-filter: blur(8px);
+}
+
+.admin-scope[data-admin-theme="light"] {
+  --admin-page-bg: #eef3fb;
+  --admin-surface: #ffffff;
+  --admin-surface-soft: #f8fbff;
+  --admin-border: #d8e2f0;
+  --admin-text: #0f172a;
+  --admin-muted: #475569;
+}
+
+.admin-scope[data-admin-theme="light"].admin-page {
+  background:
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 38%),
+    radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.08), transparent 45%),
+    var(--admin-page-bg);
+}
+
+.admin-scope[data-admin-theme="light"] .admin-sidebar,
+.admin-scope[data-admin-theme="light"] .admin-main {
+  background-color: var(--admin-surface) !important;
+  border-color: var(--admin-border) !important;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.08);
+}
+
+.admin-scope[data-admin-theme="light"] h1,
+.admin-scope[data-admin-theme="light"] h2,
+.admin-scope[data-admin-theme="light"] h3,
+.admin-scope[data-admin-theme="light"] h4,
+.admin-scope[data-admin-theme="light"] p,
+.admin-scope[data-admin-theme="light"] span,
+.admin-scope[data-admin-theme="light"] label,
+.admin-scope[data-admin-theme="light"] th,
+.admin-scope[data-admin-theme="light"] td {
+  color: var(--admin-text);
+}
+
+.admin-scope[data-admin-theme="light"] .text-gray-300,
+.admin-scope[data-admin-theme="light"] .text-gray-400,
+.admin-scope[data-admin-theme="light"] .text-gray-500,
+.admin-scope[data-admin-theme="light"] .text-slate-300,
+.admin-scope[data-admin-theme="light"] .text-slate-200 {
+  color: var(--admin-muted) !important;
+}
+
+.admin-scope[data-admin-theme="light"] .bg-primary {
+  background-color: var(--admin-surface-soft) !important;
+}
+
+.admin-scope[data-admin-theme="light"] .bg-secondary\/95 {
+  background-color: var(--admin-surface) !important;
+}
+
+.admin-scope[data-admin-theme="light"] .hover\:bg-white\/10:hover {
+  background-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+.admin-scope[data-admin-theme="light"] input:not([type='checkbox']),
+.admin-scope[data-admin-theme="light"] textarea,
+.admin-scope[data-admin-theme="light"] select {
+  background-color: #ffffff !important;
+  color: var(--admin-text) !important;
+  border-color: #c9d6e8 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.admin-scope[data-admin-theme="light"] input::placeholder,
+.admin-scope[data-admin-theme="light"] textarea::placeholder {
+  color: #64748b !important;
+}
+
+.admin-scope[data-admin-theme="light"] input:focus,
+.admin-scope[data-admin-theme="light"] textarea:focus,
+.admin-scope[data-admin-theme="light"] select:focus {
+  outline: none;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+}
+
+.admin-scope[data-admin-theme="light"] table thead {
+  background-color: #f1f6ff !important;
+}
+
+.admin-scope[data-admin-theme="light"] table tbody tr:hover {
+  background-color: rgba(56, 189, 248, 0.07);
 }
 
 ::-webkit-scrollbar {

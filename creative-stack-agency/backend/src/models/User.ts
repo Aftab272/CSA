@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { env } from '../config/env';
 
 export interface IUser extends Document {
   name: string;
@@ -118,16 +119,16 @@ UserSchema.methods.comparePassword = async function(candidatePassword: string): 
 UserSchema.methods.generateAuthToken = function(): string {
   return jwt.sign(
     { id: this._id, role: this.role },
-    process.env.JWT_SECRET || 'your-secret-key',
-    { expiresIn: process.env.JWT_EXPIRE || '1h' }
+    env.JWT_SECRET,
+    { expiresIn: env.JWT_EXPIRE }
   );
 };
 
 UserSchema.methods.generateRefreshToken = function(): string {
   return jwt.sign(
     { id: this._id },
-    process.env.JWT_REFRESH_SECRET || 'your-refresh-secret',
-    { expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d' }
+    env.JWT_REFRESH_SECRET,
+    { expiresIn: env.JWT_REFRESH_EXPIRE }
   );
 };
 
