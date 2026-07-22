@@ -1,20 +1,52 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Creative Stack Agency
 
-# Run and deploy your AI Studio app
+Full-stack project with:
+- `frontend` (React + Vite)
+- `backend` (Express + MongoDB + JWT auth)
 
-This contains everything you need to run your app locally.
+## Environment Setup
 
-View your app in AI Studio: https://ai.studio/apps/150e81b2-9c22-4b3a-8600-cf00b0c1e97c
+### 1) Backend env
 
-## Run Locally
+Copy and configure:
 
-**Prerequisites:**  Node.js
+```bash
+cp backend/.env.example backend/.env
+```
 
+Required values in `backend/.env`:
+- `MONGODB_URI` (Atlas/local Mongo connection string)
+- `JWT_SECRET`
+- `JWT_REFRESH_SECRET`
+- `ALLOWED_ORIGINS` (comma-separated frontend URLs)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 2) Frontend env (optional)
+
+Copy:
+
+```bash
+cp frontend/.env.example frontend/.env
+```
+
+For local development you can keep `VITE_API_URL` empty and use Vite proxy.
+
+## Install
+
+```bash
+npm run install:all
+```
+
+## Run
+
+```bash
+npm run dev
+```
+
+- Frontend: `http://localhost:5173` (or next free port)
+- Backend: `http://localhost:3001`
+
+## Security Notes
+
+- Backend validates and sanitizes API input.
+- Role checks are enforced on protected admin routes.
+- Inquiry endpoint (`/api/inquiries`) is rate-limited.

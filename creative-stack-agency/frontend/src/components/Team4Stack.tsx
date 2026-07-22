@@ -11,18 +11,18 @@ export default function Team4Stack() {
   ];
 
   return (
-    <section id="team4stack" className="px-8 py-24 bg-primary text-white font-sans">
-      <div className="max-w-7xl mx-auto space-y-16">
+    <section id="team4stack" className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 bg-primary text-white font-sans">
+      <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16">
         <div className="text-center space-y-6">
-          <h2 className="text-4xl md:text-5xl font-bold font-display text-white">Team4Stack Platform</h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white">Team4Stack Platform</h2>
+          <p className="text-base sm:text-xl text-gray-300 max-w-3xl mx-auto">
             Building the Future of Team Collaboration & Digital Innovation. A centralized ecosystem for project management, learning, and growth.
           </p>
-          <div className="flex gap-4 justify-center pt-4">
-            <a href="https://www.team4stack.com" target="_blank" rel="noopener noreferrer" className="bg-accent text-primary px-8 py-4 rounded-full font-bold flex items-center gap-2 hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-4">
+            <a href="https://www.team4stack.com" target="_blank" rel="noopener noreferrer" className="bg-accent text-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition">
               <ExternalLink size={20} /> Visit Team4Stack
             </a>
-            <a href="#" className="border-2 border-accent text-accent px-8 py-4 rounded-full font-bold flex items-center gap-2 hover:bg-accent/10 transition">
+            <a href="#" className="border-2 border-accent text-accent px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-accent/10 transition">
               <BookOpen size={20} /> View Documentation
             </a>
           </div>

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type MouseEvent } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
 const menuItems = [
@@ -21,6 +21,49 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
 
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const scrollToSection = (sectionId: string) => {
+    if (sectionId === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.history.replaceState(null, '', '/');
+      return;
+    }
+
+    const target = document.getElementById(sectionId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.history.replaceState(null, '', `/#${sectionId}`);
+    }
+  };
+
+  const handleMenuItemClick = (
+    event: MouseEvent<HTMLAnchorElement>,
+    item: (typeof menuItems)[number]
+  ) => {
+    setIsMenuOpen(false);
+    if (item.kind !== 'section') return;
+
+    event.preventDefault();
+    if (location.pathname !== '/') {
+      navigate(item.sectionId === 'home' ? '/' : `/#${item.sectionId}`);
+      return;
+    }
+
+    scrollToSection(item.sectionId);
+  };
+
+  const handleHireUsClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    setIsMenuOpen(false);
+    event.preventDefault();
+
+    if (location.pathname !== '/') {
+      navigate('/#contact');
+      return;
+    }
+
+    scrollToSection('contact');
+  };
   const isLinkActive = (item: (typeof menuItems)[number]) => {
     if (item.kind === 'section') {
       if (location.pathname !== '/') return false;
@@ -41,6 +84,15 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (location.pathname !== '/' || !location.hash) return;
+    const sectionId = location.hash.replace('#', '');
+    const timer = window.setTimeout(() => {
+      scrollToSection(sectionId);
+    }, 50);
+    return () => window.clearTimeout(timer);
+  }, [location.pathname, location.hash]);
+
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 font-sans px-4 md:px-8 py-4 ${isScrolled ? 'bg-primary shadow-md' : 'bg-transparent'}`}>
@@ -55,6 +107,7 @@ export default function Navbar() {
               <Link
                 key={item.label}
                 to={item.to}
+                onClick={(event) => handleMenuItemClick(event, item)}
                 className={`transition ${isLinkActive(item) ? 'text-accent font-bold' : 'hover:text-accent'}`}
               >
                 {item.label}
@@ -71,7 +124,11 @@ export default function Navbar() {
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <Link to="/#contact" className="bg-gradient-to-r from-accent to-teal-500 text-primary px-6 py-2 rounded-full font-bold hover:shadow-[0_0_15px_rgba(0,212,255,0.5)] transition text-center">
+            <Link
+              to="/#contact"
+              onClick={handleHireUsClick}
+              className="bg-linear-to-r from-accent to-teal-500 text-primary px-6 py-2 rounded-full font-bold hover:shadow-[0_0_15px_rgba(0,212,255,0.5)] transition text-center"
+            >
               Hire Us
             </Link>
           </div>
@@ -103,7 +160,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-60"
             />
             
             <motion.div
@@ -111,7 +168,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-full w-full max-w-sm bg-primary z-[70] p-8 flex flex-col shadow-2xl overflow-y-auto"
+              className="fixed top-0 right-0 h-full w-full max-w-sm bg-primary z-70 p-8 flex flex-col shadow-2xl overflow-y-auto"
             >
               <div className="flex justify-between items-center mb-12">
                 <span className="text-white font-bold text-2xl tracking-tight font-display">CSA Menu</span>
@@ -133,7 +190,7 @@ export default function Navbar() {
                   >
                     <Link
                       to={item.to}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={(event) => handleMenuItemClick(event, item)}
                       className={`text-2xl font-bold transition flex items-center gap-4 ${isLinkActive(item) ? 'text-accent' : 'text-white hover:text-accent'}`}
                     >
                       <span className="text-xs text-white/20 font-mono">0{index + 1}</span>
@@ -150,7 +207,7 @@ export default function Navbar() {
                 >
                   <Link
                     to="/#contact"
-                    onClick={() => setIsMenuOpen(false)} 
+                    onClick={handleHireUsClick}
                     className="block w-full bg-accent text-primary px-8 py-4 rounded-2xl font-black text-center hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition duration-300"
                   >
                     Hire Our Team

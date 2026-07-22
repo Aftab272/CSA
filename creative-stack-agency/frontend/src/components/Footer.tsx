@@ -32,7 +32,6 @@ const SocialIcon = ({ name, className }: { name: string; className: string }) =>
 
 type LegalDocType = 'privacy' | 'terms' | 'cookie' | 'disclaimer' | 'refund' | null;
 
-import AdminModal from './AdminModal';
 import { useAdmin } from '../context/AdminContext';
 import AdContainer from './AdContainer';
 
@@ -41,7 +40,9 @@ export default function Footer() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [activeLegalDoc, setActiveLegalDoc] = useState<LegalDocType>(null);
   const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
-  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+
+  const isInternalLink = (url: string) => url.startsWith('/') || url.startsWith('#');
+  const normalizeInternalUrl = (url: string) => (url.startsWith('#') ? `/${url}` : url);
 
   // Synchronize initial theme preference
   useEffect(() => {
@@ -95,7 +96,7 @@ export default function Footer() {
       <section 
         className={`relative border-t w-full py-16 transition-all duration-500 overflow-hidden font-sans ${
           theme === 'dark' 
-            ? 'bg-[#111827] text-white border-white/10' 
+            ? 'bg-secondary text-white border-white/10' 
             : 'bg-[#f1f5f9] text-gray-800 border-gray-200'
         }`}
       >
@@ -103,8 +104,8 @@ export default function Footer() {
         <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 md:px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 bg-primary/20 dark:bg-white/[0.02] p-8 md:p-12 rounded-3xl border border-white/10 shadow-xl backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 bg-primary/20 dark:bg-white/2 p-5 sm:p-8 md:p-12 rounded-3xl border border-white/10 shadow-xl backdrop-blur-md">
             <div className="text-center lg:text-left space-y-2">
               <h4 className="text-xl md:text-2xl font-bold font-display uppercase tracking-wider text-accent">
                 Connect Across Networks
@@ -114,7 +115,7 @@ export default function Footer() {
               </p>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-4 relative">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 relative">
               {footerData.socialLinks.map((platform) => {
                 const isHovered = hoveredSocial === platform.platform;
                 return (
@@ -153,7 +154,7 @@ export default function Footer() {
                       whileTap={{ scale: 0.95 }}
                       className={`p-3.5 rounded-2xl flex items-center justify-center transition-all duration-300 relative overflow-hidden group ${
                         theme === 'dark' 
-                          ? 'bg-white/[0.03] border border-white/[0.08]' 
+                          ? 'bg-white/3 border border-white/8' 
                           : 'bg-white border border-gray-200 shadow-sm'
                       }`}
                       style={{
@@ -185,12 +186,12 @@ export default function Footer() {
         role="contentinfo"
         className={`relative border-t w-full transition-all duration-500 overflow-hidden font-sans ${
           theme === 'dark' 
-            ? 'bg-[#0B1120]/95 text-white border-white/10' 
+            ? 'bg-primary/95 text-white border-white/10' 
             : 'bg-[#f8fafc] text-gray-800 border-gray-200'
         }`}
       >
         {/* 1. Premium Gradient Top Border */}
-        <div className="absolute top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-accent via-indigo-500 via-purple-500 to-accent animate-gradient-xy" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-accent via-indigo-500 to-accent animate-gradient-xy" />
 
         {/* Background Ambient Blur Blobs */}
         <div className="absolute top-1/4 left-10 w-72 h-72 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
@@ -199,14 +200,14 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-6 md:px-8 py-16 relative z-10">
           
           {/* 2. Responsive 6-Column Grid of Glassmorphic Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-5 sm:gap-6">
           
           {/* Column 1: Brand details with Theme Switcher */}
           <motion.div 
             whileHover={{ y: -4 }}
-            className={`group p-6 rounded-3xl transition-all duration-300 flex flex-col justify-between ${
+            className={`group p-5 sm:p-6 rounded-3xl transition-all duration-300 flex flex-col justify-between ${
               theme === 'dark' 
-                ? 'bg-white/[0.02] backdrop-blur-md border border-white/[0.08] hover:border-accent/40 shadow-xl' 
+                ? 'bg-white/2 backdrop-blur-md border border-white/8 hover:border-accent/40 shadow-xl' 
                 : 'bg-white/80 backdrop-blur-md border border-gray-200 hover:border-accent/50 shadow-md'
             }`}
           >
@@ -223,7 +224,7 @@ export default function Footer() {
               </div>
               
               {/* Animated Divider */}
-              <div className="h-[2px] w-12 bg-accent group-hover:w-full transition-all duration-500 rounded-full" />
+              <div className="h-0.5 w-12 bg-accent group-hover:w-full transition-all duration-500 rounded-full" />
               
               <p className={`text-xs leading-relaxed ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                 {footerData.description}
@@ -257,28 +258,41 @@ export default function Footer() {
 {/* Column 2: Quick Links */}
           <motion.div 
             whileHover={{ y: -4 }}
-            className={`group p-6 rounded-3xl transition-all duration-300 ${
+            className={`group p-5 sm:p-6 rounded-3xl transition-all duration-300 ${
               theme === 'dark' 
-                ? 'bg-white/[0.02] backdrop-blur-md border border-white/[0.08] hover:border-accent/40 shadow-xl' 
+                ? 'bg-white/2 backdrop-blur-md border border-white/8 hover:border-accent/40 shadow-xl' 
                 : 'bg-white/80 backdrop-blur-md border border-gray-200 hover:border-accent/50 shadow-md'
             }`}
           >
             <h4 className="text-sm font-bold font-display uppercase tracking-widest text-accent">
               Quick Links
             </h4>
-            <div className="h-[2px] w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
+            <div className="h-0.5 w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
             
             <ul className="mt-4 space-y-2 text-xs">
               {footerData.quickLinks.map((link) => (
                 <li key={link.id}>
-                  <a 
-                    href={link.url} 
-                    className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent relative py-0.5 ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                    }`}
-                  >
-                    {link.label}
-                  </a>
+                  {isInternalLink(link.url) ? (
+                    <Link
+                      to={normalizeInternalUrl(link.url)}
+                      className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent relative py-0.5 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent relative py-0.5 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
@@ -289,28 +303,41 @@ export default function Footer() {
 {/* Column 3: Services */}
           <motion.div 
             whileHover={{ y: -4 }}
-            className={`group p-6 rounded-3xl transition-all duration-300 ${
+            className={`group p-5 sm:p-6 rounded-3xl transition-all duration-300 ${
               theme === 'dark' 
-                ? 'bg-white/[0.02] backdrop-blur-md border border-white/[0.08] hover:border-accent/40 shadow-xl' 
+                ? 'bg-white/2 backdrop-blur-md border border-white/8 hover:border-accent/40 shadow-xl' 
                 : 'bg-white/80 backdrop-blur-md border border-gray-200 hover:border-accent/50 shadow-md'
             }`}
           >
             <h4 className="text-sm font-bold font-display uppercase tracking-widest text-accent">
               Services
             </h4>
-            <div className="h-[2px] w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
+            <div className="h-0.5 w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
             
             <ul className="mt-4 space-y-2 text-xs">
               {footerData.services.map((service) => (
                 <li key={service.id}>
-                  <a 
-                    href={service.url} 
-                    className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent py-0.5 ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                    }`}
-                  >
-                    {service.label}
-                  </a>
+                  {isInternalLink(service.url) ? (
+                    <Link
+                      to={normalizeInternalUrl(service.url)}
+                      className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent py-0.5 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}
+                    >
+                      {service.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={service.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent py-0.5 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}
+                    >
+                      {service.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
@@ -320,9 +347,9 @@ export default function Footer() {
 {/* Column 4: Courses */}
           <motion.div 
             whileHover={{ y: -4 }}
-            className={`group p-6 rounded-3xl transition-all duration-300 flex flex-col justify-between ${
+            className={`group p-5 sm:p-6 rounded-3xl transition-all duration-300 flex flex-col justify-between ${
               theme === 'dark' 
-                ? 'bg-white/[0.02] backdrop-blur-md border border-white/[0.08] hover:border-accent/40 shadow-xl' 
+                ? 'bg-white/2 backdrop-blur-md border border-white/8 hover:border-accent/40 shadow-xl' 
                 : 'bg-white/80 backdrop-blur-md border border-gray-200 hover:border-accent/50 shadow-md'
             }`}
           >
@@ -330,19 +357,32 @@ export default function Footer() {
               <h4 className="text-sm font-bold font-display uppercase tracking-widest text-accent">
                 Courses
               </h4>
-              <div className="h-[2px] w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
+              <div className="h-0.5 w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
               
               <ul className="mt-4 space-y-2 text-xs">
                 {footerData.courses.map((course) => (
                   <li key={course.id}>
-                    <a 
-                      href={course.url} 
-                      className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent py-0.5 ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}
-                    >
-                      {course.label}
-                    </a>
+                    {isInternalLink(course.url) ? (
+                      <Link
+                        to={normalizeInternalUrl(course.url)}
+                        className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent py-0.5 ${
+                          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                        }`}
+                      >
+                        {course.label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={course.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent py-0.5 ${
+                          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                        }`}
+                      >
+                        {course.label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -361,9 +401,9 @@ export default function Footer() {
           {/* Column 5: Projects */}
           <motion.div 
             whileHover={{ y: -4 }}
-            className={`group p-6 rounded-3xl transition-all duration-300 flex flex-col justify-between ${
+            className={`group p-5 sm:p-6 rounded-3xl transition-all duration-300 flex flex-col justify-between ${
               theme === 'dark' 
-                ? 'bg-white/[0.02] backdrop-blur-md border border-white/[0.08] hover:border-accent/40 shadow-xl' 
+                ? 'bg-white/2 backdrop-blur-md border border-white/8 hover:border-accent/40 shadow-xl' 
                 : 'bg-white/80 backdrop-blur-md border border-gray-200 hover:border-accent/50 shadow-md'
             }`}
           >
@@ -371,19 +411,32 @@ export default function Footer() {
               <h4 className="text-sm font-bold font-display uppercase tracking-widest text-accent">
                 Projects
               </h4>
-              <div className="h-[2px] w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
+              <div className="h-0.5 w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
               
               <ul className="mt-4 space-y-2 text-xs">
                 {footerData.projects.map((project) => (
                   <li key={project.id}>
-                    <a 
-                      href={project.url} 
-                      className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent py-0.5 ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}
-                    >
-                      {project.label}
-                    </a>
+                    {isInternalLink(project.url) ? (
+                      <Link
+                        to={normalizeInternalUrl(project.url)}
+                        className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent py-0.5 ${
+                          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                        }`}
+                      >
+                        {project.label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-block transition-all duration-300 hover:translate-x-1.5 hover:text-accent py-0.5 ${
+                          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                        }`}
+                      >
+                        {project.label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -402,16 +455,16 @@ export default function Footer() {
           {/* Column 6: Clickable Contact Details */}
           <motion.div 
             whileHover={{ y: -4 }}
-            className={`group p-6 rounded-3xl transition-all duration-300 ${
+            className={`group p-5 sm:p-6 rounded-3xl transition-all duration-300 ${
               theme === 'dark' 
-                ? 'bg-white/[0.02] backdrop-blur-md border border-white/[0.08] hover:border-accent/40 shadow-xl' 
+                ? 'bg-white/2 backdrop-blur-md border border-white/8 hover:border-accent/40 shadow-xl' 
                 : 'bg-white/80 backdrop-blur-md border border-gray-200 hover:border-accent/50 shadow-md'
             }`}
           >
             <h4 className="text-sm font-bold font-display uppercase tracking-widest text-accent">
               Contact Us
             </h4>
-            <div className="h-[2px] w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
+            <div className="h-0.5 w-8 bg-accent mt-2 group-hover:w-full transition-all duration-500 rounded-full" />
             
             <ul className="mt-4 space-y-3.5 text-xs">
               <li className="flex items-start gap-2 group/item">
@@ -420,7 +473,7 @@ export default function Footer() {
                   href="https://maps.google.com/?q=123+Agency+Way+New+York+NY" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className={`hover:text-accent transition ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                  className={`hover:text-accent transition wrap-break-word ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
                 >
                   123 Agency Way, New York, NY
                 </a>
@@ -430,7 +483,7 @@ export default function Footer() {
                 <Mail className="shrink-0 text-accent group-hover/item:scale-110 transition" size={16} />
                 <a 
                   href="mailto:info@creativestack.agency" 
-                  className={`hover:text-accent transition font-mono ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                  className={`hover:text-accent transition font-mono break-all ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
                 >
                   info@creativestack.agency
                 </a>
@@ -473,18 +526,18 @@ export default function Footer() {
         {/* Social Platforms Row removed from here (now pre-footer section) */}
 
         {/* 4. Bottom sub-footer containing copyright notice & SEO internal Legal links */}
-        <div className="mt-12 pt-8 border-t border-gray-500/10 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-gray-500">
+        <div className="mt-12 pt-8 border-t border-gray-500/10 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 text-xs text-gray-500">
           
           {/* Copyright description */}
           <div className="text-center md:text-left space-y-1">
             <p className="font-semibold text-gray-400 dark:text-gray-300 flex flex-wrap items-center gap-2 justify-center md:justify-start">
               <span>&copy; 2025–{new Date().getFullYear()} Creative Stack Agency. All Rights Reserved.</span>
-              <button 
-                onClick={() => setIsAdminModalOpen(true)}
+              <Link
+                to="/admin"
                 className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-accent/10 text-accent hover:bg-accent/20 transition-colors font-medium border border-accent/20"
               >
                 Admin Management
-              </button>
+              </Link>
             </p>
             <p className="text-[10px] opacity-75">
               Designed &amp; Developed with absolute precision by <span className="text-accent font-semibold">Creative Stack Agency</span>.
@@ -492,8 +545,8 @@ export default function Footer() {
           </div>
 
           {/* SEO-friendly internal legal links */}
-          <div className="flex flex-col items-center gap-8 w-full">
-            <AdContainer id="ad-footer" className="bg-white/[0.03] border-none w-full max-w-4xl" label="Sponsor Section" />
+          <div className="flex flex-col items-center lg:items-end gap-8 w-full">
+            <AdContainer id="ad-footer" className="bg-white/3 border-none w-full max-w-4xl" label="Sponsor Section" />
             
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 font-medium">
               {[
@@ -509,7 +562,7 @@ export default function Footer() {
                 <Link
                   key={doc.path}
                   to={doc.path}
-                  className="hover:text-accent transition duration-200 relative after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-0 after:h-[1px] after:bg-accent after:transition-all hover:after:w-full"
+                  className="hover:text-accent transition duration-200 relative after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-0 after:h-px after:bg-accent after:transition-all hover:after:w-full"
                 >
                   {doc.name}
                 </Link>
@@ -524,15 +577,15 @@ export default function Footer() {
       {/* 5. Interactive Legal Policy Modals - Ensures links are fully workable */}
       <AnimatePresence>
         {activeLegalDoc && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-60 flex items-center justify-center p-4">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#111827] border border-white/10 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] text-gray-100"
+              className="bg-secondary border border-white/10 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] text-gray-100"
             >
               {/* Header */}
-              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-[#0B1120]/60 shrink-0">
+              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-primary/60 shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-accent/10 rounded-xl text-accent">
                     {activeLegalDoc === 'privacy' && <Shield size={20} />}
@@ -557,7 +610,7 @@ export default function Footer() {
               </div>
 
               {/* Scrollable Document Content */}
-              <div className="p-6 md:p-8 overflow-y-auto flex-grow space-y-6 text-sm leading-relaxed text-gray-300">
+              <div className="p-6 md:p-8 overflow-y-auto grow space-y-6 text-sm leading-relaxed text-gray-300">
                 {activeLegalDoc === 'privacy' && (
                   <>
                     <h4 className="text-white font-bold text-base">1. Introduction &amp; Consent</h4>
@@ -638,7 +691,7 @@ export default function Footer() {
               </div>
 
               {/* Close Button Footer */}
-              <div className="p-4 border-t border-white/10 bg-[#0B1120]/60 flex justify-end shrink-0">
+              <div className="p-4 border-t border-white/10 bg-primary/60 flex justify-end shrink-0">
                 <button
                   onClick={() => setActiveLegalDoc(null)}
                   className="px-6 py-2.5 bg-accent text-primary font-bold text-sm rounded-xl hover:opacity-90 transition"
@@ -650,7 +703,6 @@ export default function Footer() {
           </div>
         )}
       </AnimatePresence>
-      <AdminModal isOpen={isAdminModalOpen} onClose={() => setIsAdminModalOpen(false)} />
     </footer>
     </>
   );

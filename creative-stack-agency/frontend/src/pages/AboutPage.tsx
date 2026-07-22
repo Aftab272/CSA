@@ -36,15 +36,15 @@ export default function AboutPage() {
 
       <Navbar />
 
-      <main className="pt-32 pb-24 px-6">
-        <div className="max-w-7xl mx-auto space-y-32">
+      <main className="pt-28 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto space-y-16 sm:space-y-24 lg:space-y-32">
           
           {/* Hero Section */}
           <section className="text-center space-y-8">
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-5xl md:text-7xl font-extrabold font-display leading-tight"
+              className="text-3xl sm:text-5xl md:text-7xl font-extrabold font-display leading-tight"
             >
               Our Story of <span className="text-accent italic">Innovation</span>
             </motion.h1>
@@ -52,17 +52,17 @@ export default function AboutPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed"
+              className="text-base sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed"
             >
               Creative Stack Agency was born from a simple idea: that technology and creativity shouldn't just coexist—they should amplify each other.
             </motion.p>
           </section>
 
           {/* Company History */}
-          <section className="grid md:grid-cols-2 gap-16 items-center">
+          <section className="grid md:grid-cols-2 gap-10 sm:gap-16 items-center">
             <div className="space-y-8">
-              <h2 className="text-4xl font-bold font-display">Company History</h2>
-              <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
+              <h2 className="text-3xl sm:text-4xl font-bold font-display">Company History</h2>
+              <div className="space-y-6 text-gray-300 text-base sm:text-lg leading-relaxed">
                 <p>
                   Founded in 2025, Creative Stack Agency started as a small team of passionate developers and designers in a shared workspace. Our goal was to provide high-quality digital solutions that were often out of reach for small to mid-sized businesses.
                 </p>
@@ -82,8 +82,8 @@ export default function AboutPage() {
           </section>
 
           {/* Vision & Mission */}
-          <section className="grid md:grid-cols-2 gap-12">
-            <div className="bg-secondary p-12 rounded-3xl border border-white/5 space-y-6">
+          <section className="grid md:grid-cols-2 gap-8 sm:gap-12">
+            <div className="bg-secondary p-6 sm:p-10 lg:p-12 rounded-3xl border border-white/5 space-y-6">
               <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
                 <Eye className="text-accent" size={32} />
               </div>
@@ -92,7 +92,7 @@ export default function AboutPage() {
                 To be the global leader in creative technology solutions, empowering every business to thrive in the digital age through unparalleled innovation and design excellence.
               </p>
             </div>
-            <div className="bg-secondary p-12 rounded-3xl border border-white/5 space-y-6">
+            <div className="bg-secondary p-6 sm:p-10 lg:p-12 rounded-3xl border border-white/5 space-y-6">
               <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
                 <Target className="text-accent" size={32} />
               </div>
@@ -104,9 +104,9 @@ export default function AboutPage() {
           </section>
 
           {/* Values */}
-          <section className="space-y-16">
-            <h2 className="text-4xl font-bold font-display text-center">Our Company Values</h2>
-            <div className="grid md:grid-cols-4 gap-8">
+          <section className="space-y-12 sm:space-y-16">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-center">Our Company Values</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
               {values.map((v, i) => (
                 <div key={i} className="text-center space-y-4">
                   <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6 group hover:bg-accent transition duration-300">
@@ -120,13 +120,13 @@ export default function AboutPage() {
           </section>
 
           {/* Certifications */}
-          <section className="bg-secondary border border-white/10 rounded-3xl p-12 text-center space-y-12">
-            <h2 className="text-3xl font-bold font-display flex items-center justify-center gap-4">
+          <section className="bg-secondary border border-white/10 rounded-3xl p-6 sm:p-10 lg:p-12 text-center space-y-10 sm:space-y-12">
+            <h2 className="text-2xl sm:text-3xl font-bold font-display flex items-center justify-center gap-4">
               <Award className="text-accent" /> Our Certifications
             </h2>
-            <div className="flex flex-wrap justify-center gap-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition duration-500">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 lg:gap-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition duration-500">
               {certifications.map((cert, i) => (
-                <div key={i} className="px-8 py-4 bg-primary rounded-xl font-bold border border-white/5 shadow-lg">
+                <div key={i} className="px-5 sm:px-8 py-3 sm:py-4 bg-primary rounded-xl font-bold border border-white/5 shadow-lg text-sm sm:text-base">
                   {cert}
                 </div>
               ))}
@@ -134,7 +134,7 @@ export default function AboutPage() {
           </section>
 
           {/* Why Choose Us */}
-          <section className="grid md:grid-cols-2 gap-16 items-center">
+          <section className="grid md:grid-cols-2 gap-10 sm:gap-16 items-center">
             <div className="order-2 md:order-1">
               <img 
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" 
@@ -143,7 +143,7 @@ export default function AboutPage() {
               />
             </div>
             <div className="space-y-8 order-1 md:order-2">
-              <h2 className="text-4xl font-bold font-display">Why Choose Us?</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold font-display">Why Choose Us?</h2>
               <ul className="space-y-6">
                 {[
                   { title: 'Result Driven', desc: 'We focus on KPIs and outcomes that matter to your business.' },

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Check } from 'lucide-react';
-import { Course } from '../data/courses';
+import type { CourseContent } from '../types/content';
 
 type CourseModalProps = {
-  course: Course;
+  course: CourseContent;
   onClose: () => void;
 };
 
@@ -21,7 +21,7 @@ export default function CourseModal({ course, onClose }: CourseModalProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-primary/90 backdrop-blur-md"
+      className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-primary/90 backdrop-blur-md"
       onClick={onClose}
     >
         <motion.div

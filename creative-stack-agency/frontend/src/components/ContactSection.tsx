@@ -5,6 +5,7 @@ import { SiWhatsapp } from '@icons-pack/react-simple-icons';
 import { useLocation } from 'react-router-dom';
 
 export default function ContactSection() {
+  const apiBaseUrl = (import.meta as { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL?.trim() || '';
   const location = useLocation();
   const [formData, setFormData] = useState({
     name: '',
@@ -61,7 +62,8 @@ export default function ContactSection() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/inquiries', {
+      const endpoint = apiBaseUrl ? `${apiBaseUrl.replace(/\/$/, '')}/api/inquiries` : '/api/inquiries';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,15 +100,15 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="px-6 py-16 md:px-8 md:py-24 bg-primary text-white font-sans">
+    <section id="contact" className="px-4 py-16 sm:px-6 md:px-8 md:py-24 bg-primary text-white font-sans">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-center text-4xl md:text-5xl font-bold font-display mb-16">Let's Build Something Amazing Together</h2>
+        <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-bold font-display mb-10 sm:mb-16">Let's Build Something Amazing Together</h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Side: Contact Info */}
           <div className="space-y-8">
-            <div className="bg-secondary p-8 rounded-3xl border border-white/10 shadow-xl space-y-6">
-              <h3 className="text-2xl font-bold font-display">Contact Information</h3>
+            <div className="bg-secondary p-6 sm:p-8 rounded-3xl border border-white/10 shadow-xl space-y-6">
+              <h3 className="text-xl sm:text-2xl font-bold font-display">Contact Information</h3>
               <div className="space-y-4">
                 <p className="flex items-center gap-3"><MapPin className="text-accent" /> Pakistan & Global Remote</p>
                 <p className="flex items-center gap-3"><Mail className="text-accent" /> contact@creativestackagency.com</p>
@@ -120,8 +122,8 @@ export default function ContactSection() {
               </div>
             </div>
 
-            <div className="bg-secondary p-8 rounded-3xl border border-white/10 shadow-xl space-y-4">
-              <h3 className="text-xl font-bold flex items-center gap-2 font-display"><Clock className="text-accent" /> Business Hours</h3>
+            <div className="bg-secondary p-6 sm:p-8 rounded-3xl border border-white/10 shadow-xl space-y-4">
+              <h3 className="text-lg sm:text-xl font-bold flex items-center gap-2 font-display"><Clock className="text-accent" /> Business Hours</h3>
               <p>Mon - Fri: 9:00 AM – 6:00 PM</p>
               <p>Sat: 10:00 AM – 4:00 PM</p>
               <p>Sun: Closed</p>
@@ -135,7 +137,7 @@ export default function ContactSection() {
           </div>
 
           {/* Right Side: Contact Form with AnimatePresence Success State */}
-          <div className="relative min-h-[500px]">
+          <div className="relative min-h-125">
             <AnimatePresence mode="wait">
               {!isSubmitted ? (
                 <motion.form 
@@ -143,7 +145,7 @@ export default function ContactSection() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="bg-secondary p-8 md:p-12 rounded-3xl border border-white/10 shadow-xl space-y-6 h-full flex flex-col justify-between"
+                  className="bg-secondary p-6 sm:p-8 md:p-12 rounded-3xl border border-white/10 shadow-xl space-y-6 h-full flex flex-col justify-between"
                   onSubmit={handleSubmit}
                 >
                   <div className="space-y-6">
@@ -232,7 +234,7 @@ export default function ContactSection() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full p-4 mt-6 bg-accent text-primary font-bold rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full p-4 mt-6 bg-accent text-primary font-bold rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <Send size={20} />
                     <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>

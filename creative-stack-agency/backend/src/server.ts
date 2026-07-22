@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import { connectDB } from './config/database';
+import { env } from './config/env';
 import { securityHeaders, rateLimiter, authRateLimiter, inquiryRateLimiter, corsConfig, sanitizeInput } from './middleware/security';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import { requestLogger, errorLogger } from './middleware/logger';
@@ -10,11 +11,12 @@ import authRoutes from './routes/auth';
 import projectsRoutes from './routes/projects';
 import servicesRoutes from './routes/services';
 import inquiriesRoutes from './routes/inquiries';
+import contentRoutes from './routes/content';
+import teamRoutes from './routes/team';
+import coursesRoutes from './routes/courses';
 import { authenticate, authorize } from './middleware/auth';
 
 const app = express();
-
-connectDB();
 
 app.use(cors(corsConfig));
 app.use(compression());
@@ -51,16 +53,27 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectsRoutes);
 app.use('/api/services', servicesRoutes);
 app.use('/api/inquiries', inquiriesRoutes);
+app.use('/api/content', contentRoutes);
+app.use('/api/team', teamRoutes);
+app.use('/api/courses', coursesRoutes);
 
 app.use(notFound);
 app.use(errorLogger);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3001;
+const startServer = async () => {
+  await connectDB();
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  app.listen(env.PORT, () => {
+    console.log(`Server running on port ${env.PORT}`);
+    console.log(`Environment: ${env.NODE_ENV}`);
+    console.log(`Allowed origins: ${env.ALLOWED_ORIGINS.join(', ')}`);
+  });
+};
+
+startServer().catch((error) => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
 });
 
 process.on('uncaughtException', (err) => {

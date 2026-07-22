@@ -33,7 +33,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section id="home" className="relative px-8 py-24 flex flex-col md:flex-row items-center justify-between gap-12 bg-primary text-white font-sans overflow-hidden">
+    <section id="home" className="relative px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 flex flex-col md:flex-row items-center justify-between gap-10 lg:gap-12 bg-primary text-white font-sans overflow-hidden">
       {/* Animated Background */}
       <motion.div 
         animate={{ rotate: 360 }}
@@ -41,16 +41,16 @@ export default function Hero() {
         className="absolute -top-1/2 -right-1/2 w-[1000px] h-[1000px] bg-accent/5 rounded-full blur-3xl"
       />
 
-      <div className="flex-1 space-y-6 relative z-10">
-        <h1 className="text-5xl md:text-6xl font-extrabold font-display leading-tight min-h-[160px]">
+      <div className="flex-1 space-y-6 relative z-10 w-full">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight min-h-[120px] sm:min-h-[150px]">
           {text}<span className="animate-pulse">|</span>
         </h1>
-        <p className="text-lg text-gray-300 max-w-lg">
+        <p className="text-base sm:text-lg text-gray-300 max-w-lg">
           We are a creative digital agency providing modern web solutions to help your business grow online.
         </p>
         
         {/* Stats */}
-        <div className="flex gap-8 py-4">
+        <div className="flex flex-wrap gap-6 sm:gap-8 py-2 sm:py-4">
           <div>
             <div className="text-3xl font-bold text-accent">50+</div>
             <div className="text-sm text-gray-400">Projects</div>
@@ -61,16 +61,16 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
           <a 
             href="/#contact" 
-            className="bg-accent text-primary px-8 py-4 rounded-full font-bold hover:shadow-[0_0_15px_rgba(0,212,255,0.5)] transition text-center inline-block"
+            className="bg-accent text-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold hover:shadow-[0_0_15px_rgba(0,212,255,0.5)] transition text-center inline-block w-full sm:w-auto"
           >
             Hire Us
           </a>
           <a 
             href="/#projects" 
-            className="border-2 border-accent text-accent px-8 py-4 rounded-full font-bold hover:bg-accent/10 transition text-center inline-block"
+            className="border-2 border-accent text-accent px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold hover:bg-accent/10 transition text-center inline-block w-full sm:w-auto"
           >
             View Portfolio
           </a>

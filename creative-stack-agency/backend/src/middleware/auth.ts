@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
+import { env } from '../config/env';
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -15,7 +16,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
+    const decoded = jwt.verify(token, env.JWT_SECRET) as any;
     
     const user = await User.findById(decoded.id).select('-password');
     
@@ -58,7 +59,7 @@ export const validateRefreshToken = async (req: Request, res: Response, next: Ne
       return;
     }
 
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'your-refresh-secret') as any;
+    const decoded = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as any;
     const user = await User.findById(decoded.id);
 
     if (!user) {
