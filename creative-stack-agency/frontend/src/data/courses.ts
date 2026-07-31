@@ -16,6 +16,7 @@ export type Course = {
   hasCertificate: boolean;
   features: string[];
   price: string;
+  originalPrice?: string;
   description: string;
 };
 
@@ -23,7 +24,7 @@ export const courses: Course[] = [
   {
     id: 1,
     title: 'Full Stack Web Development',
-    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=600&h=400',
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=600&h=400',
     duration: '3 Months',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Advanced',
@@ -31,13 +32,14 @@ export const courses: Course[] = [
     seats: 15,
     hasCertificate: true,
     features: ['Live Classes', 'Projects', 'Portfolio Building', 'Career Guidance'],
-    price: '$500',
+    price: 'Rs. 14,999',
+    originalPrice: 'Rs. 60,000',
     description: 'Master full-stack development with hands-on projects.'
   },
   {
     id: 2,
     title: 'WordPress Development',
-    image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=600&h=400',
+    image: 'https://images.unsplash.com/photo-1616469829581-73993eb86b02?auto=format&fit=crop&q=80&w=600&h=400',
     duration: '4 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Beginner',
@@ -45,13 +47,14 @@ export const courses: Course[] = [
     seats: 20,
     hasCertificate: true,
     features: ['Practical Labs', 'Certification'],
-    price: '$200',
+    price: 'Rs. 5,999',
+    originalPrice: 'Rs. 25,000',
     description: 'Create professional WordPress sites effortlessly.'
   },
   {
     id: 3,
     title: 'Graphic Designing',
-    image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=600&h=400',
+    image: 'https://images.unsplash.com/photo-1572044162444-ad60f128bdea?auto=format&fit=crop&q=80&w=600&h=400',
     duration: '6 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Beginner',
@@ -59,13 +62,14 @@ export const courses: Course[] = [
     seats: 12,
     hasCertificate: true,
     features: ['Portfolio Design', 'Live Sessions'],
-    price: '$250',
+    price: 'Rs. 6,999',
+    originalPrice: 'Rs. 30,000',
     description: 'Master branding and visual storytelling.'
   },
   {
     id: 4,
     title: 'UI/UX Design',
-    image: 'https://images.unsplash.com/photo-1561070791-26c113006238?auto=format&fit=crop&q=80&w=600&h=400',
+    image: 'https://images.unsplash.com/photo-1541462608141-2ff030de4a40?auto=format&fit=crop&q=80&w=600&h=400',
     duration: '6 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Intermediate',
@@ -73,13 +77,14 @@ export const courses: Course[] = [
     seats: 10,
     hasCertificate: true,
     features: ['Live Classes', 'Hands-on Projects', 'Certification'],
-    price: '$300',
+    price: 'Rs. 7,999',
+    originalPrice: 'Rs. 35,000',
     description: 'Learn user-centric design principles and tools.'
   },
   {
     id: 5,
     title: 'SEO Mastery',
-    image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&q=80&w=600&h=400',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600&h=400',
     duration: '4 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Intermediate',
@@ -87,13 +92,14 @@ export const courses: Course[] = [
     seats: 15,
     hasCertificate: true,
     features: ['Live Projects', 'Certification'],
-    price: '$200',
+    price: 'Rs. 5,999',
+    originalPrice: 'Rs. 25,000',
     description: 'Improve search rankings and drive traffic.'
   },
   {
     id: 6,
     title: 'Shopify Development',
-    image: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&q=80&w=600&h=400',
+    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=600&h=400',
     duration: '4 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Intermediate',
@@ -101,13 +107,14 @@ export const courses: Course[] = [
     seats: 15,
     hasCertificate: true,
     features: ['Live Projects', 'Certification'],
-    price: '$300',
+    price: 'Rs. 7,999',
+    originalPrice: 'Rs. 35,000',
     description: 'Build high-converting Shopify stores.'
   },
   {
     id: 7,
     title: 'YouTube Automation',
-    image: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&q=80&w=600&h=400',
+    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=600&h=400',
     duration: '4 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Beginner',
@@ -115,13 +122,14 @@ export const courses: Course[] = [
     seats: 20,
     hasCertificate: true,
     features: ['Workflow Automation', 'Strategy'],
-    price: '$350',
+    price: 'Rs. 8,999',
+    originalPrice: 'Rs. 40,000',
     description: 'Scale YouTube channels efficiently.'
   },
   {
     id: 8,
     title: 'Client Hunting & Marketing',
-    image: 'https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&q=80&w=600&h=400',
+    image: 'https://images.unsplash.com/photo-1557838923-2985c318be48?auto=format&fit=crop&q=80&w=600&h=400',
     duration: '6 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Intermediate',
@@ -129,13 +137,14 @@ export const courses: Course[] = [
     seats: 25,
     hasCertificate: true,
     features: ['Lead Generation', 'Sales Funnels'],
-    price: '$400',
+    price: 'Rs. 9,999',
+    originalPrice: 'Rs. 45,000',
     description: 'Master social media and client acquisition.'
   },
   {
     id: 9,
     title: 'MS Office & Documentation',
-    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=600&h=400',
+    image: 'https://images.unsplash.com/photo-1516387938699-a93567ec168e?auto=format&fit=crop&q=80&w=600&h=400',
     duration: '4 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Beginner',
@@ -143,7 +152,8 @@ export const courses: Course[] = [
     seats: 30,
     hasCertificate: true,
     features: ['Certification', 'Productivity'],
-    price: '$150',
+    price: 'Rs. 2,999',
+    originalPrice: 'Rs. 12,000',
     description: 'Enhance your professional document skills.'
   }
 ];

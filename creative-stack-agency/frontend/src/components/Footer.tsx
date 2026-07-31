@@ -96,13 +96,13 @@ export default function Footer() {
       <section 
         className={`relative border-t w-full py-16 transition-all duration-500 overflow-hidden font-sans ${
           theme === 'dark' 
-            ? 'bg-secondary text-white border-white/10' 
+            ? 'bg-primary text-white border-white/10' 
             : 'bg-[#f1f5f9] text-gray-800 border-gray-200'
         }`}
       >
         {/* Background Ambient Blur Blobs */}
-        <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 bg-primary/20 dark:bg-white/2 p-5 sm:p-8 md:p-12 rounded-3xl border border-white/10 shadow-xl backdrop-blur-md">
@@ -186,16 +186,16 @@ export default function Footer() {
         role="contentinfo"
         className={`relative border-t w-full transition-all duration-500 overflow-hidden font-sans ${
           theme === 'dark' 
-            ? 'bg-primary/95 text-white border-white/10' 
+            ? 'bg-primary text-white border-white/10' 
             : 'bg-[#f8fafc] text-gray-800 border-gray-200'
         }`}
       >
         {/* 1. Premium Gradient Top Border */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-accent via-indigo-500 to-accent animate-gradient-xy" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 animate-gradient-xy" />
 
         {/* Background Ambient Blur Blobs */}
-        <div className="absolute top-1/4 left-10 w-72 h-72 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-72 h-72 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/4 left-10 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none mix-blend-screen hidden dark:block" />
+        <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none mix-blend-screen hidden dark:block" />
 
         <div className="max-w-7xl mx-auto px-6 md:px-8 py-16 relative z-10">
           
@@ -391,9 +391,10 @@ export default function Footer() {
             <div className="mt-6">
               <a 
                 href="/courses" 
-                className="block text-center py-2 bg-accent text-primary font-bold text-xs rounded-xl hover:shadow-[0_4px_15px_rgba(0,212,255,0.3)] hover:scale-[1.03] active:scale-95 transition-all duration-300"
+                className="relative overflow-hidden group/btn block text-center py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] hover:scale-[1.03] active:scale-95 transition-all duration-300"
               >
-                View All Courses
+                <span className="relative z-10">View All Courses</span>
+                <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
               </a>
             </div>
           </motion.div>
@@ -445,9 +446,10 @@ export default function Footer() {
             <div className="mt-6">
               <a 
                 href="/#projects" 
-                className="block text-center py-2 bg-accent text-primary font-bold text-xs rounded-xl hover:shadow-[0_4px_15px_rgba(0,212,255,0.3)] hover:scale-[1.03] active:scale-95 transition-all duration-300"
+                className="relative overflow-hidden group/btn block text-center py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold text-xs rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] hover:scale-[1.03] active:scale-95 transition-all duration-300"
               >
-                View Portfolio
+                <span className="relative z-10">View Portfolio</span>
+                <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
               </a>
             </div>
           </motion.div>
@@ -479,36 +481,62 @@ export default function Footer() {
                 </a>
               </li>
 
-              <li className="flex items-center gap-2 group/item">
-                <Mail className="shrink-0 text-accent group-hover/item:scale-110 transition" size={16} />
-                <a 
-                  href="mailto:info@creativestack.agency" 
-                  className={`hover:text-accent transition font-mono break-all ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
-                >
-                  info@creativestack.agency
-                </a>
+              <li className="flex items-start gap-2 group/item">
+                <Mail className="shrink-0 text-accent group-hover/item:scale-110 transition mt-1" size={16} />
+                <div className="flex flex-col">
+                  <a 
+                    href="mailto:creativestackagency513@gmail.com" 
+                    className={`hover:text-accent transition font-mono break-all ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                  >
+                    creativestackagency513@gmail.com
+                  </a>
+                  <a 
+                    href="mailto:maryannawazdev7780@gmail.com" 
+                    className={`hover:text-accent transition font-mono break-all mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                  >
+                    maryannawazdev7780@gmail.com
+                  </a>
+                </div>
               </li>
 
-              <li className="flex items-center gap-2 group/item">
-                <Phone className="shrink-0 text-accent group-hover/item:scale-110 transition" size={16} />
-                <a 
-                  href="tel:+923027434569" 
-                  className={`hover:text-accent transition font-mono ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
-                >
-                  +92 (302) 743-4569
-                </a>
+              <li className="flex items-start gap-2 group/item">
+                <Phone className="shrink-0 text-accent group-hover/item:scale-110 transition mt-1" size={16} />
+                <div className="flex flex-col">
+                  <a 
+                    href="tel:+923027434569" 
+                    className={`hover:text-accent transition font-mono ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                  >
+                    +92 (302) 743-4569
+                  </a>
+                  <a 
+                    href="tel:+923047556084" 
+                    className={`hover:text-accent transition font-mono mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                  >
+                    +92 (304) 755-6084
+                  </a>
+                </div>
               </li>
 
-              <li className="flex items-center gap-2 group/item">
-                <MessageCircle className="shrink-0 text-accent group-hover/item:scale-110 transition" size={16} />
-                <a 
-                  href="https://wa.me/923027434569" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className={`hover:text-accent transition font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
-                >
-                  WhatsApp Business
-                </a>
+              <li className="flex items-start gap-2 group/item">
+                <MessageCircle className="shrink-0 text-accent group-hover/item:scale-110 transition mt-1" size={16} />
+                <div className="flex flex-col">
+                  <a 
+                    href="https://wa.me/923027434569" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className={`hover:text-accent transition font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                  >
+                    WhatsApp (Aftab)
+                  </a>
+                  <a 
+                    href="https://wa.me/923047556084" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className={`hover:text-accent transition font-medium mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                  >
+                    WhatsApp (Maryam)
+                  </a>
+                </div>
               </li>
 
               <li className="flex items-start gap-2">
@@ -585,9 +613,9 @@ export default function Footer() {
               className="bg-secondary border border-white/10 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] text-gray-100"
             >
               {/* Header */}
-              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-primary/60 shrink-0">
+              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-white/5 shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-accent/10 rounded-xl text-accent">
+                  <div className="p-2 bg-blue-500/20 rounded-xl text-blue-400">
                     {activeLegalDoc === 'privacy' && <Shield size={20} />}
                     {activeLegalDoc === 'terms' && <Scale size={20} />}
                     {activeLegalDoc === 'cookie' && <Info size={20} />}
@@ -603,7 +631,7 @@ export default function Footer() {
                 </div>
                 <button
                   onClick={() => setActiveLegalDoc(null)}
-                  className="p-1.5 text-gray-400 hover:text-white rounded-xl hover:bg-white/5 transition"
+                  className="p-1.5 text-gray-400 hover:text-white rounded-xl hover:bg-white/10 transition"
                 >
                   <X size={20} />
                 </button>
@@ -691,12 +719,13 @@ export default function Footer() {
               </div>
 
               {/* Close Button Footer */}
-              <div className="p-4 border-t border-white/10 bg-primary/60 flex justify-end shrink-0">
+              <div className="p-4 border-t border-white/10 bg-white/5 flex justify-end shrink-0">
                 <button
                   onClick={() => setActiveLegalDoc(null)}
-                  className="px-6 py-2.5 bg-accent text-primary font-bold text-sm rounded-xl hover:opacity-90 transition"
+                  className="relative overflow-hidden group/btn px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm rounded-xl hover:shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all transform hover:-translate-y-0.5"
                 >
-                  Close Document
+                  <span className="relative z-10">Close Document</span>
+                  <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
                 </button>
               </div>
             </motion.div>

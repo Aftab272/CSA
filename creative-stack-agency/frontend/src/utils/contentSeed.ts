@@ -9,7 +9,7 @@ const envBase =
 
 const githubImageBase = (
   envBase ||
-  'https://raw.githubusercontent.com/your-org/your-repo/main/frontend/src/assets/images'
+  'https://raw.githubusercontent.com/Aftab272/CSA/main/creative-stack-agency/frontend/src/assets/images'
 ).replace(/\/$/, '');
 
 const toGithubImageUrl = (value: string): string => {

@@ -7,12 +7,15 @@ import Navbar from './components/Navbar';
 import ProgressBar from './components/ProgressBar';
 import Hero from './components/Hero';
 import Services from './components/Services';
+import Courses from './components/Courses';
 import About from './components/About';
 import ReviewsSection from './components/ReviewsSection';
 import ContactSection from './components/ContactSection';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
 import Projects from './components/Projects';
+import Team from './components/Team';
+import Team4Stack from './components/Team4Stack';
 import FloatingContact from './components/FloatingContact';
 import LoadingScreen from './components/LoadingScreen';
 import BlogSection from './components/BlogSection';
@@ -22,6 +25,7 @@ import { Helmet } from 'react-helmet-async';
 import { AdminProvider, useAdmin } from './context/AdminContext';
 import AdContainer from './components/AdContainer';
 import Analytics from './components/Analytics';
+import CustomCursor from './components/CustomCursor';
 
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
@@ -60,7 +64,13 @@ function AppContent() {
   }, []);
 
   return (
-      <div className="min-h-screen bg-primary text-white transition-colors duration-300">
+      <div className="min-h-screen bg-primary text-white transition-colors duration-300 relative overflow-hidden">
+        <CustomCursor />
+        {/* Dynamic Animated Background Mesh */}
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/10 blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/10 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+        </div>
       <Helmet>
         <title>{seoData.siteTitle}</title>
         <meta name="description" content={seoData.metaDescription} />
@@ -99,9 +109,12 @@ function AppContent() {
       <Hero />
       <div className="max-w-7xl mx-auto px-6"><AdContainer id="ad-below-hero" /></div>
       <Services />
+      <Courses />
       <About />
       <div className="max-w-7xl mx-auto px-6"><AdContainer id="ad-between-sections-1" /></div>
       <Projects />
+      <Team />
+      <Team4Stack />
       <ReviewsSection />
       <ContactSection />
       <BlogSection />

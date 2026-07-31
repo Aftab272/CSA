@@ -9,8 +9,9 @@ const menuItems = [
   { label: 'About', to: '/#about', kind: 'section', sectionId: 'about' },
   { label: 'Services', to: '/#services', kind: 'section', sectionId: 'services' },
   { label: 'Projects', to: '/#projects', kind: 'section', sectionId: 'projects' },
+  { label: 'Team', to: '/#team', kind: 'section', sectionId: 'team' },
+  { label: 'Team4Stack', to: '/#team4stack', kind: 'section', sectionId: 'team4stack' },
   { label: 'Contact', to: '/#contact', kind: 'section', sectionId: 'contact' },
-  { label: 'Team', to: '/team', kind: 'page' },
   { label: 'Courses', to: '/courses', kind: 'page' },
   { label: 'Blog', to: '/blog', kind: 'page' },
 ];
@@ -95,41 +96,43 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 font-sans px-4 md:px-8 py-4 ${isScrolled ? 'bg-primary shadow-md' : 'bg-transparent'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 font-sans px-4 md:px-8 py-4 ${isScrolled ? 'bg-primary/80 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]' : 'bg-transparent'}`}>
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-white text-xl md:text-2xl font-bold font-display hover:text-accent transition">
+          <Link to="/" className="text-white text-xl md:text-2xl font-bold font-display hover:text-accent transition duration-300">
             CSA
           </Link>
           
           {/* Desktop Menu */}
-          <div className="hidden lg:flex gap-6 text-white font-medium text-sm">
+          <div className="hidden lg:flex gap-8 text-white font-medium text-sm">
             {menuItems.map((item) => (
               <Link
                 key={item.label}
                 to={item.to}
                 onClick={(event) => handleMenuItemClick(event, item)}
-                className={`transition ${isLinkActive(item) ? 'text-accent font-bold' : 'hover:text-accent'}`}
+                className={`transition-all duration-300 relative group ${isLinkActive(item) ? 'text-white' : 'text-gray-300 hover:text-white'}`}
               >
                 {item.label}
+                <span className={`absolute -bottom-1 left-0 h-[2px] bg-accent transition-all duration-300 ${isLinkActive(item) ? 'w-full shadow-[0_0_10px_rgba(37,99,235,0.8)]' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-6">
             <button
               type="button"
               onClick={toggleTheme}
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="p-2 rounded-full border border-white/10 text-white hover:text-accent hover:border-accent/40 transition"
+              className="p-2 rounded-full border border-white/10 text-white hover:text-accent hover:border-accent/40 hover:bg-white/5 transition duration-300"
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
             <Link
               to="/#contact"
               onClick={handleHireUsClick}
-              className="bg-linear-to-r from-accent to-teal-500 text-primary px-6 py-2 rounded-full font-bold hover:shadow-[0_0_15px_rgba(0,212,255,0.5)] transition text-center"
+              className="relative overflow-hidden group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-2.5 rounded-full font-bold shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all duration-300 text-center transform hover:-translate-y-0.5"
             >
-              Hire Us
+              <span className="relative z-10">Hire Us</span>
+              <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </Link>
           </div>
 

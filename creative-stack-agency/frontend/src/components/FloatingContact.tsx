@@ -7,12 +7,21 @@ export default function FloatingContact() {
 
   const contactButtons = [
     { 
-      name: 'WhatsApp', 
+      name: 'WhatsApp (Aftab)', 
       icon: (className: string) => <SiWhatsapp className={className} />, 
       color: 'bg-[#25D366]', 
       shadow: 'shadow-[#25D366]/40 hover:shadow-[#25D366]/60',
       glow: 'rgba(37, 211, 102, 0.4)',
-      link: 'https://wa.me/923000000000', // Replace with dynamic if needed, default template WhatsApp
+      link: 'https://wa.me/923027434569',
+      text: 'Chat on WhatsApp'
+    },
+    { 
+      name: 'WhatsApp (Maryam)', 
+      icon: (className: string) => <SiWhatsapp className={className} />, 
+      color: 'bg-[#128C7E]', 
+      shadow: 'shadow-[#128C7E]/40 hover:shadow-[#128C7E]/60',
+      glow: 'rgba(18, 140, 126, 0.4)',
+      link: 'https://wa.me/923047556084',
       text: 'Chat on WhatsApp'
     },
     { 
@@ -21,7 +30,7 @@ export default function FloatingContact() {
       color: 'bg-[#1DBF73]', 
       shadow: 'shadow-[#1DBF73]/40 hover:shadow-[#1DBF73]/60',
       glow: 'rgba(29, 191, 115, 0.4)',
-      link: 'https://www.fiverr.com', // Default template Fiverr
+      link: 'https://www.fiverr.com/users/aftab569/manage_gigs/do-custom-website-development-as-full-stack-web-developer-frontend-backend-dev/edit?wizard=5&tab=publish',
       text: 'Order on Fiverr'
     },
   ];

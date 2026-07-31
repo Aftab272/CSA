@@ -299,5 +299,29 @@ export const projects: Project[] = [
     gallery: ['https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600&h=400'],
     liveUrl: 'https://aurelius-food.vercel.app/',
     completionDate: '2026-07-18'
+  },
+  {
+    id: 24,
+    title: 'Fintech Mobile App Redesign',
+    category: 'UI/UX Design',
+    shortDescription: 'Complete UI/UX overhaul for a leading financial application.',
+    description: 'A comprehensive UX research and UI redesign project for a mobile banking application. The new design improved user retention by 45% and reduced task completion time by 30%.',
+    techStack: { frontend: ['Figma', 'Protopie', 'Adobe XD'], backend: [], database: [], deployment: [], other: ['UX Research', 'Wireframing'] },
+    features: ['User Research', 'Interactive Prototypes', 'Design System creation'],
+    gallery: ['https://images.unsplash.com/photo-1616469829581-73993eb86b02?auto=format&fit=crop&q=80&w=600&h=400'],
+    liveUrl: '#',
+    completionDate: '2026-07-20'
+  },
+  {
+    id: 25,
+    title: 'E-Commerce Dashboard UX',
+    category: 'UI/UX Design',
+    shortDescription: 'Modern admin dashboard design for e-commerce vendors.',
+    description: 'Designed a highly intuitive and data-rich admin dashboard for e-commerce store owners, allowing them to track sales, manage inventory, and view analytics seamlessly.',
+    techStack: { frontend: ['Figma', 'Sketch'], backend: [], database: [], deployment: [], other: ['Design System', 'User Testing'] },
+    features: ['Data Visualization', 'Component Library', 'Responsive Layouts'],
+    gallery: ['https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600&h=400'],
+    liveUrl: '#',
+    completionDate: '2026-07-25'
   }
 ];

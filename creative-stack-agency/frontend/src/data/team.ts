@@ -1,15 +1,15 @@
 import founderImage from '../assets/images/Founder.jpeg';
 import coFounderImage from '../assets/images/CO-Founder1.jpeg';
-import iqraImage from '../assets/images/Iqra-Graphics.jpeg';
+import ayeshaImage from '../assets/images/Ayesha Aslam.jpeg';
 import samiImage from '../assets/images/M SamiUllah.jpeg';
 import hasnainImage from '../assets/images/M Hasnain.png';
-import fiazImage from '../assets/images/M Fiaz Ahmed.png';
 import shumailaImage from '../assets/images/Shumaila.jpeg';
-import ayeshaImage from '../assets/images/Ayesha Aslam.jpeg';
-import ahmedImage from '../assets/images/Ahmed.jpeg';
 import nomanImage from '../assets/images/M Noman.jpeg';
-import aqsaImage from '../assets/images/Aqsa.jpeg';
+import fiazImage from '../assets/images/M Fiaz Ahmed.png';
 import khalilImage from '../assets/images/Khalil.jpeg';
+import iqraImage from '../assets/images/Iqra-Graphics.jpeg';
+import ahmedImage from '../assets/images/Ahmed.jpeg';
+import aqsaImage from '../assets/images/Aqsa.jpeg';
 
 export type TeamMember = {
   id: number;
@@ -97,25 +97,29 @@ export const teamMembers: TeamMember[] = [
   },
   {
     id: 3,
-    name: 'Iqra',
-    position: 'Graphic Designer',
-    role: 'Creative Team Member',
+    name: 'Ayesha Aslam',
+    position: 'Full Stack & WordPress Developer',
+    role: 'Full Stack Developer | WordPress Developer | UI/UX Designer',
     experience: '1+ Years',
     rating: 5,
-    testimonial: 'Graphic design is not just about making things look good; it is a powerful tool for communication and building brand identity.',
-    image: iqraImage,
-    intro: 'Iqra is a Graphic Designer at Creative Stack Agency, focusing on creating modern and engaging visual designs for businesses and brands. She designs social media creatives, logos, and marketing assets.',
-    education: 'Government Girls College Bangla Gogera',
-    projects: 'Specializes in: Social Media Post Design, Logo Design, Brand Identity Design, Flyer & Brochure Design, Banner & Web Graphics.',
-    achievements: 'Contributes to team collaboration, creative idea generation, brand consistency, and marketing campaign support.',
-    skills: ['Adobe Photoshop', 'Adobe Illustrator', 'Canva', 'Social Media Design', 'Branding', 'Logo Design', 'Print Design', 'Typography', 'Color Theory'],
+    testimonial: 'Creating visually appealing, user-friendly, and highly scalable web applications.',
+    image: ayeshaImage,
+    intro: 'Full Stack and WordPress Developer at Creative Stack Agency. She specializes in developing responsive, modern, and scalable web applications along with professional WordPress websites.',
+    education: 'Bachelor of Arts (BA) – University of Okara',
+    projects: 'Builds responsive web applications, modern UIs with React/Next.js, and complete WordPress sites.',
+    achievements: 'Skilled in MERN Stack, WordPress, and Figma UI/UX Design with strong client dealing expertise.',
+    skills: ['React.js', 'Next.js', 'Node.js', 'MongoDB', 'WordPress', 'Figma', 'UI/UX Design', 'Client Dealing'],
     certificates: [],
     social: {
-      whatsapp: 'https://wa.me/923176099755',
-      facebook: 'https://www.facebook.com/share/1EdGRoP6oU/',
-      linkedin: 'https://www.linkedin.com/in/rai-ali-ahmed-b928a83b7'
+      email: 'ayeshaweb16@gmail.com',
+      github: 'https://github.com/Ayeshadeveloper14',
+      linkedin: 'https://www.linkedin.com/in/ayesha-aslam-9971a9397/',
+      facebook: 'https://web.facebook.com/profile.php?id=61579189760363',
+      website: 'https://ayesha-portfoilo.vercel.app/',
+      whatsapp: 'https://wa.me/923298102474'
     },
-    resume: '#'
+    resume: '#',
+    portfolio: 'https://ayesha-portfoilo.vercel.app/'
   },
   {
     id: 4,
@@ -166,24 +170,6 @@ export const teamMembers: TeamMember[] = [
   },
   {
     id: 6,
-    name: 'Fiaz Ahmad',
-    position: 'Full Stack Developer | Backend & QA',
-    role: 'Backend, QA & Testing',
-    experience: '2+ Years',
-    rating: 5,
-    testimonial: 'Backend stability and rigorous testing are the backbone of any successful and scalable application.',
-    image: fiazImage,
-    intro: 'Fiaz specializes in backend development, building secure APIs and managing databases. He takes responsibility for QA/testing and manages project finances, calculating costs and aligning with budgets.',
-    education: 'Bachelor of Science in Computer Science',
-    projects: 'Specializes in backend API development, QA automation, and financial tracking for projects.',
-    achievements: 'Maintains zero critical bugs in production and effectively manages project budgets.',
-    skills: ['Node.js', 'Express.js', 'MongoDB', 'QA Automation', 'Testing', 'Project Finance'],
-    certificates: [],
-    social: {},
-    resume: '#'
-  },
-  {
-    id: 7,
     name: 'Shumaila Zulfqar',
     position: 'WordPress Developer',
     role: 'WordPress Developer | Website Designer',
@@ -208,57 +194,7 @@ export const teamMembers: TeamMember[] = [
     portfolio: 'https://project.lovestoblog.com/'
   },
   {
-    id: 8,
-    name: 'Ayesha Aslam',
-    position: 'Full Stack & WordPress Developer',
-    role: 'Full Stack Developer | WordPress Developer | UI/UX Designer',
-    experience: '1+ Years',
-    rating: 5,
-    testimonial: 'Creating visually appealing, user-friendly, and highly scalable web applications.',
-    image: ayeshaImage,
-    intro: 'Full Stack and WordPress Developer at Creative Stack Agency. She specializes in developing responsive, modern, and scalable web applications along with professional WordPress websites.',
-    education: 'Bachelor of Arts (BA) – University of Okara',
-    projects: 'Builds responsive web applications, modern UIs with React/Next.js, and complete WordPress sites.',
-    achievements: 'Skilled in MERN Stack, WordPress, and Figma UI/UX Design with strong client dealing expertise.',
-    skills: ['React.js', 'Next.js', 'Node.js', 'MongoDB', 'WordPress', 'Figma', 'UI/UX Design', 'Client Dealing'],
-    certificates: [],
-    social: {
-      email: 'ayeshaweb16@gmail.com',
-      github: 'https://github.com/Ayeshadeveloper14',
-      linkedin: 'https://www.linkedin.com/in/ayesha-aslam-9971a9397/',
-      facebook: 'https://web.facebook.com/profile.php?id=61579189760363',
-      website: 'https://ayesha-portfoilo.vercel.app/',
-      whatsapp: 'https://wa.me/923298102474'
-    },
-    resume: '#',
-    portfolio: 'https://ayesha-portfoilo.vercel.app/'
-  },
-  {
-    id: 9,
-    name: 'Ahmad Rafique',
-    position: 'Shopify Developer & AI Specialist',
-    role: 'Shopify Developer | AI Automation Specialist',
-    experience: '1+ Years',
-    rating: 5,
-    testimonial: 'Helping businesses automate repetitive tasks through AI-powered workflows and scalable eCommerce solutions.',
-    image: ahmedImage,
-    intro: 'Specializes in building, customizing, and managing Shopify stores while creating AI workflows to automate business processes.',
-    education: 'Undergraduate',
-    projects: 'Developed eCommerce stores like Glorya\'s Beauty (gloyrasbeauty.com) and Tapio\'s Provisions (tapiosprovisions.com).',
-    achievements: 'Expert in eCommerce solutions and AI workflow automation for improved operational efficiency.',
-    skills: ['Shopify', 'AI Automation', 'Theme Customization', 'Business Automation', 'Workflow Optimization'],
-    certificates: [],
-    social: {
-      email: 'ahmadrafiquevhr@gmail.com',
-      github: 'https://github.com/Ahmad-Rafique-192',
-      linkedin: 'https://www.linkedin.com/in/ahmad-rafique-2863823b1/',
-      instagram: 'https://www.instagram.com/ahmadrafique804/'
-    },
-    resume: '#',
-    portfolio: 'https://github.com/Ahmad-Rafique-192'
-  },
-  {
-    id: 10,
+    id: 7,
     name: 'Muhammad Noman',
     position: 'Full Stack MERN Developer',
     role: 'Frontend & MERN Stack Developer',
@@ -283,7 +219,89 @@ export const teamMembers: TeamMember[] = [
     portfolio: 'https://muhammad-noman-portfolio-five.vercel.app/'
   },
   {
+    id: 8,
+    name: 'Fiaz Ahmad',
+    position: 'Full Stack Developer | Backend & QA',
+    role: 'Backend, QA & Testing',
+    experience: '2+ Years',
+    rating: 5,
+    testimonial: 'Backend stability and rigorous testing are the backbone of any successful and scalable application.',
+    image: fiazImage,
+    intro: 'Fiaz specializes in backend development, building secure APIs and managing databases. He takes responsibility for QA/testing and manages project finances, calculating costs and aligning with budgets.',
+    education: 'Bachelor of Science in Computer Science',
+    projects: 'Specializes in backend API development, QA automation, and financial tracking for projects.',
+    achievements: 'Maintains zero critical bugs in production and effectively manages project budgets.',
+    skills: ['Node.js', 'Express.js', 'MongoDB', 'QA Automation', 'Testing', 'Project Finance'],
+    certificates: [],
+    social: {},
+    resume: '#'
+  },
+  {
+    id: 9,
+    name: 'Khalil Ahmad',
+    position: 'Business Website Expert',
+    role: 'Business Website Expert',
+    experience: '2+ Years',
+    rating: 5,
+    testimonial: 'A professional business website is the foundation of a strong online presence and digital growth.',
+    image: khalilImage,
+    intro: 'Business Website Expert specializing in designing and developing modern, responsive, and high-performing websites tailored to the unique needs of businesses, startups, and organizations.',
+    education: 'Not Specified',
+    projects: 'Develops professional business websites, corporate landing pages, and service-based websites with a focus on performance and SEO.',
+    achievements: 'Expert in creating SEO-friendly structures, fast-loading performance, and business lead generation.',
+    skills: ['Corporate Websites', 'Landing Pages', 'SEO Optimization', 'Performance Optimization', 'Responsive Design', 'Lead Generation'],
+    certificates: [],
+    social: {},
+    resume: '#'
+  },
+  {
+    id: 10,
+    name: 'Iqra',
+    position: 'Graphic Designer',
+    role: 'Creative Team Member',
+    experience: '1+ Years',
+    rating: 5,
+    testimonial: 'Graphic design is not just about making things look good; it is a powerful tool for communication and building brand identity.',
+    image: iqraImage,
+    intro: 'Iqra is a Graphic Designer at Creative Stack Agency, focusing on creating modern and engaging visual designs for businesses and brands. She designs social media creatives, logos, and marketing assets.',
+    education: 'Government Girls College Bangla Gogera',
+    projects: 'Specializes in: Social Media Post Design, Logo Design, Brand Identity Design, Flyer & Brochure Design, Banner & Web Graphics.',
+    achievements: 'Contributes to team collaboration, creative idea generation, brand consistency, and marketing campaign support.',
+    skills: ['Adobe Photoshop', 'Adobe Illustrator', 'Canva', 'Social Media Design', 'Branding', 'Logo Design', 'Print Design', 'Typography', 'Color Theory'],
+    certificates: [],
+    social: {
+      whatsapp: 'https://wa.me/923176099755',
+      facebook: 'https://www.facebook.com/share/1EdGRoP6oU/',
+      linkedin: 'https://www.linkedin.com/in/rai-ali-ahmed-b928a83b7'
+    },
+    resume: '#'
+  },
+  {
     id: 11,
+    name: 'Ahmad Rafique',
+    position: 'Shopify Developer & AI Specialist',
+    role: 'Shopify Developer | AI Automation Specialist',
+    experience: '1+ Years',
+    rating: 5,
+    testimonial: 'Helping businesses automate repetitive tasks through AI-powered workflows and scalable eCommerce solutions.',
+    image: ahmedImage,
+    intro: 'Specializes in building, customizing, and managing Shopify stores while creating AI workflows to automate business processes.',
+    education: 'Undergraduate',
+    projects: 'Developed eCommerce stores like Glorya\'s Beauty (gloyrasbeauty.com) and Tapio\'s Provisions (tapiosprovisions.com).',
+    achievements: 'Expert in eCommerce solutions and AI workflow automation for improved operational efficiency.',
+    skills: ['Shopify', 'AI Automation', 'Theme Customization', 'Business Automation', 'Workflow Optimization'],
+    certificates: [],
+    social: {
+      email: 'ahmadrafiquevhr@gmail.com',
+      github: 'https://github.com/Ahmad-Rafique-192',
+      linkedin: 'https://www.linkedin.com/in/ahmad-rafique-2863823b1/',
+      instagram: 'https://www.instagram.com/ahmadrafique804/'
+    },
+    resume: '#',
+    portfolio: 'https://github.com/Ahmad-Rafique-192'
+  },
+  {
+    id: 12,
     name: 'Eng. Aqsa',
     position: 'Flutter App & Frontend Web Developer',
     role: 'Flutter Developer | Frontend Developer',
@@ -305,23 +323,5 @@ export const teamMembers: TeamMember[] = [
     },
     resume: '#',
     portfolio: 'https://cosmic-hamster-2eb9d1.netlify.app/'
-  },
-  {
-    id: 12,
-    name: 'Khalil Ahmad',
-    position: 'Business Website Expert',
-    role: 'Business Website Expert',
-    experience: '2+ Years',
-    rating: 5,
-    testimonial: 'A professional business website is the foundation of a strong online presence and digital growth.',
-    image: khalilImage,
-    intro: 'Business Website Expert specializing in designing and developing modern, responsive, and high-performing websites tailored to the unique needs of businesses, startups, and organizations.',
-    education: 'Not Specified',
-    projects: 'Develops professional business websites, corporate landing pages, and service-based websites with a focus on performance and SEO.',
-    achievements: 'Expert in creating SEO-friendly structures, fast-loading performance, and business lead generation.',
-    skills: ['Corporate Websites', 'Landing Pages', 'SEO Optimization', 'Performance Optimization', 'Responsive Design', 'Lead Generation'],
-    certificates: [],
-    social: {},
-    resume: '#'
   }
 ];

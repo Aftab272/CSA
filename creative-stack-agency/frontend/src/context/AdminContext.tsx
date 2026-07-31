@@ -18,7 +18,7 @@ type FooterData = {
   projects: { id: string; label: string; url: string }[];
   legalLinks: { id: string; label: string; url: string }[];
   contactInfo: { email: string; phone: string; address: string; hours: string };
-  socialLinks: { id: string; platform: string; url: string; enabled: boolean }[];
+  socialLinks: { id: string; platform: string; url: string; enabled: boolean; iconName: string }[];
   copyrightText: string;
   sections: SectionVisibility;
 };
@@ -64,10 +64,11 @@ const defaultFooterData: FooterData = {
     hours: 'Mon - Fri: 9:00 AM - 6:00 PM',
   },
   socialLinks: [
-    { id: '1', platform: 'Facebook', url: '#', enabled: true },
-    { id: '2', platform: 'Instagram', url: '#', enabled: true },
-    { id: '3', platform: 'LinkedIn', url: '#', enabled: true },
-    { id: '4', platform: 'GitHub', url: '#', enabled: true },
+    { id: '1', platform: 'Facebook', url: 'https://facebook.com/creativestackagency', enabled: true, iconName: 'facebook' },
+    { id: '2', platform: 'Instagram', url: 'https://instagram.com/creativestackagency', enabled: true, iconName: 'instagram' },
+    { id: '3', platform: 'LinkedIn', url: 'https://linkedin.com/company/creativestackagency', enabled: true, iconName: 'linkedin' },
+    { id: '4', platform: 'GitHub', url: 'https://github.com/Aftab272', enabled: true, iconName: 'github' },
+    { id: '5', platform: 'WhatsApp', url: 'https://wa.me/923027434569', enabled: true, iconName: 'whatsapp' },
   ],
   copyrightText: '© {year} Creative Stack Agency. All Rights Reserved.',
   sections: {

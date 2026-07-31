@@ -933,12 +933,16 @@ export default function AdminDashboardPage() {
 
   return (
     <div
-      className="admin-scope admin-page min-h-screen bg-primary text-slate-100 transition-colors duration-300"
+      className="admin-scope admin-page min-h-screen bg-primary text-slate-100 transition-colors duration-300 relative overflow-hidden"
       data-admin-theme={adminTheme}
     >
-      <div className="max-w-360 mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      {/* Dynamic Animated Background Mesh */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/10 blur-[120px] animate-pulse pointer-events-none mix-blend-screen"></div>
+      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/10 blur-[120px] animate-pulse pointer-events-none mix-blend-screen" style={{ animationDelay: '2s' }}></div>
+
+      <div className="max-w-360 mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
         <div className="flex flex-col lg:flex-row gap-6">
-          <aside className="admin-sidebar w-full lg:w-72 bg-secondary/95 border border-white/15 rounded-3xl p-4 shadow-xl">
+          <aside className="admin-sidebar w-full lg:w-72 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
             <div className="px-2 py-3 border-b border-white/10 mb-4">
               <h1 className="text-xl font-bold font-display text-white">Admin Panel</h1>
               <p className="text-xs text-slate-300 mt-1">Management Console</p>
@@ -979,7 +983,9 @@ export default function AdminDashboardPage() {
             </button>
           </aside>
 
-          <main className="admin-main flex-1 bg-secondary/95 border border-white/15 rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl">
+          <main className="admin-main flex-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 sm:p-8 lg:p-10 shadow-[0_4px_30px_rgba(0,0,0,0.1)] relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-[2rem]"></div>
+
             {message && (
               <div className="mb-5 rounded-xl bg-accent/15 border border-accent/30 text-accent px-4 py-2 text-sm">
                 {message}
@@ -990,13 +996,13 @@ export default function AdminDashboardPage() {
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold font-display mb-6">Overview</h2>
                 <div className="mb-6 bg-primary border border-white/10 rounded-2xl p-4 sm:p-5">
-                  <p className="text-sm text-gray-300 mb-3">
+                  <p className="text-sm text-gray-300 mb-4">
                     Use GitHub raw image links in admin forms. Existing site data (services,
                     projects, team, and courses) can be synced into MongoDB with one click.
                   </p>
                   <button
                     onClick={() => void seedExistingContent()}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-primary font-bold"
+                    className="relative overflow-hidden group/btn inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] hover:-translate-y-0.5 transition-all duration-300"
                   >
                     <Database size={16} />
                     Sync Current Site Data to Database
