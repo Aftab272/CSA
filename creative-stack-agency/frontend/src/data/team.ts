@@ -90,10 +90,11 @@ export const teamMembers: TeamMember[] = [
       github: 'https://github.com/maryamnawazdev7780-has',
       whatsapp: 'https://wa.me/923047556084',
       tiktok: 'https://www.tiktok.com/@mn711395',
-      facebook: 'https://www.facebook.com/share/17bXtMmeHN/'
+      facebook: 'https://www.facebook.com/share/17bXtMmeHN/',
+      website: 'https://maryamdev-three.vercel.app/'
     },
     resume: '#',
-    portfolio: 'https://personal-portfolio-neon-delta-47.vercel.app/'
+    portfolio: 'https://maryamdev-three.vercel.app/'
   },
   {
     id: 3,

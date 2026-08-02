@@ -69,7 +69,7 @@ export const courses: Course[] = [
   {
     id: 4,
     title: 'UI/UX Design',
-    image: 'https://images.unsplash.com/photo-1541462608141-2ff030de4a40?auto=format&fit=crop&q=80&w=600&h=400',
+    image: '/src/assets/images/User Profile.png',
     duration: '6 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Intermediate',

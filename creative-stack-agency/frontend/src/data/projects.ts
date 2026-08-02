@@ -308,7 +308,7 @@ export const projects: Project[] = [
     description: 'A comprehensive UX research and UI redesign project for a mobile banking application. The new design improved user retention by 45% and reduced task completion time by 30%.',
     techStack: { frontend: ['Figma', 'Protopie', 'Adobe XD'], backend: [], database: [], deployment: [], other: ['UX Research', 'Wireframing'] },
     features: ['User Research', 'Interactive Prototypes', 'Design System creation'],
-    gallery: ['https://images.unsplash.com/photo-1616469829581-73993eb86b02?auto=format&fit=crop&q=80&w=600&h=400'],
+    gallery: ['/src/assets/images/User Profile.png'],
     liveUrl: '#',
     completionDate: '2026-07-20'
   },
@@ -320,7 +320,7 @@ export const projects: Project[] = [
     description: 'Designed a highly intuitive and data-rich admin dashboard for e-commerce store owners, allowing them to track sales, manage inventory, and view analytics seamlessly.',
     techStack: { frontend: ['Figma', 'Sketch'], backend: [], database: [], deployment: [], other: ['Design System', 'User Testing'] },
     features: ['Data Visualization', 'Component Library', 'Responsive Layouts'],
-    gallery: ['https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600&h=400'],
+    gallery: ['/src/assets/images/Dashboard.png'],
     liveUrl: '#',
     completionDate: '2026-07-25'
   }

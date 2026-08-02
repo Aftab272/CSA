@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import compression from 'compression';
+// import compression from 'compression'; // Temporarily commented out to fix missing package error
 import { connectDB } from './config/database';
 import { env } from './config/env';
 import { securityHeaders, rateLimiter, authRateLimiter, inquiryRateLimiter, corsConfig, sanitizeInput } from './middleware/security';
@@ -19,7 +19,7 @@ import { authenticate, authorize } from './middleware/auth';
 const app = express();
 
 app.use(cors(corsConfig));
-app.use(compression());
+// app.use(compression()); // Temporarily commented out to fix missing package error
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(securityHeaders);

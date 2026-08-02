@@ -54,13 +54,10 @@ export default function SocialMedia() {
               <p className="text-gray-400 text-sm flex-grow">{platform.followers}</p>
               <a 
                 href={platform.url} 
-                className={`w-full py-3 font-bold rounded-full transition text-center ${
-                  isHighlight 
-                    ? 'bg-accent text-primary hover:bg-accent/80 hover:shadow-[0_0_15px_rgba(0,212,255,0.4)]' 
-                    : 'bg-white/5 text-white hover:bg-white/10'
-                }`}
+                className="relative overflow-hidden group/btn w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 transform hover:-translate-y-0.5 text-center flex items-center justify-center"
               >
-                Visit {platform.name}
+                <span className="relative z-10">Visit {platform.name}</span>
+                <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
               </a>
             </motion.div>
           );

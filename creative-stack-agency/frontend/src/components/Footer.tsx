@@ -26,7 +26,24 @@ const SocialIcon = ({ name, className }: { name: string; className: string }) =>
     case 'telegram': return <SiTelegram className={className} />;
     case 'botim': return <MessageSquare className={className} />;
     case 'tiktok': return <SiTiktok className={className} />;
+    case 'tiktok': return <SiTiktok className={className} />;
     default: return <ExternalLink className={className} />;
+  }
+};
+
+const getSocialColor = (name: string) => {
+  switch (name) {
+    case 'facebook': return 'text-[#1877F2]';
+    case 'instagram': return 'text-[#E4405F]';
+    case 'linkedin': return 'text-[#0A66C2]';
+    case 'github': return 'text-gray-900 dark:text-white';
+    case 'youtube': return 'text-[#FF0000]';
+    case 'whatsapp': return 'text-[#25D366]';
+    case 'fiverr': return 'text-[#00b22d]';
+    case 'upwork': return 'text-[#14a800]';
+    case 'telegram': return 'text-[#0088cc]';
+    case 'tiktok': return 'text-black dark:text-white';
+    default: return 'text-blue-500';
   }
 };
 
@@ -100,12 +117,10 @@ export default function Footer() {
             : 'bg-[#f1f5f9] text-gray-800 border-gray-200'
         }`}
       >
-        {/* Background Ambient Blur Blobs */}
-        <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none" />
+        {/* Removed ambient blur blobs to reduce extra effects and brightness */}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 bg-primary/20 dark:bg-white/2 p-5 sm:p-8 md:p-12 rounded-3xl border border-white/10 shadow-xl backdrop-blur-md">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 bg-primary/5 dark:bg-white/5 p-5 sm:p-8 md:p-12 rounded-3xl border border-white/5 shadow-sm">
             <div className="text-center lg:text-left space-y-2">
               <h4 className="text-xl md:text-2xl font-bold font-display uppercase tracking-wider text-accent">
                 Connect Across Networks
@@ -154,22 +169,13 @@ export default function Footer() {
                       whileTap={{ scale: 0.95 }}
                       className={`p-3.5 rounded-2xl flex items-center justify-center transition-all duration-300 relative overflow-hidden group ${
                         theme === 'dark' 
-                          ? 'bg-white/3 border border-white/8' 
-                          : 'bg-white border border-gray-200 shadow-sm'
+                          ? 'bg-white/5 border border-white/10 hover:bg-white/10' 
+                          : 'bg-white border border-gray-200 shadow-sm hover:bg-gray-50'
                       }`}
-                      style={{
-                        boxShadow: isHovered 
-                          ? theme === 'dark'
-                            ? `0 0 20px rgba(0, 212, 255, 0.15)`
-                            : `0 4px 15px rgba(0, 0, 0, 0.08)`
-                          : 'none'
-                      }}
                     >
                       <SocialIcon 
                         name={platform.iconName} 
-                        className={`w-6 h-6 transition-all duration-300 ${
-                          isHovered ? platform.color : 'text-gray-400 group-hover:scale-105'
-                        }`} 
+                        className={`w-6 h-6 transition-all duration-300 ${getSocialColor(platform.iconName)} group-hover:scale-110`} 
                       />
                     </motion.a>
                   </div>

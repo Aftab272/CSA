@@ -87,9 +87,10 @@ export default function Courses() {
                 </div>
                 <button 
                   onClick={() => setSelectedCourse(course)}
-                  className="w-full py-3 bg-accent text-primary font-bold rounded-full hover:shadow-lg transition"
+                  className="relative overflow-hidden group/btn w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 transform hover:-translate-y-0.5 text-center flex items-center justify-center"
                 >
-                  Enroll Now
+                  <span className="relative z-10">Enroll Now</span>
+                  <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
                 </button>
               </div>
             </motion.div>

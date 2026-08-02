@@ -29,7 +29,7 @@ const MemberCard: React.FC<MemberCardProps> = ({ member, onSelect, isLeadership 
         loading="lazy" 
         src={member.image} 
         alt={member.name} 
-        className={`${isLeadership ? 'w-36 h-36 sm:w-48 sm:h-48' : 'w-32 h-32 sm:w-36 sm:h-36'} rounded-full object-cover object-top group-hover:brightness-110 border-4 border-blue-500/30 group-hover:border-blue-500 relative z-10 shadow-[0_0_20px_rgba(37,99,235,0.2)] transition-all duration-300`} 
+        className={`${isLeadership ? 'w-36 h-36 sm:w-48 sm:h-48 aspect-square' : 'w-32 h-32 sm:w-36 sm:h-36 aspect-square'} rounded-full object-cover object-center group-hover:brightness-110 border-4 border-blue-500/30 group-hover:border-blue-500 relative z-10 shadow-[0_0_20px_rgba(37,99,235,0.2)] transition-all duration-300`} 
       />
     </div>
     <h3 className="text-2xl sm:text-3xl font-extrabold font-display text-gray-900 dark:text-white tracking-wide group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mt-2">{member.name}</h3>
@@ -41,17 +41,18 @@ const MemberCard: React.FC<MemberCardProps> = ({ member, onSelect, isLeadership 
     </div>
 
     <div className="flex gap-4 mt-auto mb-8 relative z-10">
-      {member.social.email && <a href={`mailto:${member.social.email}`} className="p-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full hover:bg-blue-600/20 hover:border-blue-500 hover:text-blue-400 transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.1)]"><Mail size={18} /></a>}
-      {member.social.linkedin && <a href={member.social.linkedin} target="_blank" rel="noopener noreferrer" className="p-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full hover:bg-blue-600/20 hover:border-blue-500 hover:text-[#0A66C2] transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.1)]"><Linkedin size={18} /></a>}
-      {member.social.github && <a href={member.social.github} target="_blank" rel="noopener noreferrer" className="p-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full hover:bg-blue-600/20 hover:border-blue-500 hover:text-gray-900 dark:hover:text-white transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.1)]"><SiGithub size={18} /></a>}
+      {member.social.email && <a href={`mailto:${member.social.email}`} className="p-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full hover:bg-blue-600/20 hover:border-blue-500 text-blue-500 transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.1)]"><Mail size={18} /></a>}
+      {member.social.linkedin && <a href={member.social.linkedin} target="_blank" rel="noopener noreferrer" className="p-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full hover:bg-blue-600/20 hover:border-blue-500 text-[#0A66C2] transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.1)]"><Linkedin size={18} /></a>}
+      {member.social.github && <a href={member.social.github} target="_blank" rel="noopener noreferrer" className="p-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full hover:bg-blue-600/20 hover:border-blue-500 text-gray-900 dark:text-white transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.1)]"><SiGithub size={18} /></a>}
     </div>
     
     <div className="flex w-full gap-3 mt-auto relative z-10">
       <button 
         onClick={() => onSelect(member)}
-        className="flex-1 py-3.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-bold rounded-full hover:bg-gray-200 dark:hover:bg-white/10 dark:hover:border-white/20 transition-all duration-300 text-sm"
+        className="relative overflow-hidden group/btn flex-1 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 text-sm transform hover:-translate-y-0.5 text-center"
       >
-        View Profile
+        <span className="relative z-10">View Profile</span>
+        <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
       </button>
       {member.portfolio ? (
         <a 

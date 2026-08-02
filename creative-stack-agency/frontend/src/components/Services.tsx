@@ -75,16 +75,17 @@ export default function Services() {
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button 
                   onClick={() => handleHireUs(service.title)}
-                  className="relative overflow-hidden group/btn grow py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5 text-center"
+                  className="relative overflow-hidden group/btn grow py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5 text-center flex items-center justify-center"
                 >
                   <span className="relative z-10">Start Project</span>
                   <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
                 </button>
                 <button 
                   onClick={() => setSelectedService(service)}
-                  className="grow py-3.5 bg-gray-200 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white font-bold rounded-full hover:bg-gray-300 dark:hover:bg-white/10 hover:border-blue-500/50 transition-all duration-300 cursor-pointer text-center"
+                  className="relative overflow-hidden group/btn grow py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5 text-center flex items-center justify-center"
                 >
-                  Learn More
+                  <span className="relative z-10">Learn More</span>
+                  <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
                 </button>
               </div>
             </motion.div>

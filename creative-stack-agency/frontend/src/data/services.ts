@@ -47,7 +47,7 @@ export const services: Service[] = [
     category: 'Design',
     description: 'User-centric research and dynamic prototypes designed for excellent engagement and visual delight.',
     benefits: ['Intuitive Navigation', 'Improved User Journey', 'Modern Aesthetic'],
-    image: 'https://images.unsplash.com/photo-1581291518655-9523c932ebcf?auto=format&fit=crop&q=80&w=400&h=300',
+    image: '/src/assets/images/User Profile.png',
   },
   {
     id: 6,
