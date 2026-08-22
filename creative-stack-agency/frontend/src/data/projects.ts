@@ -1,3 +1,11 @@
+import team4stackImage from '../assets/images/Team4stack.png';
+import aureliusImage from '../assets/images/Aurelius.png';
+import csaImage from '../assets/images/CSA.png';
+import curtainImage from '../assets/images/Curtain.png';
+import luxeRealtyImage from '../assets/images/luxerealty.png';
+import userProfileImage from '../assets/images/User Profile.png';
+import dashboardImage from '../assets/images/Dashboard.png';
+
 export type Project = {
   id: number;
   title: string;
@@ -26,7 +34,7 @@ export const projects: Project[] = [
     description: 'Building the Future of Team Collaboration & Digital Innovation. A centralized ecosystem featuring a Landing Page, Dashboard, User Profile, and Team Workspace.',
     techStack: { frontend: ['React.js', 'Next.js', 'Tailwind CSS'], backend: ['Node.js', 'Express.js'], database: ['MongoDB'], deployment: ['Vercel'], other: ['Figma'] },
     features: ['Project Management', 'User Profile', 'Team Workspace', 'Dashboard'],
-    gallery: ['/src/assets/images/Team4stack.png'],
+    gallery: [team4stackImage],
     liveUrl: 'https://www.team4stack.com',
     completionDate: '2026-07-17'
   },
@@ -38,7 +46,7 @@ export const projects: Project[] = [
     description: 'A modern web application for showcasing collections with elegant UI and smooth user experience.',
     techStack: { frontend: ['React.js', 'Next.js', 'Tailwind CSS'], backend: ['Node.js', 'Express.js'], database: ['MongoDB'], deployment: ['Vercel'], other: ['Figma'] },
     features: ['Collection Display', 'Modern UI', 'Responsive Design'],
-    gallery: ['/src/assets/images/Aurelius.png'],
+    gallery: [aureliusImage],
     liveUrl: 'https://aurelius-collection.vercel.app/',
     githubUrl: 'https://github.com/Ayeshadeveloper14/AURELIUS.Configuration',
     completionDate: '2026-07-15'
@@ -211,7 +219,7 @@ export const projects: Project[] = [
     description: 'Official website for Creative Stack Agency showcasing services, team, and portfolio.',
     techStack: { frontend: ['React.js', 'Next.js', 'Tailwind CSS'], backend: ['Node.js', 'Express.js'], database: ['MongoDB'], deployment: ['Vercel'], other: ['Framer Motion'] },
     features: ['Service Display', 'Team Showcase', 'Portfolio Gallery'],
-    gallery: ['/src/assets/images/CSA.png'],
+    gallery: [csaImage],
     liveUrl: 'https://creative-stack-agency.vercel.app',
     githubUrl: 'https://github.com/Aftab272',
     completionDate: '2026-07-18'
@@ -224,7 +232,7 @@ export const projects: Project[] = [
     description: 'E-commerce platform for curtains and home decoration products in UAE.',
     techStack: { frontend: ['React', 'Shopify'], backend: ['Shopify API'], database: ['Shopify DB'], deployment: ['Shopify'], other: ['Payment Gateway'] },
     features: ['Product Catalog', 'Custom Orders', 'UAE Shipping'],
-    gallery: ['/src/assets/images/Curtain.png'],
+    gallery: [curtainImage],
     liveUrl: 'https://curtaintownuae.com/',
     completionDate: '2026-07-18'
   },
@@ -248,7 +256,7 @@ export const projects: Project[] = [
     description: 'Premium real estate platform for luxury properties and listings.',
     techStack: { frontend: ['React.js', 'Next.js', 'Tailwind CSS'], backend: ['Node.js', 'Express.js'], database: ['MongoDB'], deployment: ['Vercel'], other: ['Figma'] },
     features: ['Luxury Listings', 'Property Search', 'Virtual Tours'],
-    gallery: ['/src/assets/images/luxerealty.png'],
+    gallery: [luxeRealtyImage],
     liveUrl: 'https://luxerealty-lime.vercel.app/',
     completionDate: '2026-07-18'
   },
@@ -308,7 +316,7 @@ export const projects: Project[] = [
     description: 'A comprehensive UX research and UI redesign project for a mobile banking application. The new design improved user retention by 45% and reduced task completion time by 30%.',
     techStack: { frontend: ['Figma', 'Protopie', 'Adobe XD'], backend: [], database: [], deployment: [], other: ['UX Research', 'Wireframing'] },
     features: ['User Research', 'Interactive Prototypes', 'Design System creation'],
-    gallery: ['/src/assets/images/User Profile.png'],
+    gallery: [userProfileImage],
     liveUrl: '#',
     completionDate: '2026-07-20'
   },
@@ -320,7 +328,7 @@ export const projects: Project[] = [
     description: 'Designed a highly intuitive and data-rich admin dashboard for e-commerce store owners, allowing them to track sales, manage inventory, and view analytics seamlessly.',
     techStack: { frontend: ['Figma', 'Sketch'], backend: [], database: [], deployment: [], other: ['Design System', 'User Testing'] },
     features: ['Data Visualization', 'Component Library', 'Responsive Layouts'],
-    gallery: ['/src/assets/images/Dashboard.png'],
+    gallery: [dashboardImage],
     liveUrl: '#',
     completionDate: '2026-07-25'
   }

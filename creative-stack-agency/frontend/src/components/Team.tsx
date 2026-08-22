@@ -135,9 +135,9 @@ export default function Team() {
         </div>
 
         {/* Rest of the Team */}
-        <div className="flex overflow-x-auto gap-8 sm:gap-10 pb-12 pt-4 snap-x snap-mandatory hide-scrollbar">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 pb-12 pt-4">
           {team.map(member => (
-            <div key={member._id || member.name} className="w-[320px] sm:w-[360px] snap-center flex-shrink-0">
+            <div key={member._id || member.name} className="w-full">
               <MemberCard member={member} onSelect={setSelectedMember} />
             </div>
           ))}

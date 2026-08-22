@@ -53,7 +53,7 @@ export default function CustomCursor() {
   return (
     <>
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full border border-accent pointer-events-none z-[9999] mix-blend-screen"
+        className="hidden md:block fixed top-0 left-0 w-8 h-8 rounded-full border border-accent pointer-events-none z-[9999] mix-blend-screen"
         style={{
           x: smoothX,
           y: smoothY,
@@ -73,7 +73,7 @@ export default function CustomCursor() {
           initial={{ opacity: 0.8, scale: 0.5, x: b.x, y: b.y }}
           animate={{ opacity: 0, scale: 1.5, y: b.y - 40 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="fixed w-2 h-2 bg-accent rounded-full pointer-events-none z-[9998] blur-[1px]"
+          className="hidden md:block fixed w-2 h-2 bg-accent rounded-full pointer-events-none z-[9998] blur-[1px]"
         />
       ))}
     </>

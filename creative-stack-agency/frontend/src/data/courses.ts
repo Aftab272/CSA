@@ -1,3 +1,5 @@
+import userProfileImage from '../assets/images/User Profile.png';
+
 export type Instructor = {
   name: string;
   designation: string;
@@ -69,7 +71,7 @@ export const courses: Course[] = [
   {
     id: 4,
     title: 'UI/UX Design',
-    image: '/src/assets/images/User Profile.png',
+    image: userProfileImage,
     duration: '6 Weeks',
     instructor: { name: 'Muhammad Aftab Akram', designation: 'Founder & Lead', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=120&h=120' },
     level: 'Intermediate',

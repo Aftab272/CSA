@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Mail, Phone, Clock, Send, CheckCircle2 } from 'lucide-react';
 import { SiWhatsapp } from '@icons-pack/react-simple-icons';
 import { useLocation } from 'react-router-dom';
+import team4stackImage from '../assets/images/Team4stack.png';
 
 export default function ContactSection() {
   const apiBaseUrl = (import.meta as { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL?.trim() || '';
@@ -118,9 +119,9 @@ export default function ContactSection() {
                 <p className="flex items-center gap-4 text-lg"><MapPin className="text-blue-500 dark:text-blue-400 shrink-0" size={24} /> Pakistan & Global Remote</p>
                 <div className="flex items-start gap-4 text-lg">
                   <Mail className="text-blue-500 dark:text-blue-400 shrink-0 mt-1" size={24} /> 
-                  <div className="flex flex-col">
-                    <a href="mailto:creativestackagency513@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">creativestackagency513@gmail.com</a>
-                    <a href="mailto:maryannawazdev7780@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">maryannawazdev7780@gmail.com</a>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <a href="mailto:creativestackagency513@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate block">creativestackagency513@gmail.com</a>
+                    <a href="mailto:maryannawazdev7780@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate block">maryannawazdev7780@gmail.com</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 text-lg">
@@ -152,6 +153,11 @@ export default function ContactSection() {
                 <p className="flex justify-between border-b border-gray-200 dark:border-white/5 pb-2"><span>Sat</span> <span className="font-medium text-gray-900 dark:text-white">10:00 AM – 4:00 PM</span></p>
                 <p className="flex justify-between pb-2"><span>Sun</span> <span className="font-medium text-red-500 dark:text-gray-500">Closed</span></p>
               </div>
+            </div>
+
+            <div className="bg-white dark:bg-white/5 dark:backdrop-blur-xl p-6 rounded-[2rem] border border-gray-200 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)] relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              <img src={team4stackImage} alt="Team4Stack" className="w-full h-auto rounded-xl object-cover" />
             </div>
           </div>
 

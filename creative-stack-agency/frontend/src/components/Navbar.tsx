@@ -1,8 +1,7 @@
 import { useState, useEffect, type MouseEvent } from 'react';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
 
 const menuItems = [
   { label: 'Home', to: '/', kind: 'section', sectionId: 'home' },
@@ -19,7 +18,6 @@ const menuItems = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -118,14 +116,6 @@ export default function Navbar() {
           </div>
 
           <div className="hidden lg:flex items-center gap-6">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="p-2 rounded-full border border-white/10 text-white hover:text-accent hover:border-accent/40 hover:bg-white/5 transition duration-300"
-            >
-              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
             <Link
               to="/#contact"
               onClick={handleHireUsClick}
@@ -138,14 +128,6 @@ export default function Navbar() {
 
           {/* Mobile Toggle */}
           <div className="lg:hidden flex items-center gap-3">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="p-2 rounded-full border border-white/10 text-white hover:text-accent transition"
-            >
-              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
             <button className="text-white" onClick={() => setIsMenuOpen(true)}>
               <Menu className="w-8 h-8" />
             </button>

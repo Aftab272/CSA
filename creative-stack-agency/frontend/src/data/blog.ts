@@ -1,3 +1,5 @@
+import userProfileImage from '../assets/images/User Profile.png';
+
 export type BlogPost = {
   id: number;
   title: string;
@@ -24,7 +26,7 @@ export const blogPosts: BlogPost[] = [
     excerpt: 'Top trends in UI/UX design to keep your website looking fresh.',
     content: 'User experience is the single most important factor for online success. As digital products evolve, designers are turning toward highly immersive, responsive, and tactile interfaces that capture human emotion. This year, we are seeing a shift toward sophisticated glassmorphic cards, hyper-personalized dashboard designs, micro-interactions that guide users organically, and minimalist bento grids. Learn how you can implement these top UX patterns to engage your audience and dramatically increase key performance metrics.',
     category: 'UI/UX Design',
-    image: '/src/assets/images/User Profile.png',
+    image: userProfileImage,
     readTime: '4 min read'
   },
   {

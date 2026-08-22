@@ -1,3 +1,5 @@
+import userProfileImage from '../assets/images/User Profile.png';
+
 export type Service = {
   id: number;
   title: string;
@@ -47,7 +49,7 @@ export const services: Service[] = [
     category: 'Design',
     description: 'User-centric research and dynamic prototypes designed for excellent engagement and visual delight.',
     benefits: ['Intuitive Navigation', 'Improved User Journey', 'Modern Aesthetic'],
-    image: '/src/assets/images/User Profile.png',
+    image: userProfileImage,
   },
   {
     id: 6,
