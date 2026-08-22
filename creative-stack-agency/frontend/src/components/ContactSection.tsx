@@ -120,8 +120,8 @@ export default function ContactSection() {
                 <div className="flex items-start gap-4 text-lg">
                   <Mail className="text-blue-500 dark:text-blue-400 shrink-0 mt-1" size={24} /> 
                   <div className="flex flex-col min-w-0 flex-1">
-                    <a href="mailto:creativestackagency513@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate block">creativestackagency513@gmail.com</a>
-                    <a href="mailto:maryannawazdev7780@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate block">maryannawazdev7780@gmail.com</a>
+                    <a href="mailto:creativestackagency513@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors break-words [overflow-wrap:anywhere]">creativestackagency513@gmail.com</a>
+                    <a href="mailto:maryannawazdev7780@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors break-words [overflow-wrap:anywhere]">maryannawazdev7780@gmail.com</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 text-lg">

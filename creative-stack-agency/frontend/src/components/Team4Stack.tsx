@@ -1,13 +1,17 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ExternalLink, BookOpen } from 'lucide-react';
+import landingPageImg from '../assets/images/Landing-page.png';
+import dashboardImg from '../assets/images/Dashboard.png';
+import userProfileImg from '../assets/images/User Profile.png';
+import teamWorkImg from '../assets/images/Team work.png';
 
 export default function Team4Stack() {
   const screenshots = [
-    { title: 'Landing Page', img: '/src/assets/images/Landing-page.png' },
-    { title: 'Dashboard', img: '/src/assets/images/Dashboard.png' },
-    { title: 'User Profile', img: '/src/assets/images/User Profile.png' },
-    { title: 'Team Workspace', img: '/src/assets/images/Team work.png' },
+    { title: 'Landing Page', img: landingPageImg },
+    { title: 'Dashboard', img: dashboardImg },
+    { title: 'User Profile', img: userProfileImg },
+    { title: 'Team Workspace', img: teamWorkImg },
   ];
 
   return (

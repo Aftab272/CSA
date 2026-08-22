@@ -268,3 +268,9 @@ video {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+@media (pointer: coarse), (hover: none) {
+  .mobile-cursor-hide {
+    display: none !important;
+  }
+}
