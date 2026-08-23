@@ -2,6 +2,7 @@ import { useState, useEffect, type MouseEvent } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import logo from '../assets/images/CSA.png';
 
 const menuItems = [
   { label: 'Home', to: '/', kind: 'section', sectionId: 'home' },
@@ -96,8 +97,8 @@ export default function Navbar() {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 font-sans px-4 md:px-8 py-4 ${isScrolled ? 'bg-primary/80 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]' : 'bg-transparent'}`}>
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-white text-xl md:text-2xl font-bold font-display hover:text-accent transition duration-300">
-            CSA
+          <Link to="/" className="flex items-center hover:opacity-80 transition duration-300">
+            <img src={logo} alt="Creative Stack Agency" className="h-10 md:h-12 w-auto object-contain" />
           </Link>
           
           {/* Desktop Menu */}
