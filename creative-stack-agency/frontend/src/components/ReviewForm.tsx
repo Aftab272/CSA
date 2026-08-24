@@ -1,44 +1,45 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Star, Upload, Send, CheckCircle } from 'lucide-react';
+import { Star, Upload, Send, CheckCircle, Loader2 } from 'lucide-react';
+import { db } from '../lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function ReviewForm() {
   const [name, setName] = useState('');
   const [service, setService] = useState('Web Development');
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(5);
-  const [image, setImage] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120'); // Default avatar
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setImage(file);
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setImageUrl(url);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !comment) return;
+    setIsSubmitting(true);
 
-    const newReview = {
-      id: Date.now(),
-      name,
-      company: 'Verified Client',
-      image: imageUrl,
-      service,
-      rating,
-      comment,
-      date: new Date().toISOString().split('T')[0]
-    };
+    try {
+      const finalImageUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120'; // Default avatar
 
-    // Dispatch custom event so Testimonials component can update in real-time!
-    window.dispatchEvent(new CustomEvent('new-review', { detail: newReview }));
-    setIsSubmitted(true);
+      // Review ka data Firebase Database (Firestore) mein save karein
+      const newReview = {
+        name,
+        company: 'Verified Client',
+        image: finalImageUrl,
+        service,
+        rating,
+        comment,
+        createdAt: serverTimestamp(),
+        date: new Date().toISOString().split('T')[0]
+      };
+
+      await addDoc(collection(db, 'reviews'), newReview);
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Error adding review: ", error);
+      alert("Error submitting review. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -46,8 +47,6 @@ export default function ReviewForm() {
     setService('Web Development');
     setComment('');
     setRating(5);
-    setImage(null);
-    setImageUrl('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120');
     setIsSubmitted(false);
   };
 
@@ -119,26 +118,9 @@ export default function ReviewForm() {
                 ></textarea>
               </div>
 
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                className="hidden" 
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-              
-              <button 
-                type="button" 
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center space-x-2 p-4 bg-primary border border-dashed border-white/20 rounded-xl hover:bg-white/5 transition"
-              >
-                <Upload size={20} className="text-accent" />
-                <span className="text-sm font-semibold">{image ? image.name : 'Upload Avatar (Optional)'}</span>
-              </button>
-
-              <button type="submit" className="w-full p-4 bg-accent text-primary font-bold rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition flex items-center justify-center space-x-2 cursor-pointer">
-                <Send size={20} />
-                <span>Submit Review</span>
+              <button type="submit" disabled={isSubmitting} className="w-full p-4 bg-accent text-primary font-bold rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
+                {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
+                <span>{isSubmitting ? 'Submitting...' : 'Submit Review'}</span>
               </button>
             </form>
           </motion.div>

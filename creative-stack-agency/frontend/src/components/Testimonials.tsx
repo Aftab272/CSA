@@ -2,10 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star } from 'lucide-react';
 import { reviews as initialReviews, Review } from '../data/reviews';
+import { db } from '../lib/firebase';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 export default function Testimonials() {
   const [localReviews, setLocalReviews] = useState<Review[]>(initialReviews);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    // Real-time listener for Firebase Database
+    const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedReviews = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Review[];
+      
+      if (fetchedReviews.length > 0) {
+        setLocalReviews(fetchedReviews);
+      } else {
+        setLocalReviews(initialReviews); // Fallback agar database khali ho
+      }
+      setCurrentIndex(0); // Reset index whenever data changes
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -16,25 +38,6 @@ export default function Testimonials() {
       });
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const handleNewReview = (e: Event) => {
-      const customEvent = e as CustomEvent<Review>;
-      if (customEvent.detail) {
-        setLocalReviews(prev => {
-          const updated = [customEvent.detail, ...prev];
-          // Instantly switch index to show the newly added review!
-          setCurrentIndex(0);
-          return updated;
-        });
-      }
-    };
-
-    window.addEventListener('new-review', handleNewReview);
-    return () => {
-      window.removeEventListener('new-review', handleNewReview);
-    };
   }, []);
 
   const review = localReviews[currentIndex] || initialReviews[0];
@@ -61,7 +64,9 @@ export default function Testimonials() {
               className="bg-secondary p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl"
             >
               <div className="flex items-center justify-center space-x-4 mb-6">
-                <img loading="lazy" src={review.image} alt={review.name} className="w-16 h-16 rounded-full object-cover border border-accent/20" />
+                <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xl border border-accent/30">
+                  {review.name.charAt(0).toUpperCase()}
+                </div>
                 <div className="text-left">
                   <h4 className="font-bold text-white">{review.name}</h4>
                   <p className="text-sm text-gray-400">{review.company}</p>
