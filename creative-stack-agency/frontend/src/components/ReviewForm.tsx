@@ -100,7 +100,7 @@ export default function ReviewForm() {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star 
                       key={star} 
-                      className={`cursor-pointer transition-all duration-200 ${star <= rating ? 'text-accent fill-current scale-110' : 'text-gray-600 hover:text-accent/60'}`} 
+                      className={`cursor-pointer transition-all duration-200 ${star <= rating ? 'text-yellow-400 fill-current scale-110' : 'text-gray-600 hover:text-yellow-400/60'}`} 
                       onClick={() => setRating(star)}
                     />
                   ))}

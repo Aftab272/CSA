@@ -157,7 +157,16 @@ export default function ContactSection() {
 
             <div className="bg-white dark:bg-white/5 dark:backdrop-blur-xl p-6 rounded-[2rem] border border-gray-200 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)] relative overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-              <img src={team4stackImage} alt="Team4Stack" className="w-full h-auto rounded-xl object-cover" />
+              <iframe 
+                src="https://maps.google.com/maps?q=Vehari,%20Punjab,%20Pakistan&t=&z=13&ie=UTF8&iwloc=&output=embed" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0, minHeight: '300px', borderRadius: '12px' }} 
+                allowFullScreen 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Vehari Location Map"
+              ></iframe>
             </div>
           </div>
 

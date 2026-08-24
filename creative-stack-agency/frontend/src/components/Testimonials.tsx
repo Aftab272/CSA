@@ -46,7 +46,7 @@ export default function Testimonials() {
 
         <div className="flex justify-center items-center mb-8 gap-1">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className="text-accent fill-current w-6 h-6" />
+            <Star key={i} className="text-yellow-400 fill-current w-6 h-6" />
           ))}
           <span className="ml-3 text-xl font-bold">4.9 / 5.0 Average</span>
         </div>
