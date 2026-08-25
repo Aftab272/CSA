@@ -33,9 +33,12 @@ export default function ReviewForm() {
          try {
              const formData = new FormData();
              formData.append('file', imageFile);
-             formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'YOUR_CLOUDINARY_UPLOAD_PRESET');
              
-             const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'YOUR_CLOUDINARY_CLOUD_NAME';
+             // Hardcoded to avoid Vite server restart issues
+             const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'csa_reviews_preset';
+             const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'z6sk8xam';
+             
+             formData.append('upload_preset', preset);
              const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                 method: 'POST',
                 body: formData
