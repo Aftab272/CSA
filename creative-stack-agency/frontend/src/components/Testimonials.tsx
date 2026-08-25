@@ -2,31 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star } from 'lucide-react';
 import { reviews as initialReviews, Review } from '../data/reviews';
-import { db } from '../lib/firebase';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { supabase } from '../lib/supabase';
 
 export default function Testimonials() {
   const [localReviews, setLocalReviews] = useState<Review[]>(initialReviews);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    // Real-time listener for Firebase Database
-    const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedReviews = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Review[];
-      
-      if (fetchedReviews.length > 0) {
-        setLocalReviews(fetchedReviews);
+    const fetchReviews = async () => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .order('createdAt', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        setLocalReviews(data as Review[]);
       } else {
         setLocalReviews(initialReviews); // Fallback agar database khali ho
       }
       setCurrentIndex(0); // Reset index whenever data changes
-    });
+    };
 
-    return () => unsubscribe();
+    fetchReviews();
+
+    // Real-time listener for Supabase Database
+    const channel = supabase
+      .channel('public:reviews')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, payload => {
+        fetchReviews();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {

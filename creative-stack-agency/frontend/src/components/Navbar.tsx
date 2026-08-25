@@ -2,6 +2,7 @@ import { useState, useEffect, type MouseEvent } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import logoCSA from '../assets/images/logo-CSA.png';
 
 const menuItems = [
   { label: 'Home', to: '/', kind: 'section', sectionId: 'home' },
@@ -96,8 +97,12 @@ export default function Navbar() {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 font-sans px-4 md:px-8 py-4 ${isScrolled ? 'bg-primary/80 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]' : 'bg-transparent'}`}>
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-white text-xl md:text-2xl font-bold font-display hover:text-accent transition duration-300">
-            CSA
+          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition duration-300">
+            <img src={logoCSA} alt="Logo" className="h-12 w-12 md:h-14 md:w-14 rounded-full object-cover shadow-[0_0_15px_rgba(37,99,235,0.2)] border border-white/10 bg-white/5" />
+            <div className="flex flex-col">
+              <span className="text-white text-lg md:text-xl font-bold font-display leading-none tracking-wide hidden sm:block">Creative Stack <span className="text-accent">Agency</span></span>
+              <span className="text-white text-lg font-bold font-display leading-none tracking-wide sm:hidden">CSA</span>
+            </div>
           </Link>
           
           {/* Desktop Menu */}

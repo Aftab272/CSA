@@ -62,16 +62,16 @@ export default function ContactSection() {
     setIsSubmitting(true);
 
     try {
-      // Import Firebase dynamically or statically. We will use dynamic import here to keep it simple without changing top imports if not needed.
-      // Wait, let's just use dynamic import for firebase to avoid adding to the top imports block.
-      const { db } = await import('../lib/firebase');
-      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+      // Import Supabase dynamically
+      const { supabase } = await import('../lib/supabase');
 
-      await addDoc(collection(db, 'inquiries'), {
+      const { error: supabaseError } = await supabase.from('inquiries').insert([{
         ...formData,
-        createdAt: serverTimestamp(),
+        createdAt: new Date().toISOString(),
         status: 'new'
-      });
+      }]);
+      
+      if (supabaseError) throw supabaseError;
 
       setIsSubmitted(true);
     } catch (error) {

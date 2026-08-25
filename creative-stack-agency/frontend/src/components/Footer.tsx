@@ -11,6 +11,7 @@ import {
 } from '@icons-pack/react-simple-icons';
 import { motion, AnimatePresence } from 'motion/react';
 import { socialPlatforms } from '../data/social';
+import logoCSA from '../assets/images/logo-CSA.png';
 
 // Icon mapping helper for Social Icons
 const SocialIcon = ({ name, className }: { name: string; className: string }) => {
@@ -222,10 +223,7 @@ export default function Footer() {
                 {footerData.logoUrl ? (
                   <img loading="lazy" src={footerData.logoUrl} alt="Logo" className="w-12 h-12 rounded-xl object-contain" />
                 ) : (
-                  <>
-                    <div className="w-12 h-12 bg-accent/25 rounded-2xl flex items-center justify-center font-bold text-accent text-lg shadow-[0_0_15px_rgba(0,212,255,0.2)]">CSA</div>
-                    <span className="font-bold text-sm uppercase tracking-wider text-accent font-display">Creative Stack</span>
-                  </>
+                  <img loading="lazy" src={logoCSA} alt="Creative Stack Agency" className="w-12 h-12 rounded-xl object-contain bg-white/5 p-1" />
                 )}
               </div>
               

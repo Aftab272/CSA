@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, Upload, Send, CheckCircle, Loader2 } from 'lucide-react';
-import { db } from '../lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { supabase } from '../lib/supabase';
 
 export default function ReviewForm() {
   const [name, setName] = useState('');
@@ -11,16 +10,49 @@ export default function ReviewForm() {
   const [rating, setRating] = useState(5);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !comment) return;
+    if (!name || !comment || !imageFile) {
+      alert("Please fill all required fields including the profile image.");
+      return;
+    }
     setIsSubmitting(true);
 
     try {
-      const finalImageUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120'; // Default avatar
+      let finalImageUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120'; // Default avatar
 
-      // Review ka data Firebase Database (Firestore) mein save karein
+      if (imageFile) {
+         try {
+             const formData = new FormData();
+             formData.append('file', imageFile);
+             formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'YOUR_CLOUDINARY_UPLOAD_PRESET');
+             
+             const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'YOUR_CLOUDINARY_CLOUD_NAME';
+             const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: 'POST',
+                body: formData
+             });
+             const data = await res.json();
+             if (data.secure_url) {
+                finalImageUrl = data.secure_url;
+             } else {
+                throw new Error(data.error?.message || "Cloudinary Image upload failed");
+             }
+         } catch (err: any) {
+             console.error("Cloudinary fetch error:", err);
+             throw new Error(`Cloudinary Error: ${err.message}`);
+         }
+      }
+
+      // Review ka data Supabase Database mein save karein
       const newReview = {
         name,
         company: 'Verified Client',
@@ -28,15 +60,24 @@ export default function ReviewForm() {
         service,
         rating,
         comment,
-        createdAt: serverTimestamp(),
+        createdAt: new Date().toISOString(),
         date: new Date().toISOString().split('T')[0]
       };
 
-      await addDoc(collection(db, 'reviews'), newReview);
+      try {
+        const { error: supabaseError } = await supabase.from('reviews').insert([newReview]);
+        if (supabaseError) {
+          throw new Error(`Supabase Error: ${supabaseError.message || supabaseError.details || 'Unknown DB Error'}`);
+        }
+      } catch (err: any) {
+        console.error("Supabase insert error:", err);
+        throw new Error(`Database Error: ${err.message}`);
+      }
+      
       setIsSubmitted(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding review: ", error);
-      alert("Error submitting review. Please try again.");
+      alert(`Error submitting review: ${error.message || 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -91,6 +132,17 @@ export default function ReviewForm() {
                   <option>Content Writing</option>
                   <option>MS Office & Documentation</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Profile Image *</label>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  required
+                  onChange={handleImageChange}
+                  className="w-full p-4 bg-primary border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20" 
+                />
               </div>
 
               <div className="flex items-center justify-between border-t border-b border-white/5 py-3">

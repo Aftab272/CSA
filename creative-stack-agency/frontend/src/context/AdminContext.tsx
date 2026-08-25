@@ -24,7 +24,7 @@ type FooterData = {
 };
 
 const defaultFooterData: FooterData = {
-  logoUrl: null,
+  logoUrl: '/logo.png',
   description: "We are a creative digital agency providing modern web solutions to help your business grow online.",
   quickLinks: [
     { id: '1', label: 'Home', url: '/' },
