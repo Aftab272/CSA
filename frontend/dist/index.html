@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="description" content="Creative Stack Agency - Professional web development, design, and digital marketing services" />
+    <meta name="keywords" content="web development, design, digital marketing, SEO, Shopify, WordPress" />
+    <meta name="author" content="Creative Stack Agency" />
+    <meta name="robots" content="index, follow" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="#00d4ff" />
+    <!-- Security headers removed for local development -->
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+    <title>Creative Stack Agency</title>
+    <script>
+      (function () {
+        var stored = localStorage.getItem('csa-theme');
+        var theme = stored === 'light' || stored === 'dark' ? stored : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+        document.documentElement.classList.toggle('light', theme === 'light');
+      })();
+    </script>
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+    <script type="module" crossorigin src="/assets/index-DpKBZesb.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/motion-D49LJTab.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-ud3rD8XO.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DgNVxTeG.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
