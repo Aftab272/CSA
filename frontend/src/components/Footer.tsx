@@ -219,7 +219,7 @@ export default function Footer() {
           >
             <div className="space-y-4">
               <div className="flex items-center gap-2.5">
-                {footerData.logoUrl ? (
+                {footerData.logoUrl && footerData.logoUrl !== '/logo.png' ? (
                   <img loading="lazy" src={footerData.logoUrl} alt="Logo" className="w-12 h-12 rounded-xl object-contain" />
                 ) : (
                   <img loading="lazy" src={logoCSA} alt="Creative Stack Agency" className="w-12 h-12 rounded-xl object-contain bg-white/5 p-1" />
