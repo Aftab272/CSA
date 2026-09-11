@@ -1700,7 +1700,26 @@ export default function AdminDashboardPage() {
                     rows={3}
                   />
                   <button
-                    onClick={() => setFlash('Site settings saved')}
+                    onClick={async () => {
+                      try {
+                        const { error: seoErr } = await supabase
+                          .from('site_settings')
+                          .upsert({ setting_key: 'seo_data', setting_value: seoData });
+                          
+                        const { error: footerErr } = await supabase
+                          .from('site_settings')
+                          .upsert({ setting_key: 'footer_data', setting_value: footerData });
+                          
+                        if (seoErr || footerErr) {
+                          console.error('Save error', seoErr, footerErr);
+                          setFlash('Error saving. Did you create the site_settings table?');
+                        } else {
+                          setFlash('Site settings saved to backend!');
+                        }
+                      } catch (err) {
+                        setFlash('Error saving to backend');
+                      }
+                    }}
                     className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-accent text-primary font-bold rounded-xl w-fit"
                   >
                     <Save size={16} />
