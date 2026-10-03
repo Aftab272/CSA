@@ -14,9 +14,32 @@ export default function Newsletter() {
   const [message, setMessage] = useState('');
   const [showWelcome, setShowWelcome] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
+  const [adminEmailInput, setAdminEmailInput] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [adminError, setAdminError] = useState('');
+
+  // Check if admin is already logged in
+  useEffect(() => {
+    if (showAdmin) {
+      import('../lib/supabase').then(({ supabase }) => {
+        supabase.auth.getSession().then(async ({ data: { session } }) => {
+          if (session?.access_token) {
+            setIsAdminAuthenticated(true);
+            try {
+              const { adminApi } = await import('../lib/api');
+              const res = await adminApi.getSubscribers(session.access_token);
+              if (res.success && Array.isArray(res.subscribers)) {
+                setSubscribers(res.subscribers.map((s: any) => ({ email: s.email, subscribedAt: s.subscribed_at })));
+              }
+            } catch (err) {
+              console.warn('Subscribers load note:', err);
+            }
+          }
+        });
+      });
+    }
+  }, [showAdmin]);
 
   // Load existing subscribers
   useEffect(() => {
@@ -39,7 +62,7 @@ export default function Newsletter() {
     }
   }, []);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     setAdminError('');
 
@@ -53,36 +76,54 @@ export default function Newsletter() {
       return;
     }
 
-    // 2. Duplicate detection
-    const isDuplicate = subscribers.some(sub => sub.email === cleanEmail);
-    if (isDuplicate) {
-      setStatus('error');
-      setMessage('This email address is already subscribed to our newsletter!');
-      return;
-    }
+    try {
+      setStatus('loading');
+      const { subscribeNewsletter } = await import('../lib/api');
+      const res = await subscribeNewsletter(cleanEmail);
 
-    // 3. Register Subscriber
-    const newSub: Subscriber = {
-      email: cleanEmail,
-      subscribedAt: new Date().toLocaleString()
-    };
-    
-    const updated = [newSub, ...subscribers];
-    localStorage.setItem('csa_newsletter_subscribers', JSON.stringify(updated));
-    setSubscribers(updated);
-    
-    setStatus('success');
-    setMessage('Thank you! You have successfully subscribed to the Creative Stack Agency newsletter.');
-    setEmail('');
+      const newSub: Subscriber = {
+        email: cleanEmail,
+        subscribedAt: new Date().toLocaleString()
+      };
+      
+      const updated = [newSub, ...subscribers.filter(s => s.email !== cleanEmail)];
+      localStorage.setItem('csa_newsletter_subscribers', JSON.stringify(updated));
+      setSubscribers(updated);
+
+      setStatus('success');
+      setMessage(res.message || 'Thank you! You have successfully subscribed to the Creative Stack Agency newsletter.');
+      setEmail('');
+    } catch (err: any) {
+      setStatus('error');
+      setMessage(err.message || 'Subscription failed. Please try again.');
+    }
   };
 
-  const handleAdminLogin = (e: React.FormEvent) => {
+  const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminPassword === 'admin' || adminPassword === 'admin123') {
-      setIsAdminAuthenticated(true);
-      setAdminError('');
-    } else {
-      setAdminError('Invalid password. Hint: Use "admin"');
+    setAdminError('');
+    try {
+      const { supabase } = await import('../lib/supabase');
+      const { error } = await supabase.auth.signInWithPassword({
+        email: adminEmailInput,
+        password: adminPassword,
+      });
+      if (error) {
+        setAdminError(error.message || 'Invalid credentials');
+      } else {
+        setIsAdminAuthenticated(true);
+        // Fetch real subscribers from secure backend
+        const session = (await supabase.auth.getSession()).data.session;
+        if (session?.access_token) {
+          const { adminApi } = await import('../lib/api');
+          const res = await adminApi.getSubscribers(session.access_token);
+          if (res.success && Array.isArray(res.subscribers)) {
+            setSubscribers(res.subscribers.map((s: any) => ({ email: s.email, subscribedAt: s.subscribed_at })));
+          }
+        }
+      }
+    } catch (err: any) {
+      setAdminError(err.message || 'Authentication failed');
     }
   };
 
@@ -347,20 +388,30 @@ export default function Newsletter() {
                       <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto text-accent mb-2">
                         <Key size={24} />
                       </div>
-                      <h4 className="text-lg font-bold text-white">Enter Admin Password</h4>
-                      <p className="text-xs text-gray-400">Authorized personnel only. Password is <strong>admin</strong></p>
+                      <h4 className="text-lg font-bold text-white">Admin Authentication</h4>
+                      <p className="text-xs text-gray-400">Authorized personnel only. Enter your admin credentials.</p>
                     </div>
 
                     <form onSubmit={handleAdminLogin} className="space-y-3">
                       <div>
                         <input
+                          type="email"
+                          value={adminEmailInput}
+                          onChange={(e) => setAdminEmailInput(e.target.value)}
+                          placeholder="Admin Email"
+                          className="w-full p-3.5 bg-primary border border-white/10 rounded-2xl focus:outline-none focus:border-accent text-white text-sm"
+                          required
+                          autoFocus
+                        />
+                      </div>
+                      <div>
+                        <input
                           type="password"
                           value={adminPassword}
                           onChange={(e) => setAdminPassword(e.target.value)}
-                          placeholder="Password (e.g. admin)"
-                          className="w-full p-4 bg-primary border border-white/10 rounded-2xl focus:outline-none focus:border-accent text-white text-center text-sm"
+                          placeholder="Admin Password"
+                          className="w-full p-3.5 bg-primary border border-white/10 rounded-2xl focus:outline-none focus:border-accent text-white text-sm"
                           required
-                          autoFocus
                         />
                       </div>
                       {adminError && (

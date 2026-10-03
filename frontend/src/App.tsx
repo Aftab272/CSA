@@ -42,6 +42,7 @@ import CopyrightPolicy from './pages/legal/CopyrightPolicy';
 import AcceptableUsePolicy from './pages/legal/AcceptableUsePolicy';
 import TeamPage from './pages/TeamPage';
 import CoursesPage from './pages/CoursesPage';
+import AboutPage from './pages/AboutPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 
 function RouteScrollReset() {
@@ -133,6 +134,7 @@ export default function App() {
           <RouteScrollReset />
           <Routes>
             <Route path="/" element={<AppContent />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/team" element={<TeamPage />} />
             <Route path="/courses" element={<CoursesPage />} />
             <Route path="/admin/login/*" element={<AdminDashboardPage />} />

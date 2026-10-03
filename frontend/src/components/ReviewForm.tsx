@@ -55,27 +55,16 @@ export default function ReviewForm() {
          }
       }
 
-      // Review ka data Supabase Database mein save karein
-      const newReview = {
+      // Review data secure backend API ke zariye submit karein
+      const { submitReview } = await import('../lib/api');
+      await submitReview({
         name,
         company: 'Verified Client',
         image: finalImageUrl,
         service,
         rating,
         comment,
-        createdAt: new Date().toISOString(),
-        date: new Date().toISOString().split('T')[0]
-      };
-
-      try {
-        const { error: supabaseError } = await supabase.from('reviews').insert([newReview]);
-        if (supabaseError) {
-          throw new Error(`Supabase Error: ${supabaseError.message || supabaseError.details || 'Unknown DB Error'}`);
-        }
-      } catch (err: any) {
-        console.error("Supabase insert error:", err);
-        throw new Error(`Database Error: ${err.message}`);
-      }
+      });
       
       setIsSubmitted(true);
     } catch (error: any) {

@@ -62,21 +62,12 @@ export default function ContactSection() {
     setIsSubmitting(true);
 
     try {
-      // Import Supabase dynamically
-      const { supabase } = await import('../lib/supabase');
-
-      const { error: supabaseError } = await supabase.from('inquiries').insert([{
-        ...formData,
-        createdAt: new Date().toISOString(),
-        status: 'new'
-      }]);
-      
-      if (supabaseError) throw supabaseError;
-
+      const { submitInquiry } = await import('../lib/api');
+      await submitInquiry(formData);
       setIsSubmitted(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting inquiry: ", error);
-      setSubmitError('Network error. Please try again in a moment.');
+      setSubmitError(error.message || 'Failed to submit inquiry. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

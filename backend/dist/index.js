@@ -11,39 +11,30 @@ import { inquiryRouter } from './routes/inquiryRoutes.js';
 import { reviewRouter } from './routes/reviewRoutes.js';
 import { newsletterRouter } from './routes/newsletterRoutes.js';
 import { adminRouter } from './routes/adminRoutes.js';
-
 const app = express();
-
 // Security Headers
 app.use(helmet());
-
 // CORS configuration (Allows frontend from localhost and production domains)
-app.use(
-  cors({
+app.use(cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, server-to-server)
-      if (!origin) return callback(null, true);
-      if (
-        ENV.ALLOWED_ORIGINS.includes('*') ||
-        ENV.ALLOWED_ORIGINS.includes(origin) ||
-        origin.endsWith('.creativestackagency.dev') ||
-        origin.includes('localhost')
-      ) {
-        return callback(null, true);
-      }
-      return callback(null, true); // Permissive in development
+        // Allow requests with no origin (like mobile apps, curl, server-to-server)
+        if (!origin)
+            return callback(null, true);
+        if (ENV.ALLOWED_ORIGINS.includes('*') ||
+            ENV.ALLOWED_ORIGINS.includes(origin) ||
+            origin.endsWith('.creativestackagency.dev') ||
+            origin.includes('localhost')) {
+            return callback(null, true);
+        }
+        return callback(null, true); // Permissive in development
     },
     credentials: true,
-  })
-);
-
+}));
 // Body parsers
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
-
 // Apply rate limiter to all /api routes
 app.use('/api', apiRateLimiter);
-
 // API Routes
 app.use('/api', healthRouter);
 app.use('/api/ai', aiRouter);
@@ -52,18 +43,15 @@ app.use('/api/inquiries', inquiryRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/newsletter', newsletterRouter);
 app.use('/api/admin', adminRouter);
-
 // Global Error Handler
 app.use(errorHandler);
-
 // Start server
 app.listen(ENV.PORT, () => {
-  console.log(`=========================================`);
-  console.log(`🚀 Beemim AI Backend is running!`);
-  console.log(`📍 Port: http://localhost:${ENV.PORT}`);
-  console.log(`🛡️  Service: Creative Stack Agency`);
-  console.log(`🤖 AI Engine: Google Gemini & Free Image Gen`);
-  console.log(`=========================================`);
+    console.log(`=========================================`);
+    console.log(`🚀 Beemim AI Backend is running!`);
+    console.log(`📍 Port: http://localhost:${ENV.PORT}`);
+    console.log(`🛡️  Service: Creative Stack Agency`);
+    console.log(`🤖 AI Engine: Google Gemini & Free Image Gen`);
+    console.log(`=========================================`);
 });
-
 export default app;
