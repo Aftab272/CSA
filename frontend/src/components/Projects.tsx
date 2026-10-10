@@ -48,7 +48,7 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
   const categories = ['All', ...Array.from(new Set(projectsList.map((p) => p.category).filter(Boolean)))];
 
   return (
-    <section id="projects" className="relative px-4 sm:px-6 lg:px-8 py-16 sm:py-24 bg-white dark:bg-primary font-sans text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
+    <section id="projects" className="relative px-3.5 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-24 bg-white dark:bg-primary font-sans text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
       {/* Background Glow */}
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none hidden dark:block"></div>
 
@@ -57,16 +57,16 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
       </AnimatePresence>
       
       <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-5">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-xs font-semibold mb-3">
-              <Layers size={14} />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-[11px] sm:text-xs font-semibold mb-2.5">
+              <Layers size={13} />
               <span>Proven Track Record</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-extrabold font-display tracking-tight text-gray-900 dark:text-white">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold font-display tracking-tight text-gray-900 dark:text-white">
               Featured Case Studies
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base mt-2 max-w-xl">
+            <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm md:text-base mt-2 max-w-xl">
               High-impact digital platforms, responsive applications, and custom enterprise tools engineered by our team.
             </p>
           </div>
@@ -74,33 +74,33 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
           {showExploreLink && (
             <Link
               to="/projects"
-              className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group shrink-0"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group shrink-0"
             >
               <span>View Full Portfolio</span>
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           )}
         </div>
 
         {/* Filters and search: Only show if not limited or if on dedicated page */}
         {!limit && (
-          <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-8 sm:mb-12">
             <div className="relative w-full sm:w-80">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
               <input
                 type="text"
                 placeholder="Search projects..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-secondary/80 backdrop-blur-md rounded-2xl border border-gray-200 dark:border-white/10 focus:border-blue-500 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none transition"
+                className="w-full pl-11 pr-4 py-2.5 sm:py-3 bg-gray-50 dark:bg-secondary/80 backdrop-blur-md rounded-2xl border border-gray-200 dark:border-white/10 focus:border-blue-500 text-xs sm:text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none transition"
               />
             </div>
-            <div className="flex gap-2 flex-wrap justify-center sm:justify-end w-full sm:w-auto">
+            <div className="flex gap-1.5 sm:gap-2 flex-wrap justify-center sm:justify-end w-full sm:w-auto">
               {categories.map((c) => (
                 <button
                   key={c}
                   onClick={() => setFilter(c)}
-                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
                     filter === c
                       ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]'
                       : 'bg-gray-100 dark:bg-secondary/60 border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10'
@@ -119,7 +119,7 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
           </div>
         )}
 
-        <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           <AnimatePresence>
             {displayedProjects.map((project) => (
               <motion.div
@@ -129,9 +129,9 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.3 }}
                 key={project._id || project.id || project.title}
-                className="group bg-white dark:bg-secondary/70 backdrop-blur-xl rounded-3xl overflow-hidden border border-gray-200/90 dark:border-white/10 hover:border-blue-500/40 shadow-[0_4px_25px_rgba(0,0,0,0.06)] dark:shadow-xl hover:shadow-[0_14px_35px_rgba(37,99,235,0.18)] transition-all flex flex-col h-full"
+                className="group bg-white dark:bg-secondary/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/90 dark:border-white/10 hover:border-blue-500/40 shadow-[0_4px_25px_rgba(0,0,0,0.06)] dark:shadow-xl hover:shadow-[0_14px_35px_rgba(37,99,235,0.18)] transition-all flex flex-col h-full"
               >
-                <div className="relative overflow-hidden h-52 sm:h-56 bg-gray-100 dark:bg-primary/40 shrink-0">
+                <div className="relative overflow-hidden h-44 sm:h-56 bg-gray-100 dark:bg-primary/40 shrink-0">
                   <img
                     loading="lazy"
                     src={project.gallery?.[0] || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'}
@@ -139,31 +139,31 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                  <div className="absolute top-3.5 left-3.5 flex gap-2">
-                    <span className="px-3 py-1 bg-blue-600/95 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider rounded-full shadow-lg">
+                  <div className="absolute top-3 left-3 sm:top-3.5 sm:left-3.5 flex gap-2">
+                    <span className="px-2.5 sm:px-3 py-1 bg-blue-600/95 backdrop-blur-md text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-wider rounded-full shadow-lg">
                       {project.category}
                     </span>
                   </div>
                 </div>
 
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold font-display text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2">
+                <div className="p-4 sm:p-6 flex-1 flex flex-col">
+                  <h3 className="text-lg sm:text-xl font-bold font-display text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2">
                     {project.title}
                   </h3>
 
-                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 line-clamp-2 font-light">
+                  <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-2 font-light">
                     {project.shortDescription || project.description || 'Custom engineered digital experience.'}
                   </p>
 
                   {project.techStack && Object.values(project.techStack).flat().length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mb-6">
+                    <div className="flex flex-wrap gap-1.5 mb-5 sm:mb-6">
                       {Object.values(project.techStack)
                         .flat()
                         .slice(0, 4)
                         .map((tech, i) => (
                           <span
                             key={i}
-                            className="px-2.5 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-[11px] text-gray-700 dark:text-gray-300 font-medium"
+                            className="px-2 sm:px-2.5 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-[10px] sm:text-[11px] text-gray-700 dark:text-gray-300 font-medium"
                           >
                             {tech}
                           </span>
@@ -171,28 +171,28 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
                     </div>
                   )}
 
-                  <div className="mt-auto pt-4 border-t border-gray-200 dark:border-white/10 flex items-center gap-3">
+                  <div className="mt-auto pt-3.5 sm:pt-4 border-t border-gray-200 dark:border-white/10 flex items-center gap-2 sm:gap-3">
                     {project.liveUrl ? (
                       <a
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transform hover:-translate-y-0.5 flex items-center justify-center gap-1.5"
+                        className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transform hover:-translate-y-0.5 flex items-center justify-center gap-1.5 text-center cursor-pointer"
                       >
                         <span>Live Demo</span>
-                        <ExternalLink size={14} />
+                        <ExternalLink size={13} />
                       </a>
                     ) : (
                       <button
                         onClick={() => setSelectedProject(project)}
-                        className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transform hover:-translate-y-0.5"
+                        className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transform hover:-translate-y-0.5 text-center cursor-pointer"
                       >
                         Case Study
                       </button>
                     )}
                     <button
                       onClick={() => setSelectedProject(project)}
-                      className="py-3 px-4 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 border border-gray-200 dark:border-white/15 text-gray-800 dark:text-white font-semibold rounded-xl text-xs sm:text-sm transition-all cursor-pointer"
+                      className="py-2.5 sm:py-3 px-3 sm:px-4 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 border border-gray-200 dark:border-white/15 text-gray-800 dark:text-white font-semibold rounded-xl text-xs sm:text-sm transition-all cursor-pointer"
                     >
                       Details
                     </button>

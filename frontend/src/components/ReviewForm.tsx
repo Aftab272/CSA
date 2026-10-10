@@ -83,7 +83,7 @@ export default function ReviewForm() {
   };
 
   return (
-    <div className="bg-white dark:bg-secondary p-8 md:p-12 rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl relative min-h-[450px] transition-colors duration-300">
+    <div className="bg-white dark:bg-secondary p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl relative min-h-[420px] transition-colors duration-300">
       <AnimatePresence mode="wait">
         {!isSubmitted ? (
           <motion.div
@@ -92,17 +92,17 @@ export default function ReviewForm() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <h3 className="text-3xl font-bold font-display mb-8 text-center text-gray-900 dark:text-white">Share Your Experience</h3>
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <h3 className="text-2xl sm:text-3xl font-bold font-display mb-6 sm:mb-8 text-center text-gray-900 dark:text-white">Share Your Experience</h3>
+            <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider mb-2">Your Name *</label>
+                <label className="block text-[11px] sm:text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider mb-1.5 sm:mb-2">Your Name *</label>
                 <input 
                   type="text" 
                   placeholder="e.g. Muhammad Ali" 
                   required 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full p-4 bg-gray-50 dark:bg-primary border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition" 
+                  className="w-full p-3 sm:p-4 text-xs sm:text-sm bg-gray-50 dark:bg-primary border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition" 
                 />
               </div>
 

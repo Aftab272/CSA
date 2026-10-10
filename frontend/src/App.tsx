@@ -110,43 +110,43 @@ function AppContent() {
       <ScrollToTop />
       <Navbar />
       <Hero />
-      <div className="max-w-7xl mx-auto px-6"><AdContainer id="ad-below-hero" /></div>
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6"><AdContainer id="ad-below-hero" /></div>
       <Services limit={3} showExploreLink={true} />
       <About />
-      <div className="max-w-7xl mx-auto px-6"><AdContainer id="ad-between-sections-1" /></div>
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6"><AdContainer id="ad-between-sections-1" /></div>
       <Projects limit={3} showExploreLink={true} />
       <Courses limit={3} showExploreLink={true} />
       <ReviewsSection />
 
       {/* High-Impact Project Consultation CTA Banner */}
-      <section className="relative py-16 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
-        <div className="max-w-7xl mx-auto relative rounded-3xl overflow-hidden p-8 sm:p-12 lg:p-14 bg-gradient-to-br from-blue-50/90 via-indigo-50/50 to-white dark:from-blue-950/70 dark:via-indigo-950/60 dark:to-[#0c1222] border border-blue-200/80 dark:border-blue-500/30 backdrop-blur-xl shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-colors duration-300">
+      <section className="relative py-12 sm:py-20 px-3.5 sm:px-6 lg:px-8 overflow-hidden font-sans">
+        <div className="max-w-7xl mx-auto relative rounded-2xl sm:rounded-3xl overflow-hidden p-5 sm:p-10 lg:p-14 bg-gradient-to-br from-blue-50/90 via-indigo-50/50 to-white dark:from-blue-950/70 dark:via-indigo-950/60 dark:to-[#0c1222] border border-blue-200/80 dark:border-blue-500/30 backdrop-blur-xl shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-colors duration-300">
           <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
           <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
           <div className="relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Column: Heading, Subtext & Action Buttons */}
-            <div className="lg:col-span-7 space-y-4 text-left">
-              <span className="px-3.5 py-1 rounded-full bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider border border-blue-500/20 dark:border-blue-500/30 inline-block">
+            <div className="lg:col-span-7 space-y-4 text-center lg:text-left">
+              <span className="px-3.5 py-1 rounded-full bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-cyan-400 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-blue-500/20 dark:border-blue-500/30 inline-block">
                 Let's Build Something Great
               </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display text-gray-900 dark:text-white tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold font-display text-gray-900 dark:text-white tracking-tight leading-tight">
                 Ready to Turn Your Vision Into Reality?
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed max-w-xl">
+              <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
                 Whether you need a high-performance web platform, modern mobile application, or tailored tech mentorship, our squad is ready to deliver.
               </p>
-              <div className="pt-4 flex flex-wrap gap-4">
+              <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start w-full max-w-md mx-auto lg:mx-0">
                 <a
                   href="/contact"
-                  className="py-3.5 px-8 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
+                  className="w-full sm:w-auto py-3.5 px-6 sm:px-8 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer text-center"
                 >
                   <span>Start a Conversation</span>
                   <ArrowRight size={16} />
                 </a>
                 <a
                   href="/team"
-                  className="py-3.5 px-6 rounded-xl bg-white dark:bg-white/10 hover:bg-gray-100 dark:hover:bg-white/20 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white font-bold text-sm transition-all shadow-sm flex items-center gap-2 cursor-pointer"
+                  className="w-full sm:w-auto py-3.5 px-6 rounded-xl bg-white dark:bg-white/10 hover:bg-gray-100 dark:hover:bg-white/20 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white font-bold text-sm transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer text-center"
                 >
                   <span>Meet Our Experts</span>
                   <ArrowRight size={16} />
