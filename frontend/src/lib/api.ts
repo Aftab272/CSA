@@ -1,4 +1,4 @@
-﻿const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 const getUrl = (endpoint: string): string => {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
@@ -12,6 +12,82 @@ export interface ApiResponse<T = any> {
   data?: T;
   [key: string]: any;
 }
+
+import { 
+  defaultServices, 
+  defaultProjects, 
+  defaultTeam, 
+  defaultCourses, 
+  defaultReviews 
+} from './defaultData';
+
+// -------------------------------------------------------------
+// PUBLIC DATA APIS (Services, Projects, Team, Courses, Reviews)
+// -------------------------------------------------------------
+export const fetchPublicServices = async (): Promise<any[]> => {
+  try {
+    const res = await fetch(getUrl('/api/public/services'));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.success && Array.isArray(data.services) && data.services.length > 0 
+      ? data.services 
+      : defaultServices;
+  } catch (err) {
+    return defaultServices;
+  }
+};
+
+export const fetchPublicProjects = async (): Promise<any[]> => {
+  try {
+    const res = await fetch(getUrl('/api/public/projects'));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.success && Array.isArray(data.projects) && data.projects.length > 0 
+      ? data.projects 
+      : defaultProjects;
+  } catch (err) {
+    return defaultProjects;
+  }
+};
+
+export const fetchPublicTeam = async (): Promise<any[]> => {
+  try {
+    const res = await fetch(getUrl('/api/public/team'));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.success && Array.isArray(data.team) && data.team.length > 0 
+      ? data.team 
+      : defaultTeam;
+  } catch (err) {
+    return defaultTeam;
+  }
+};
+
+export const fetchPublicCourses = async (): Promise<any[]> => {
+  try {
+    const res = await fetch(getUrl('/api/public/courses'));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.success && Array.isArray(data.courses) && data.courses.length > 0 
+      ? data.courses 
+      : defaultCourses;
+  } catch (err) {
+    return defaultCourses;
+  }
+};
+
+export const fetchVerifiedReviews = async (): Promise<any[]> => {
+  try {
+    const response = await fetch(getUrl('/api/reviews'));
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return data.success && Array.isArray(data.reviews) && data.reviews.length > 0 
+      ? data.reviews 
+      : defaultReviews;
+  } catch (err) {
+    return defaultReviews;
+  }
+};
 
 // -------------------------------------------------------------
 // PUBLIC INQUIRY / CONTACT API
@@ -59,20 +135,6 @@ export const submitReview = async (reviewData: {
   return data;
 };
 
-export const fetchVerifiedReviews = async (): Promise<any[]> => {
-  try {
-    const response = await fetch(getUrl('/api/reviews'));
-    const data = await response.json();
-    if (data.success && Array.isArray(data.reviews)) {
-      return data.reviews;
-    }
-    return [];
-  } catch (err) {
-    console.warn('Backend fetch reviews note:', err);
-    return [];
-  }
-};
-
 // -------------------------------------------------------------
 // NEWSLETTER API
 // -------------------------------------------------------------
@@ -88,6 +150,29 @@ export const subscribeNewsletter = async (email: string): Promise<ApiResponse> =
     throw new Error(data.error || 'Subscription failed. Please check your email.');
   }
   return data;
+};
+
+// -------------------------------------------------------------
+// AUTHENTICATION API (Admin login via backend)
+// -------------------------------------------------------------
+export const authApi = {
+  login: async (email: string, password: string): Promise<{ success: boolean; token?: string; user?: any; error?: string }> => {
+    const res = await fetch(getUrl('/api/auth/login'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    return res.json();
+  },
+  getSession: async (token: string): Promise<{ success: boolean; user?: any; error?: string }> => {
+    const res = await fetch(getUrl('/api/auth/session'), {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.json();
+  },
+  logout: async (): Promise<void> => {
+    await fetch(getUrl('/api/auth/logout'), { method: 'POST' }).catch(() => {});
+  },
 };
 
 // -------------------------------------------------------------
@@ -123,6 +208,12 @@ export const adminApi = {
   },
 
   // Services
+  getServices: async (token: string) => {
+    const res = await fetch(getUrl('/api/admin/services'), {
+      headers: adminApi.getAuthHeaders(token),
+    });
+    return res.json();
+  },
   createService: async (payload: any, token: string) => {
     const res = await fetch(getUrl('/api/admin/services'), {
       method: 'POST',
@@ -148,6 +239,12 @@ export const adminApi = {
   },
 
   // Projects
+  getProjects: async (token: string) => {
+    const res = await fetch(getUrl('/api/admin/projects'), {
+      headers: adminApi.getAuthHeaders(token),
+    });
+    return res.json();
+  },
   createProject: async (payload: any, token: string) => {
     const res = await fetch(getUrl('/api/admin/projects'), {
       method: 'POST',
@@ -173,6 +270,12 @@ export const adminApi = {
   },
 
   // Team
+  getTeam: async (token: string) => {
+    const res = await fetch(getUrl('/api/admin/team'), {
+      headers: adminApi.getAuthHeaders(token),
+    });
+    return res.json();
+  },
   createTeamMember: async (payload: any, token: string) => {
     const res = await fetch(getUrl('/api/admin/team'), {
       method: 'POST',
@@ -198,6 +301,12 @@ export const adminApi = {
   },
 
   // Courses
+  getCourses: async (token: string) => {
+    const res = await fetch(getUrl('/api/admin/courses'), {
+      headers: adminApi.getAuthHeaders(token),
+    });
+    return res.json();
+  },
   createCourse: async (payload: any, token: string) => {
     const res = await fetch(getUrl('/api/admin/courses'), {
       method: 'POST',

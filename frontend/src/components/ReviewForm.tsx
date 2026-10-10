@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, Upload, Send, CheckCircle, Loader2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { submitReview } from '../lib/api';
 
 export default function ReviewForm() {
   const [name, setName] = useState('');
@@ -56,7 +56,6 @@ export default function ReviewForm() {
       }
 
       // Review data secure backend API ke zariye submit karein
-      const { submitReview } = await import('../lib/api');
       await submitReview({
         name,
         company: 'Verified Client',
@@ -84,7 +83,7 @@ export default function ReviewForm() {
   };
 
   return (
-    <div className="bg-secondary p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl relative min-h-[450px]">
+    <div className="bg-white dark:bg-secondary p-8 md:p-12 rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl relative min-h-[450px] transition-colors duration-300">
       <AnimatePresence mode="wait">
         {!isSubmitted ? (
           <motion.div
@@ -93,26 +92,26 @@ export default function ReviewForm() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <h3 className="text-3xl font-bold font-display mb-8 text-center text-white">Share Your Experience</h3>
+            <h3 className="text-3xl font-bold font-display mb-8 text-center text-gray-900 dark:text-white">Share Your Experience</h3>
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Your Name *</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider mb-2">Your Name *</label>
                 <input 
                   type="text" 
                   placeholder="e.g. Muhammad Ali" 
                   required 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full p-4 bg-primary border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent transition" 
+                  className="w-full p-4 bg-gray-50 dark:bg-primary border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition" 
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Service Used *</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider mb-2">Service Used *</label>
                 <select 
                   value={service}
                   onChange={(e) => setService(e.target.value)}
-                  className="w-full p-4 bg-primary border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent transition"
+                  className="w-full p-4 bg-gray-50 dark:bg-primary border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition"
                 >
                   <option>Web Development</option>
                   <option>WordPress Development</option>
@@ -127,23 +126,23 @@ export default function ReviewForm() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Profile Image *</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider mb-2">Profile Image *</label>
                 <input 
                   type="file" 
-                  accept="image/*"
+                  accept="image/*" 
                   required
                   onChange={handleImageChange}
-                  className="w-full p-4 bg-primary border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20" 
+                  className="w-full p-4 bg-gray-50 dark:bg-primary border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 dark:file:bg-accent/10 dark:file:text-accent hover:file:bg-blue-100" 
                 />
               </div>
 
-              <div className="flex items-center justify-between border-t border-b border-white/5 py-3">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Rating:</span>
+              <div className="flex items-center justify-between border-t border-b border-gray-200 dark:border-white/5 py-3">
+                <span className="text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider">Rating:</span>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star 
                       key={star} 
-                      className={`cursor-pointer transition-all duration-200 ${star <= rating ? 'text-yellow-400 fill-current scale-110' : 'text-gray-600 hover:text-yellow-400/60'}`} 
+                      className={`cursor-pointer transition-all duration-200 ${star <= rating ? 'text-yellow-400 fill-current scale-110' : 'text-gray-300 dark:text-gray-600 hover:text-yellow-400/60'}`} 
                       onClick={() => setRating(star)}
                     />
                   ))}
@@ -151,18 +150,18 @@ export default function ReviewForm() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Your Feedback *</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider mb-2">Your Feedback *</label>
                 <textarea 
                   placeholder="Tell us what you liked about our agency..." 
                   rows={4} 
                   required 
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="w-full p-4 bg-primary border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent transition"
+                  className="w-full p-4 bg-gray-50 dark:bg-primary border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition"
                 ></textarea>
               </div>
 
-              <button type="submit" disabled={isSubmitting} className="w-full p-4 bg-accent text-primary font-bold rounded-xl hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
+              <button type="submit" disabled={isSubmitting} className="w-full p-4 bg-blue-600 dark:bg-accent text-white dark:text-primary font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-blue-700 dark:hover:bg-blue-400 transition flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
                 {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
                 <span>{isSubmitting ? 'Submitting...' : 'Submit Review'}</span>
               </button>
@@ -176,16 +175,16 @@ export default function ReviewForm() {
             exit={{ opacity: 0, scale: 0.95 }}
             className="flex flex-col items-center justify-center text-center space-y-6 py-12 absolute inset-0 p-8"
           >
-            <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-accent animate-bounce">
+            <div className="w-16 h-16 bg-blue-100 dark:bg-accent/10 rounded-full flex items-center justify-center text-blue-600 dark:text-accent animate-bounce">
               <CheckCircle size={36} />
             </div>
-            <h3 className="text-2xl font-bold font-display text-white">Review Submitted!</h3>
-            <p className="text-gray-300 text-sm max-w-sm">
-              Thank you, <strong className="text-accent">{name}</strong>! Your review has been submitted and added to the testimonial carousel. We highly value your feedback.
+            <h3 className="text-2xl font-bold font-display text-gray-900 dark:text-white">Review Submitted!</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm max-w-sm">
+              Thank you, <strong className="text-blue-600 dark:text-accent">{name}</strong>! Your review has been submitted and added to the testimonial carousel. We highly value your feedback.
             </p>
             <button 
               onClick={handleReset}
-              className="px-6 py-2 bg-white/5 border border-white/10 text-white font-semibold rounded-full hover:bg-white/10 transition mt-4"
+              className="px-6 py-2 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-semibold rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition mt-4"
             >
               Write Another Review
             </button>

@@ -152,7 +152,7 @@ export default function AdminModal({ isOpen, onClose }: AdminModalProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
-                <input type="email" defaultValue="contact@creativestackagency.com" className="w-full px-4 py-3 bg-white dark:bg-[#0B1120] border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-accent focus:border-transparent transition-all text-gray-900 dark:text-white" />
+                <input type="email" defaultValue="contact@creativestackagency.dev" className="w-full px-4 py-3 bg-white dark:bg-[#0B1120] border border-gray-300 dark:border-white/20 rounded-xl focus:ring-2 focus:ring-accent focus:border-transparent transition-all text-gray-900 dark:text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>

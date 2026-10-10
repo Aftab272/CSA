@@ -10,11 +10,12 @@ export const aiRouter = Router();
  */
 aiRouter.post('/chat', async (req, res, next) => {
     try {
-        const { prompt, history, context } = req.body;
+        const { prompt, history, context, apiKey } = req.body;
+        const clientKey = (apiKey || req.headers['x-gemini-key'] || '').toString().trim();
         if (!prompt || typeof prompt !== 'string') {
             return res.status(400).json({ success: false, error: 'Prompt is required.' });
         }
-        const reply = await GeminiService.chat(prompt, history || [], context);
+        const reply = await GeminiService.chat(prompt, history || [], context, clientKey);
         return res.json({ success: true, response: reply });
     }
     catch (error) {

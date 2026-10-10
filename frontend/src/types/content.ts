@@ -53,7 +53,11 @@ export type TeamMemberContent = {
   achievements: string;
   skills: string[];
   certificates: string[];
+  order?: number;
+  badge?: string;
   social: {
+    order?: number;
+    badge?: string;
     email?: string;
     linkedin?: string;
     github?: string;

@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import ServiceModal from './ServiceModal';
 import type { ServiceContent } from '../types/content';
-import { supabase } from '../lib/supabase';
+import { fetchPublicServices } from '../lib/api';
+import { ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 
-export default function Services() {
+interface ServicesProps {
+  limit?: number;
+  showExploreLink?: boolean;
+}
+
+export default function Services({ limit, showExploreLink }: ServicesProps) {
   const [selectedService, setSelectedService] = useState<ServiceContent | null>(null);
   const [services, setServices] = useState<ServiceContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -14,22 +20,8 @@ export default function Services() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const { data, error } = await supabase
-          .from('services')
-          .select('*')
-          .eq('is_active', true);
-          
-        if (error) throw error;
-        
-        if (data && data.length > 0) {
-          const mapped = data.map(item => ({
-            ...item,
-            isActive: item.is_active
-          }));
-          setServices(mapped as unknown as ServiceContent[]);
-        } else {
-          setServices([]);
-        }
+        const data = await fetchPublicServices();
+        setServices(data as ServiceContent[]);
       } catch (error) {
         setServices([]);
       } finally {
@@ -42,56 +34,104 @@ export default function Services() {
 
   const handleHireUs = (serviceTitle: string) => {
     const query = new URLSearchParams({ service: serviceTitle });
-    navigate(`/?${query.toString()}#contact`);
+    navigate(`/contact?${query.toString()}`);
   };
 
+  const displayedServices = limit ? services.slice(0, limit) : services;
+
   return (
-    <section id="services" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32 bg-secondary font-sans text-white overflow-hidden">
+    <section id="services" className="relative px-4 sm:px-6 lg:px-8 py-16 sm:py-24 bg-slate-50/60 dark:bg-secondary/40 font-sans text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
       {/* Background Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none hidden dark:block"></div>
 
       {selectedService && <ServiceModal service={selectedService} onClose={() => setSelectedService(null)} />}
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        <h2 className="text-center text-4xl sm:text-5xl md:text-6xl font-extrabold font-display text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 mb-16 sm:mb-20 tracking-tight">Our Premium Services</h2>
-        {isLoading && <p className="text-center text-sm text-gray-400 mb-8">Loading services...</p>}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {services.map((service) => (
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-blue-400 text-xs font-semibold mb-3">
+              <Sparkles size={14} />
+              <span>What We Excel At</span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-extrabold font-display tracking-tight text-gray-900 dark:text-white">
+              Our Premium Services
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base mt-2 max-w-xl">
+              Scalable, high-performance digital engineering engineered with precision and modern design standards.
+            </p>
+          </div>
+
+          {showExploreLink && (
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group shrink-0"
+            >
+              <span>Explore All Services</span>
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          )}
+        </div>
+
+        {isLoading && (
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {displayedServices.map((service) => (
             <motion.div 
               key={service._id || service.id || service.title} 
-              whileHover={{ y: -10 }}
-              className="group bg-white dark:bg-white/5 dark:backdrop-blur-xl p-6 sm:p-8 rounded-[2rem] border border-gray-200 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_0_40px_rgba(37,99,235,0.2)] hover:border-blue-500/30 transition-all duration-300 flex flex-col space-y-6 relative overflow-hidden"
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.25 }}
+              className="group bg-white dark:bg-secondary/80 backdrop-blur-xl p-6 rounded-3xl border border-gray-200/90 dark:border-white/10 hover:border-blue-500/40 shadow-[0_4px_25px_rgba(0,0,0,0.06)] dark:shadow-xl hover:shadow-[0_14px_35px_rgba(37,99,235,0.18)] transition-all flex flex-col h-full relative overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-              
-              <div className="relative overflow-hidden rounded-2xl">
-                <img loading="lazy" src={service.image} alt={service.title} className="w-full h-52 sm:h-60 object-cover transform group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent hidden dark:block"></div>
+              <div className="relative overflow-hidden rounded-2xl h-52 sm:h-56 mb-5 shrink-0 bg-gray-100 dark:bg-primary/40">
+                <img 
+                  loading="lazy" 
+                  src={service.image} 
+                  alt={service.title} 
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                {service.category && (
+                  <span className="absolute top-3.5 left-3.5 px-3 py-1 bg-blue-600/95 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider rounded-full shadow-lg">
+                    {service.category}
+                  </span>
+                )}
               </div>
               
-              <h3 className="text-2xl sm:text-3xl font-bold font-display text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">{service.title}</h3>
-              <p className="text-gray-700 dark:text-gray-400 text-base leading-relaxed grow font-light">{service.description}</p>
+              <h3 className="text-xl sm:text-2xl font-bold font-display text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 mb-2">
+                {service.title}
+              </h3>
               
-              <ul className="text-blue-400 text-sm space-y-2 font-medium">
-                {service.benefits.map(b => <li key={b} className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span> {b}</li>)}
-              </ul>
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-5 line-clamp-3 font-light">
+                {service.description}
+              </p>
               
-              <div className="text-gray-400 font-medium text-sm pt-4 border-t border-white/10">Pricing: <span className="text-white font-bold">Custom</span></div>
+              {service.benefits && service.benefits.length > 0 && (
+                <ul className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm space-y-2 mb-6">
+                  {service.benefits.slice(0, 3).map((benefit, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <CheckCircle2 size={15} className="text-blue-600 dark:text-blue-400 shrink-0" />
+                      <span className="line-clamp-1">{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
               
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              <div className="mt-auto pt-4 border-t border-gray-200 dark:border-white/10 flex items-center gap-3">
                 <button 
                   onClick={() => handleHireUs(service.title)}
-                  className="relative overflow-hidden group/btn grow py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5 text-center flex items-center justify-center"
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transform hover:-translate-y-0.5 text-center cursor-pointer"
                 >
-                  <span className="relative z-10">Start Project</span>
-                  <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                  Start Project
                 </button>
                 <button 
                   onClick={() => setSelectedService(service)}
-                  className="relative overflow-hidden group/btn grow py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5 text-center flex items-center justify-center"
+                  className="py-3 px-4 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 border border-gray-200 dark:border-white/15 text-gray-800 dark:text-white font-semibold rounded-xl text-xs sm:text-sm transition-all cursor-pointer"
                 >
-                  <span className="relative z-10">Learn More</span>
-                  <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                  Details
                 </button>
               </div>
             </motion.div>

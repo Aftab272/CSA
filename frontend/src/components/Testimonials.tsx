@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star } from 'lucide-react';
 import { reviews as initialReviews, Review } from '../data/reviews';
-import { supabase } from '../lib/supabase';
+import { fetchVerifiedReviews } from '../lib/api';
 
 export default function Testimonials() {
   const [localReviews, setLocalReviews] = useState<Review[]>(initialReviews);
@@ -10,32 +10,16 @@ export default function Testimonials() {
 
   useEffect(() => {
     const fetchReviews = async () => {
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('*')
-        .order('createdAt', { ascending: false });
-
-      if (!error && data && data.length > 0) {
+      const data = await fetchVerifiedReviews();
+      if (data && data.length > 0) {
         setLocalReviews(data as Review[]);
       } else {
-        setLocalReviews(initialReviews); // Fallback agar database khali ho
+        setLocalReviews(initialReviews);
       }
-      setCurrentIndex(0); // Reset index whenever data changes
+      setCurrentIndex(0);
     };
 
     fetchReviews();
-
-    // Real-time listener for Supabase Database
-    const channel = supabase
-      .channel('public:reviews')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, payload => {
-        fetchReviews();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, []);
 
   useEffect(() => {
@@ -53,14 +37,14 @@ export default function Testimonials() {
 
   return (
       <div className="text-center">
-        <h2 className="text-3xl md:text-5xl font-bold font-display mb-6">What Our Clients Say</h2>
-        <p className="text-gray-400 mb-12">Trusted by clients worldwide.</p>
+        <h2 className="text-3xl md:text-5xl font-bold font-display mb-6 text-gray-900 dark:text-white">What Our Clients Say</h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-12">Trusted by clients worldwide.</p>
 
         <div className="flex justify-center items-center mb-8 gap-1">
           {[...Array(5)].map((_, i) => (
             <Star key={i} className="text-yellow-400 fill-current w-6 h-6" />
           ))}
-          <span className="ml-3 text-xl font-bold">4.9 / 5.0 Average</span>
+          <span className="ml-3 text-xl font-bold text-gray-900 dark:text-white">4.9 / 5.0 Average</span>
         </div>
 
         <AnimatePresence mode="wait">
@@ -70,19 +54,19 @@ export default function Testimonials() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-secondary p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl"
+              className="bg-white dark:bg-secondary p-8 md:p-12 rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl transition-colors duration-300"
             >
               <div className="flex items-center justify-center space-x-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xl border border-accent/30">
+                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-accent/20 flex items-center justify-center text-blue-600 dark:text-accent font-bold text-xl border border-blue-200 dark:border-accent/30">
                   {review.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="text-left">
-                  <h4 className="font-bold text-white">{review.name}</h4>
-                  <p className="text-sm text-gray-400">{review.company}</p>
+                  <h4 className="font-bold text-gray-900 dark:text-white">{review.name}</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{review.company}</p>
                 </div>
               </div>
-              <p className="text-lg md:text-xl italic mb-6 text-gray-200">"{review.comment}"</p>
-              <div className="text-sm text-accent font-bold uppercase tracking-wider">{review.service}</div>
+              <p className="text-lg md:text-xl italic mb-6 text-gray-700 dark:text-gray-200">"{review.comment}"</p>
+              <div className="text-sm text-blue-600 dark:text-accent font-bold uppercase tracking-wider">{review.service}</div>
             </motion.div>
           )}
         </AnimatePresence>

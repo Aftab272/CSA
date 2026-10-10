@@ -11,6 +11,8 @@ import { inquiryRouter } from './routes/inquiryRoutes.js';
 import { reviewRouter } from './routes/reviewRoutes.js';
 import { newsletterRouter } from './routes/newsletterRoutes.js';
 import { adminRouter } from './routes/adminRoutes.js';
+import { authRouter } from './routes/authRoutes.js';
+import { publicDataRouter } from './routes/publicDataRoutes.js';
 
 const app = express();
 
@@ -27,6 +29,7 @@ app.use(
         ENV.ALLOWED_ORIGINS.includes('*') ||
         ENV.ALLOWED_ORIGINS.includes(origin) ||
         origin.endsWith('.creativestackagency.dev') ||
+        origin.endsWith('.vercel.app') ||
         origin.includes('localhost')
       ) {
         return callback(null, true);
@@ -52,18 +55,22 @@ app.use('/api/inquiries', inquiryRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/newsletter', newsletterRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/public', publicDataRouter);
 
 // Global Error Handler
 app.use(errorHandler);
 
-// Start server
-app.listen(ENV.PORT, () => {
-  console.log(`=========================================`);
-  console.log(`🚀 Beemim AI Backend is running!`);
-  console.log(`📍 Port: http://localhost:${ENV.PORT}`);
-  console.log(`🛡️  Service: Creative Stack Agency`);
-  console.log(`🤖 AI Engine: Google Gemini & Free Image Gen`);
-  console.log(`=========================================`);
-});
+// Start server (only in standalone Node environment, not in Vercel serverless)
+if (!process.env.VERCEL) {
+  app.listen(ENV.PORT, () => {
+    console.log(`=========================================`);
+    console.log(`🚀 Beemim AI Backend is running!`);
+    console.log(`📍 Port: http://localhost:${ENV.PORT}`);
+    console.log(`🛡️  Service: Creative Stack Agency`);
+    console.log(`🤖 AI Engine: Google Gemini & Free Image Gen`);
+    console.log(`=========================================`);
+  });
+}
 
 export default app;
