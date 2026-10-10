@@ -4,9 +4,10 @@ import { Upload, Loader2 } from 'lucide-react';
 interface CloudinaryUploadWidgetProps {
   onUploadSuccess: (url: string) => void;
   className?: string;
+  croppingAspectRatio?: number;
 }
 
-export default function CloudinaryUploadWidget({ onUploadSuccess, className }: CloudinaryUploadWidgetProps) {
+export default function CloudinaryUploadWidget({ onUploadSuccess, className, croppingAspectRatio }: CloudinaryUploadWidgetProps) {
   const widgetRef = useRef<any>(null);
   const [isInitializing, setIsInitializing] = useState(false);
 
@@ -25,38 +26,62 @@ export default function CloudinaryUploadWidget({ onUploadSuccess, className }: C
       return false;
     }
 
-    if (!widgetRef.current) {
+    // Destroy previous widget if options change so fresh cropping ratio applies
+    if (widgetRef.current) {
       try {
-        // @ts-ignore
-        widgetRef.current = window.cloudinary.createUploadWidget(
-          {
-            cloudName: cloudName,
-            uploadPreset: uploadPreset,
-            sources: ['local'], // Only allow uploading from PC storage
-            cropping: true,
-            showSkipCropButton: false, // Force them to crop or at least see the crop screen
-            multiple: false,
-            clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp'],
-            maxImageFileSize: 5000000, // 5MB
-            theme: 'minimal',
-          },
-          (error: any, result: any) => {
-            if (error) {
-              console.error("Cloudinary upload error:", error);
-              // Do not alert on 'close' events
-              if (error.message && error.message !== 'Widget is closed') {
-                alert(`Image upload failed: ${error.statusText || error.message}`);
-              }
-            } else if (result && result.event === 'success') {
-              onUploadSuccess(result.info.secure_url);
-            }
-          }
-        );
-      } catch (err: any) {
-        console.error("Widget creation error:", err);
-        alert(`Could not open image uploader: ${err.message}`);
-        return false;
+        widgetRef.current.destroy();
+      } catch (e) {}
+      widgetRef.current = null;
+    }
+
+    try {
+      const widgetOptions: any = {
+        cloudName: cloudName,
+        uploadPreset: uploadPreset,
+        apiKey: import.meta.env.VITE_CLOUDINARY_API_KEY,
+        sources: ['local'], // Only allow uploading from PC storage
+        cropping: true,
+        showSkipCropButton: false, // Strict crop mode to guarantee 100% card fit
+        multiple: false,
+        clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp'],
+        maxImageFileSize: 5000000, // 5MB
+        theme: 'minimal',
+      };
+
+      if (croppingAspectRatio) {
+        widgetOptions.croppingAspectRatio = croppingAspectRatio;
+        widgetOptions.croppingDefaultSelectionRatio = 0.95;
+        widgetOptions.croppingShowDimensions = true;
       }
+
+      // @ts-ignore
+      widgetRef.current = window.cloudinary.createUploadWidget(
+        widgetOptions,
+        (error: any, result: any) => {
+          if (error) {
+            console.error("Cloudinary upload error:", error);
+            // Do not alert on 'close' events
+            if (error.message && error.message !== 'Widget is closed') {
+              alert(`Image upload failed: ${error.statusText || error.message}`);
+            }
+          } else if (result && result.event === 'success') {
+            let url: string = result.info.secure_url;
+            // Apply exact 3:4 crop transformation to URL so image fits card frame 100%
+            if (croppingAspectRatio && url.includes('/upload/')) {
+              if (result.info.coordinates && result.info.coordinates.custom && result.info.coordinates.custom.length > 0) {
+                url = url.replace('/upload/', '/upload/c_crop,g_custom/');
+              } else {
+                url = url.replace('/upload/', '/upload/c_fill,ar_3:4,g_auto/');
+              }
+            }
+            onUploadSuccess(url);
+          }
+        }
+      );
+    } catch (err: any) {
+      console.error("Widget creation error:", err);
+      alert(`Could not open image uploader: ${err.message}`);
+      return false;
     }
     return true;
   };

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MapPin, Mail, Phone, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { MapPin, Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
 import { SiWhatsapp } from '@icons-pack/react-simple-icons';
 import { useLocation } from 'react-router-dom';
+import { submitInquiry } from '../lib/api';
 
 export default function ContactSection() {
   const apiBaseUrl = (import.meta as { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL?.trim() || '';
@@ -62,21 +63,11 @@ export default function ContactSection() {
     setIsSubmitting(true);
 
     try {
-      // Import Supabase dynamically
-      const { supabase } = await import('../lib/supabase');
-
-      const { error: supabaseError } = await supabase.from('inquiries').insert([{
-        ...formData,
-        createdAt: new Date().toISOString(),
-        status: 'new'
-      }]);
-      
-      if (supabaseError) throw supabaseError;
-
+      await submitInquiry(formData);
       setIsSubmitted(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting inquiry: ", error);
-      setSubmitError('Network error. Please try again in a moment.');
+      setSubmitError(error.message || 'Failed to submit inquiry. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -114,14 +105,6 @@ export default function ContactSection() {
                   <Mail className="text-blue-500 dark:text-blue-400 shrink-0 mt-1" size={24} /> 
                   <div className="flex flex-col min-w-0 flex-1">
                     <a href="mailto:creativestackagency513@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors break-words [overflow-wrap:anywhere]">creativestackagency513@gmail.com</a>
-                    <a href="mailto:maryannawazdev7780@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors break-words [overflow-wrap:anywhere]">maryannawazdev7780@gmail.com</a>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 text-lg">
-                  <Phone className="text-blue-500 dark:text-blue-400 shrink-0 mt-1" size={24} /> 
-                  <div className="flex flex-col">
-                    <a href="tel:+923027434569" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">+92 302 7434569</a>
-                    <a href="tel:+923047556084" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">+92 304 7556084</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 text-lg">

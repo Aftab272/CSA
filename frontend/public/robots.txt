@@ -4,4 +4,11 @@ Disallow: /admin
 Disallow: /api/
 Disallow: /private/
 
-Sitemap: https://creativestackagency.com/sitemap.xml
+# Explicitly allow Google AdSense crawler
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+Sitemap: https://creativestackagency.dev/sitemap.xml

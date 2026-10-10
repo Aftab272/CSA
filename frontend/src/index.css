@@ -64,15 +64,15 @@ video {
 }
 
 /* 2. Fix Card & Container Backgrounds */
-[data-theme="light"] .bg-white\/5,
-[data-theme="light"] .bg-white\/10,
-[data-theme="light"] .bg-white\/20,
+[data-theme="light"] .bg-white\/5:not(button, a),
+[data-theme="light"] .bg-white\/10:not(button, a),
+[data-theme="light"] .bg-white\/20:not(button, a),
 [data-theme="light"] .bg-primary\/20,
 [data-theme="light"] .bg-primary\/50,
 [data-theme="light"] .bg-primary\/80,
 [data-theme="light"] .bg-secondary\/50,
-[data-theme="light"] .dark\:bg-white\/5,
-[data-theme="light"] .dark\:bg-white\/10,
+[data-theme="light"] .dark\:bg-white\/5:not(button, a),
+[data-theme="light"] .dark\:bg-white\/10:not(button, a),
 [data-theme="light"] .bg-primary {
   background-color: #ffffff !important;
 }
@@ -86,19 +86,86 @@ video {
   background-color: #f8fafc !important;
 }
 
+/* Secondary / Outlined / Ghost buttons and links in Light Mode */
+[data-theme="light"] button.bg-white\/5,
+[data-theme="light"] button.bg-white\/10,
+[data-theme="light"] button.bg-white\/15,
+[data-theme="light"] button.bg-white\/20,
+[data-theme="light"] a.bg-white\/5,
+[data-theme="light"] a.bg-white\/10,
+[data-theme="light"] a.bg-white\/15,
+[data-theme="light"] a.bg-white\/20,
+[data-theme="light"] button.dark\:bg-white\/5,
+[data-theme="light"] button.dark\:bg-white\/10,
+[data-theme="light"] a.dark\:bg-white\/5,
+[data-theme="light"] a.dark\:bg-white\/10 {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] button.bg-white\/5:hover,
+[data-theme="light"] button.bg-white\/10:hover,
+[data-theme="light"] button.bg-white\/15:hover,
+[data-theme="light"] button.bg-white\/20:hover,
+[data-theme="light"] a.bg-white\/5:hover,
+[data-theme="light"] a.bg-white\/10:hover,
+[data-theme="light"] a.bg-white\/15:hover,
+[data-theme="light"] a.bg-white\/20:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+
 /* 3. Fix Typography Colors */
-/* Ensure buttons and colored links keep their white text, but regular text turns dark */
-[data-theme="light"] .text-white:not(button, button *, a[class*="bg-"], a[class*="bg-"] *, .bg-blue-600 *, .bg-indigo-600 *, .bg-accent *),
-[data-theme="light"] .text-gray-300:not(button, button *, a[class*="bg-"], a[class*="bg-"] *, .bg-blue-600 *, .bg-indigo-600 *, .bg-accent *),
-[data-theme="light"] .text-gray-400:not(button, button *, a[class*="bg-"], a[class*="bg-"] *, .bg-blue-600 *, .bg-indigo-600 *, .bg-accent *) {
+[data-theme="light"] .text-white:not(
+  .bg-blue-600, .bg-blue-600 *, 
+  .bg-blue-500, .bg-blue-500 *, 
+  .bg-indigo-600, .bg-indigo-600 *, 
+  .bg-accent, .bg-accent *,
+  [class*="from-blue-"], [class*="from-blue-"] *, 
+  [class*="from-indigo-"], [class*="from-indigo-"] *, 
+  .team-card, .team-card *, 
+  .team-overlay, .team-overlay *, 
+  .preserve-white, .preserve-white *
+),
+[data-theme="light"] .text-gray-100:not(.team-card, .team-card *, .preserve-white, .preserve-white *),
+[data-theme="light"] .text-gray-200:not(.team-card, .team-card *, .preserve-white, .preserve-white *),
+[data-theme="light"] .text-gray-300:not(.team-card, .team-card *, .preserve-white, .preserve-white *),
+[data-theme="light"] .text-slate-100:not(.team-card, .team-card *, .preserve-white, .preserve-white *),
+[data-theme="light"] .text-slate-200:not(.team-card, .team-card *, .preserve-white, .preserve-white *),
+[data-theme="light"] .text-slate-300:not(.team-card, .team-card *, .preserve-white, .preserve-white *) {
   color: #111827 !important;
 }
 
-[data-theme="light"] .text-gray-500,
-[data-theme="light"] .text-white\/60,
-[data-theme="light"] .text-white\/70,
-[data-theme="light"] .text-white\/20 {
-  color: #374151 !important;
+/* Explicit high-contrast rules for Team Card overlays to guarantee 100% crisp white text across both Light and Dark themes */
+.team-card-name {
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 4px 16px rgba(0, 0, 0, 0.8) !important;
+}
+
+.team-card-role {
+  color: rgba(255, 255, 255, 0.9) !important;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95) !important;
+}
+
+.team-card-link {
+  color: #60a5fa !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9) !important;
+}
+
+.team-card-hint {
+  color: rgba(255, 255, 255, 0.7) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="light"] .text-gray-400:not(.team-card, .team-card *, .preserve-white, .preserve-white *),
+[data-theme="light"] .text-slate-400:not(.team-card, .team-card *, .preserve-white, .preserve-white *),
+[data-theme="light"] .text-gray-500:not(.team-card, .team-card *),
+[data-theme="light"] .text-white\/60:not(.team-card, .team-card *),
+[data-theme="light"] .text-white\/70:not(.team-card, .team-card *),
+[data-theme="light"] .text-white\/20:not(.team-card, .team-card *) {
+  color: #4b5563 !important;
 }
 
 /* 4. Fix Borders */

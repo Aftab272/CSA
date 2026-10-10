@@ -156,6 +156,20 @@ export default function BlogAdminPanel() {
               <input type="text" value={editingPost.featuredImage} onChange={e => setEditingPost({...editingPost, featuredImage: e.target.value})} className="w-full px-3 py-2 bg-primary border border-white/20 rounded-lg text-white" />
             </div>
             <div>
+              <label className="block text-sm font-medium mb-1 text-slate-200">Author (Team Member)</label>
+              <select 
+                value={editingPost.authorId} 
+                onChange={e => setEditingPost({...editingPost, authorId: e.target.value})} 
+                className="w-full px-3 py-2 bg-primary border border-white/20 rounded-lg text-white"
+              >
+                {authors.map(a => (
+                  <option key={a.id} value={a.id}>
+                    {a.name} — {a.position}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className="block text-sm font-medium mb-1 text-slate-200">Category</label>
               <select value={editingPost.categoryId} onChange={e => setEditingPost({...editingPost, categoryId: e.target.value})} className="w-full px-3 py-2 bg-primary border border-white/20 rounded-lg text-white">
                 {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -197,14 +211,27 @@ export default function BlogAdminPanel() {
 
       {activeSubTab === 'authors' && (
         <div className="space-y-4">
-          <h4 className="font-bold text-white mb-4">Manage Authors</h4>
-          <div className="grid gap-2">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-bold text-white">Team Authors &amp; Contributors</h4>
+            <span className="text-xs text-slate-300 bg-white/10 px-3 py-1 rounded-full">
+              {authors.length} Real Authors Configured
+            </span>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3">
             {authors.map(author => (
-              <div key={author.id} className="flex items-center gap-4 p-3 bg-primary rounded-lg border border-white/10">
-                <img src={author.image} alt={author.name} className="w-10 h-10 rounded-full object-cover" />
-                <div>
-                  <p className="font-medium text-white">{author.name}</p>
-                  <p className="text-xs text-slate-300">{author.position}</p>
+              <div key={author.id} className="flex items-start gap-3.5 p-3.5 bg-primary rounded-xl border border-white/10 hover:border-white/20 transition">
+                <img 
+                  src={author.image} 
+                  alt={author.name} 
+                  className="w-12 h-12 rounded-full object-cover ring-2 ring-accent/30 shrink-0" 
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png';
+                  }}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="font-bold text-white text-sm">{author.name}</p>
+                  <p className="text-xs text-accent font-medium">{author.position}</p>
+                  <p className="text-[11px] text-slate-300 mt-1 line-clamp-2 leading-relaxed">{author.bio}</p>
                 </div>
               </div>
             ))}

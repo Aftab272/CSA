@@ -1,40 +1,29 @@
-const CACHE_NAME = 'creative-stack-agency-v1';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-];
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
-  );
+self.addEventListener('install', (e) => {
+  // Force the new service worker to activate immediately
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-  );
-});
-
-self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    // Delete all old caches
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
+          return caches.delete(cacheName);
         })
       );
+    }).then(() => {
+      // Take control of all pages immediately
+      return self.clients.claim();
+    })
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  // Always fetch from the network (bypassing cache)
+  e.respondWith(
+    fetch(e.request).catch(() => {
+      return new Response("Network error occurred");
     })
   );
 });

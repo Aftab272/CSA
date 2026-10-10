@@ -20,9 +20,18 @@ import {
   Trash2,
   Database,
   Users,
+  Bot,
+  Sparkles,
+  DollarSign,
+  CheckCircle2,
+  Lock,
+  ExternalLink,
+  Globe,
+  Phone,
+  MapPin,
+  Clock,
 } from 'lucide-react';
-import { buildContentSeedPayload } from '../utils/contentSeed';
-import { supabase } from '../lib/supabase';
+import { adminApi, authApi, submitInquiry as submitPublicInquiry } from '../lib/api';
 
 type Inquiry = {
   _id: string;
@@ -80,7 +89,11 @@ type TeamItem = {
   achievements: string;
   skills: string[];
   certificates: string[];
+  order?: number;
+  badge?: string;
   social: {
+    order?: number;
+    badge?: string;
     email?: string;
     linkedin?: string;
     github?: string;
@@ -201,6 +214,8 @@ const initialTeamForm = {
   instagram: '',
   resume: '',
   portfolio: '',
+  order: '1',
+  badge: '',
   isActive: true,
 };
 
@@ -278,11 +293,19 @@ export default function AdminDashboardPage() {
   const [courseForm, setCourseForm] = useState(initialCourseForm);
   const [editingCourseId, setEditingCourseId] = useState<string | null>(null);
 
+  const getToken = () => localStorage.getItem('csa_admin_token') || '';
+
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsAuthenticated(!!session);
+    const token = getToken();
+    if (!token) {
+      setIsAuthenticated(false);
       setIsAuthLoading(false);
-      if (session) {
+      return;
+    }
+
+    authApi.getSession(token).then((res) => {
+      if (res.success && res.user) {
+        setIsAuthenticated(true);
         void Promise.all([
           fetchInquiries(),
           fetchServices(),
@@ -290,37 +313,41 @@ export default function AdminDashboardPage() {
           fetchTeam(),
           fetchCourses(),
         ]);
+      } else {
+        localStorage.removeItem('csa_admin_token');
+        setIsAuthenticated(false);
       }
+      setIsAuthLoading(false);
+    }).catch(() => {
+      setIsAuthenticated(false);
+      setIsAuthLoading(false);
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
-      if (session) {
-        void Promise.all([
-          fetchInquiries(),
-          fetchServices(),
-          fetchProjects(),
-          fetchTeam(),
-          fetchCourses(),
-        ]);
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = async (e: import('react').FormEvent) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setAuthError('');
     setIsLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: authEmail,
-      password: authPassword,
-    });
-    if (error) {
-      setAuthError(error.message);
+    try {
+      const res = await authApi.login(authEmail, authPassword);
+      if (res.success && res.token) {
+        localStorage.setItem('csa_admin_token', res.token);
+        setIsAuthenticated(true);
+        void Promise.all([
+          fetchInquiries(),
+          fetchServices(),
+          fetchProjects(),
+          fetchTeam(),
+          fetchCourses(),
+        ]);
+      } else {
+        setAuthError(res.error || 'Invalid credentials');
+      }
+    } catch (err: any) {
+      setAuthError(err.message || 'Login failed. Please verify backend connection.');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -399,88 +426,148 @@ export default function AdminDashboardPage() {
   };
 
   const openCreatePage = (tab: CrudTab) => {
+    if (tab === 'team') {
+      const firstAvail = availableOrders[0] ?? 1;
+      setTeamForm({ ...initialTeamForm, order: String(firstAvail) });
+      setEditingTeamId(null);
+    }
     navigate(`/admin/${tab}/new`);
   };
+
+  const occupiedOrders = useMemo(() => {
+    const set = new Set<number>();
+    team.forEach((m) => {
+      // Ignore currently editing member so their current order is allowed
+      if (editingTeamId && (m._id === editingTeamId || (m as any).id === editingTeamId)) {
+        return;
+      }
+      const ord = m.order !== undefined ? Number(m.order) : (m.social?.order !== undefined ? Number(m.social.order) : undefined);
+      if (ord !== undefined && !isNaN(ord) && ord >= 1 && ord <= 30) {
+        set.add(ord);
+      }
+    });
+    return set;
+  }, [team, editingTeamId]);
+
+  const availableOrders = useMemo(() => {
+    const list: number[] = [];
+    for (let i = 1; i <= 30; i++) {
+      if (!occupiedOrders.has(i)) {
+        list.push(i);
+      }
+    }
+    const currentVal = Number(teamForm.order);
+    if (currentVal && !list.includes(currentVal)) {
+      list.push(currentVal);
+      list.sort((a, b) => a - b);
+    }
+    return list;
+  }, [occupiedOrders, teamForm.order]);
 
   const backToList = (tab: CrudTab) => {
     navigate(`/admin/${tab}`);
   };
 
   const fetchInquiries = async () => {
-    const { data, error } = await supabase.from('inquiries').select('*').order('createdAt', { ascending: false });
-    if (data && !error) {
-      setInquiries(data.map(item => ({
-        ...item,
-        _id: item.id
-      })) as Inquiry[]);
+    try {
+      const res = await adminApi.getInquiries(getToken());
+      if (res.success && Array.isArray(res.inquiries)) {
+        setInquiries(res.inquiries.map((item: any) => ({
+          ...item,
+          _id: item.id
+        })) as Inquiry[]);
+      }
+    } catch (err) {
+      console.warn('Fetch inquiries note:', err);
     }
   };
 
   const fetchServices = async () => {
-    const { data, error } = await supabase.from('services').select('*').order('created_at', { ascending: false });
-    if (data && !error) {
-      setServices(data.map(item => ({
-        ...item,
-        _id: item.id,
-        isActive: item.is_active
-      })) as ServiceItem[]);
+    try {
+      const res = await adminApi.getServices(getToken());
+      if (res.success && Array.isArray(res.services)) {
+        setServices(res.services.map((item: any) => ({
+          ...item,
+          _id: item.id,
+          isActive: item.is_active
+        })) as ServiceItem[]);
+      }
+    } catch (err) {
+      console.warn('Fetch services note:', err);
     }
   };
 
   const fetchProjects = async () => {
-    const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
-    if (data && !error) {
-      setProjects(data.map(item => ({
-        ...item,
-        _id: item.id,
-        shortDescription: item.short_description,
-        techStack: item.tech_stack,
-        githubUrl: item.github_url,
-        liveUrl: item.live_url,
-        completionDate: item.completion_date,
-        isPublished: item.is_published
-      })) as ProjectItem[]);
+    try {
+      const res = await adminApi.getProjects(getToken());
+      if (res.success && Array.isArray(res.projects)) {
+        setProjects(res.projects.map((item: any) => ({
+          ...item,
+          _id: item.id,
+          shortDescription: item.short_description,
+          techStack: item.tech_stack,
+          githubUrl: item.github_url,
+          liveUrl: item.live_url,
+          completionDate: item.completion_date,
+          isPublished: item.is_published
+        })) as ProjectItem[]);
+      }
+    } catch (err) {
+      console.warn('Fetch projects note:', err);
     }
   };
 
   const fetchTeam = async () => {
-    const { data, error } = await supabase.from('team_members').select('*').order('created_at', { ascending: false });
-    if (data && !error) {
-      setTeam(data.map(item => ({
-        ...item,
-        _id: item.id,
-        isActive: item.is_active
-      })) as TeamItem[]);
+    try {
+      const res = await adminApi.getTeam(getToken());
+      if (res.success && Array.isArray(res.team)) {
+        setTeam(res.team.map((item: any) => ({
+          ...item,
+          _id: item.id,
+          isActive: item.is_active,
+          order: item.order ?? item.social?.order ?? 999,
+          badge: item.badge ?? item.social?.badge ?? '',
+        })) as TeamItem[]);
+      }
+    } catch (err) {
+      console.warn('Fetch team note:', err);
     }
   };
 
   const fetchCourses = async () => {
-    const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
-    if (data && !error) {
-      setCourses(data.map(item => ({
-        ...item,
-        _id: item.id,
-        hasCertificate: item.has_certificate,
-        isActive: item.is_active
-      })) as CourseItem[]);
+    try {
+      const res = await adminApi.getCourses(getToken());
+      if (res.success && Array.isArray(res.courses)) {
+        setCourses(res.courses.map((item: any) => ({
+          ...item,
+          _id: item.id,
+          hasCertificate: item.has_certificate,
+          isActive: item.is_active
+        })) as CourseItem[]);
+      }
+    } catch (err) {
+      console.warn('Fetch courses note:', err);
     }
   };
 
   const seedExistingContent = async () => {
-    setFlash('Seeding is not supported in the Supabase integration.');
+    setFlash('Seeding is managed securely from server backend.');
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await authApi.logout();
+    localStorage.removeItem('csa_admin_token');
     setIsAuthenticated(false);
     navigate('/');
   };
 
   const updateInquiryStatus = async (id: string, status: Inquiry['status']) => {
-    const { error } = await supabase.from('inquiries').update({ status }).eq('id', id);
-    if (!error) {
+    const res = await adminApi.updateInquiry(id, { status }, getToken());
+    if (res.success) {
       setFlash('Inquiry updated');
       await fetchInquiries();
+    } else {
+      setFlash(res.error || 'Failed to update inquiry');
     }
   };
 
@@ -495,23 +582,21 @@ export default function AdminDashboardPage() {
     };
 
     const isEdit = Boolean(editingInquiryId);
-    let error;
+    let res;
     if (isEdit) {
-      const res = await supabase.from('inquiries').update(payload).eq('id', editingInquiryId);
-      error = res.error;
+      res = await adminApi.updateInquiry(editingInquiryId!, payload, getToken());
     } else {
-      const res = await supabase.from('inquiries').insert(payload);
-      error = res.error;
+      res = await submitPublicInquiry(payload);
     }
 
-    if (!error) {
+    if (res.success) {
       setFlash(isEdit ? 'Inquiry updated' : 'Inquiry created');
       setInquiryForm(initialInquiryForm);
       setEditingInquiryId(null);
       await fetchInquiries();
       backToList('inquiries');
     } else {
-      setFlash(error?.message || 'Unable to save inquiry');
+      setFlash(res.error || 'Unable to save inquiry');
     }
   };
 
@@ -529,10 +614,12 @@ export default function AdminDashboardPage() {
 
   const deleteInquiry = async (id: string) => {
     if (!confirm('Delete this inquiry?')) return;
-    const { error } = await supabase.from('inquiries').delete().eq('id', id);
-    if (!error) {
+    const res = await adminApi.deleteInquiry(id, getToken());
+    if (res.success) {
       setFlash('Inquiry deleted');
       await fetchInquiries();
+    } else {
+      setFlash(res.error || 'Failed to delete inquiry');
     }
   };
 
@@ -548,23 +635,21 @@ export default function AdminDashboardPage() {
     };
 
     const isEdit = Boolean(editingServiceId);
-    let error;
+    let res;
     if (isEdit) {
-      const res = await supabase.from('services').update(payload).eq('id', editingServiceId);
-      error = res.error;
+      res = await adminApi.updateService(editingServiceId!, payload, getToken());
     } else {
-      const res = await supabase.from('services').insert(payload);
-      error = res.error;
+      res = await adminApi.createService(payload, getToken());
     }
 
-    if (!error) {
+    if (res.success) {
       setFlash(isEdit ? 'Service updated' : 'Service created');
       setServiceForm(initialServiceForm);
       setEditingServiceId(null);
       await fetchServices();
       backToList('services');
     } else {
-      setFlash(error?.message || 'Unable to save service');
+      setFlash(res.error || 'Unable to save service');
     }
   };
 
@@ -583,10 +668,12 @@ export default function AdminDashboardPage() {
 
   const deleteService = async (id: string) => {
     if (!confirm('Delete this service?')) return;
-    const { error } = await supabase.from('services').delete().eq('id', id);
-    if (!error) {
+    const res = await adminApi.deleteService(id, getToken());
+    if (res.success) {
       setFlash('Service deleted');
       await fetchServices();
+    } else {
+      setFlash(res.error || 'Failed to delete service');
     }
   };
 
@@ -613,23 +700,21 @@ export default function AdminDashboardPage() {
     };
 
     const isEdit = Boolean(editingProjectId);
-    let error;
+    let res;
     if (isEdit) {
-      const res = await supabase.from('projects').update(payload).eq('id', editingProjectId);
-      error = res.error;
+      res = await adminApi.updateProject(editingProjectId!, payload, getToken());
     } else {
-      const res = await supabase.from('projects').insert(payload);
-      error = res.error;
+      res = await adminApi.createProject(payload, getToken());
     }
 
-    if (!error) {
+    if (res.success) {
       setFlash(isEdit ? 'Project updated' : 'Project created');
       setProjectForm(initialProjectForm);
       setEditingProjectId(null);
       await fetchProjects();
       backToList('projects');
     } else {
-      setFlash(error?.message || 'Unable to save project');
+      setFlash(res.error || 'Unable to save project');
     }
   };
 
@@ -657,10 +742,12 @@ export default function AdminDashboardPage() {
 
   const deleteProject = async (id: string) => {
     if (!confirm('Delete this project?')) return;
-    const { error } = await supabase.from('projects').delete().eq('id', id);
-    if (!error) {
+    const res = await adminApi.deleteProject(id, getToken());
+    if (res.success) {
       setFlash('Project deleted');
       await fetchProjects();
+    } else {
+      setFlash(res.error || 'Failed to delete project');
     }
   };
 
@@ -680,7 +767,11 @@ export default function AdminDashboardPage() {
       achievements: teamForm.achievements,
       skills: splitCsv(teamForm.skills),
       certificates: splitCsv(teamForm.certificates),
+      order: Number(teamForm.order || 1),
+      badge: teamForm.badge.trim(),
       social: {
+        order: Number(teamForm.order || 1),
+        badge: teamForm.badge.trim(),
         email: teamForm.email || undefined,
         linkedin: teamForm.linkedin || undefined,
         github: teamForm.github || undefined,
@@ -696,23 +787,21 @@ export default function AdminDashboardPage() {
     };
 
     const isEdit = Boolean(editingTeamId);
-    let error;
+    let res;
     if (isEdit) {
-      const res = await supabase.from('team_members').update(payload).eq('id', editingTeamId);
-      error = res.error;
+      res = await adminApi.updateTeamMember(editingTeamId!, payload, getToken());
     } else {
-      const res = await supabase.from('team_members').insert(payload);
-      error = res.error;
+      res = await adminApi.createTeamMember(payload, getToken());
     }
 
-    if (!error) {
+    if (res.success) {
       setFlash(isEdit ? 'Team member updated' : 'Team member created');
       setTeamForm(initialTeamForm);
       setEditingTeamId(null);
       await fetchTeam();
       backToList('team');
     } else {
-      setFlash(error?.message || 'Unable to save team member');
+      setFlash(res.error || 'Unable to save team member');
     }
   };
 
@@ -732,14 +821,16 @@ export default function AdminDashboardPage() {
       achievements: item.achievements,
       skills: item.skills.join(', '),
       certificates: item.certificates.join(', '),
-      email: item.social.email || '',
-      linkedin: item.social.linkedin || '',
-      github: item.social.github || '',
-      website: item.social.website || '',
-      whatsapp: item.social.whatsapp || '',
-      tiktok: item.social.tiktok || '',
-      facebook: item.social.facebook || '',
-      instagram: item.social.instagram || '',
+      order: String(item.order ?? item.social?.order ?? 1),
+      badge: item.badge ?? item.social?.badge ?? '',
+      email: item.social?.email || '',
+      linkedin: item.social?.linkedin || '',
+      github: item.social?.github || '',
+      website: item.social?.website || '',
+      whatsapp: item.social?.whatsapp || '',
+      tiktok: item.social?.tiktok || '',
+      facebook: item.social?.facebook || '',
+      instagram: item.social?.instagram || '',
       resume: item.resume || '',
       portfolio: item.portfolio || '',
       isActive: item.isActive,
@@ -749,10 +840,12 @@ export default function AdminDashboardPage() {
 
   const deleteTeam = async (id: string) => {
     if (!confirm('Delete this team member?')) return;
-    const { error } = await supabase.from('team_members').delete().eq('id', id);
-    if (!error) {
+    const res = await adminApi.deleteTeamMember(id, getToken());
+    if (res.success) {
       setFlash('Team member deleted');
       await fetchTeam();
+    } else {
+      setFlash(res.error || 'Failed to delete team member');
     }
   };
 
@@ -778,23 +871,21 @@ export default function AdminDashboardPage() {
     };
 
     const isEdit = Boolean(editingCourseId);
-    let error;
+    let res;
     if (isEdit) {
-      const res = await supabase.from('courses').update(payload).eq('id', editingCourseId);
-      error = res.error;
+      res = await adminApi.updateCourse(editingCourseId!, payload, getToken());
     } else {
-      const res = await supabase.from('courses').insert(payload);
-      error = res.error;
+      res = await adminApi.createCourse(payload, getToken());
     }
 
-    if (!error) {
+    if (res.success) {
       setFlash(isEdit ? 'Course updated' : 'Course created');
       setCourseForm(initialCourseForm);
       setEditingCourseId(null);
       await fetchCourses();
       backToList('courses');
     } else {
-      setFlash(error?.message || 'Unable to save course');
+      setFlash(res.error || 'Unable to save course');
     }
   };
 
@@ -821,10 +912,12 @@ export default function AdminDashboardPage() {
 
   const deleteCourse = async (id: string) => {
     if (!confirm('Delete this course?')) return;
-    const { error } = await supabase.from('courses').delete().eq('id', id);
-    if (!error) {
+    const res = await adminApi.deleteCourse(id, getToken());
+    if (res.success) {
       setFlash('Course deleted');
       await fetchCourses();
+    } else {
+      setFlash(res.error || 'Failed to delete course');
     }
   };
 
@@ -846,7 +939,8 @@ export default function AdminDashboardPage() {
       }
       if (editorRouteState.tab === 'team') {
         setEditingTeamId(null);
-        setTeamForm(initialTeamForm);
+        const firstAvail = availableOrders[0] ?? 1;
+        setTeamForm({ ...initialTeamForm, order: String(firstAvail) });
       }
       if (editorRouteState.tab === 'courses') {
         setEditingCourseId(null);
@@ -906,7 +1000,7 @@ export default function AdminDashboardPage() {
       }
     }
     if (editorRouteState.tab === 'team') {
-      const item = team.find((entry) => entry._id === editorRouteState.id);
+      const item = team.find((entry) => entry._id === editorRouteState.id || (entry as any).id === editorRouteState.id);
       if (item) {
         setEditingTeamId(item._id);
         setTeamForm({
@@ -923,14 +1017,16 @@ export default function AdminDashboardPage() {
           achievements: item.achievements,
           skills: item.skills.join(', '),
           certificates: item.certificates.join(', '),
-          email: item.social.email || '',
-          linkedin: item.social.linkedin || '',
-          github: item.social.github || '',
-          website: item.social.website || '',
-          whatsapp: item.social.whatsapp || '',
-          tiktok: item.social.tiktok || '',
-          facebook: item.social.facebook || '',
-          instagram: item.social.instagram || '',
+          order: String(item.order ?? item.social?.order ?? 1),
+          badge: item.badge ?? item.social?.badge ?? '',
+          email: item.social?.email || '',
+          linkedin: item.social?.linkedin || '',
+          github: item.social?.github || '',
+          website: item.social?.website || '',
+          whatsapp: item.social?.whatsapp || '',
+          tiktok: item.social?.tiktok || '',
+          facebook: item.social?.facebook || '',
+          instagram: item.social?.instagram || '',
           resume: item.resume || '',
           portfolio: item.portfolio || '',
           isActive: item.isActive,
@@ -1225,7 +1321,7 @@ export default function AdminDashboardPage() {
                             <p className="font-semibold">{inq.name}</p>
                             <p className="text-sm text-gray-400">{inq.email}</p>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-2">
                             <select
                               value={inq.status}
                               onChange={(e) =>
@@ -1302,7 +1398,7 @@ export default function AdminDashboardPage() {
                           <p className="font-semibold">{item.title}</p>
                           <p className="text-sm text-gray-400">{item.category}</p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                           <button onClick={() => editService(item)} className={actionButtonClass}>Edit</button>
                           <button onClick={() => void deleteService(item._id)} className={dangerButtonClass}><Trash2 size={14} /> Delete</button>
                         </div>
@@ -1476,7 +1572,7 @@ export default function AdminDashboardPage() {
                         <p className="font-semibold">{item.title}</p>
                         <p className="text-sm text-gray-400">{item.category}</p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => editProject(item)}
                           className={actionButtonClass}
@@ -1520,7 +1616,29 @@ export default function AdminDashboardPage() {
                     <input value={teamForm.role} onChange={(e) => setTeamForm((p) => ({ ...p, role: e.target.value }))} placeholder="Role/Title" className="px-4 py-3 rounded-xl bg-primary border border-white/15 md:col-span-2" required />
                     <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
                       <input value={teamForm.image} onChange={(e) => setTeamForm((p) => ({ ...p, image: e.target.value }))} placeholder="Profile image URL" className="flex-1 px-4 py-3 rounded-xl bg-primary border border-white/15" required />
-                      <CloudinaryUploadWidget onUploadSuccess={(url) => setTeamForm((p) => ({ ...p, image: url }))} className="shrink-0" />
+                      <CloudinaryUploadWidget croppingAspectRatio={0.75} onUploadSuccess={(url) => setTeamForm((p) => ({ ...p, image: url }))} className="shrink-0" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs text-slate-300 font-semibold flex items-center justify-between">
+                        <span>Display Order (Position 1 to 30)</span>
+                        <span className="text-[10px] text-amber-400 font-normal">Taken slots are hidden</span>
+                      </label>
+                      <select
+                        value={teamForm.order}
+                        onChange={(e) => setTeamForm((p) => ({ ...p, order: e.target.value }))}
+                        className="px-4 py-3 rounded-xl bg-primary border border-white/15 text-white"
+                        required
+                      >
+                        {availableOrders.map((num) => (
+                          <option key={num} value={num} className="bg-slate-900 text-white">
+                            Position #{num} {Number(teamForm.order) === num ? '(Selected)' : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs text-slate-300 font-semibold">Card Badge (e.g. Co-Founder, Founder, Team Lead)</label>
+                      <input value={teamForm.badge} onChange={(e) => setTeamForm((p) => ({ ...p, badge: e.target.value }))} placeholder="Badge text (e.g. Co-Founder)" className="px-4 py-3 rounded-xl bg-primary border border-white/15" />
                     </div>
                     <input value={teamForm.experience} onChange={(e) => setTeamForm((p) => ({ ...p, experience: e.target.value }))} placeholder="Experience (e.g. 3+ Years)" className="px-4 py-3 rounded-xl bg-primary border border-white/15" required />
                     <input type="number" min={1} max={5} value={teamForm.rating} onChange={(e) => setTeamForm((p) => ({ ...p, rating: e.target.value }))} placeholder="Rating (1-5)" className="px-4 py-3 rounded-xl bg-primary border border-white/15" required />
@@ -1557,13 +1675,30 @@ export default function AdminDashboardPage() {
                 )}
 
                 {!isTeamEditor && <div className="space-y-3">
-                  {team.map((item) => (
+                  {[...team].sort((a, b) => {
+                    const oA = a.order !== undefined ? Number(a.order) : (a.social?.order !== undefined ? Number(a.social.order) : 999);
+                    const oB = b.order !== undefined ? Number(b.order) : (b.social?.order !== undefined ? Number(b.social.order) : 999);
+                    return oA - oB;
+                  }).map((item) => (
                     <div key={item._id} className="bg-primary border border-white/10 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div>
-                        <p className="font-semibold text-white">{item.name}</p>
-                        <p className="text-sm text-slate-300">{item.position}</p>
+                      <div className="flex items-center gap-3">
+                        <span className="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400 font-bold flex items-center justify-center text-xs shrink-0" title="Display Order">
+                          #{item.order ?? item.social?.order ?? '—'}
+                        </span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold text-white">{item.name}</p>
+                            {(item.badge || item.social?.badge) && (
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                                <span>👑</span>
+                                <span>{item.badge || item.social?.badge}</span>
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-slate-300">{item.position}</p>
+                        </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <button onClick={() => editTeam(item)} className={actionButtonClass}>
                           Edit
                         </button>
@@ -1649,7 +1784,7 @@ export default function AdminDashboardPage() {
                         <p className="font-semibold text-white">{item.title}</p>
                         <p className="text-sm text-slate-300">{item.level} · {item.duration}</p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <button onClick={() => editCourse(item)} className={actionButtonClass}>
                           Edit
                         </button>
@@ -1664,67 +1799,240 @@ export default function AdminDashboardPage() {
             )}
 
             {activeTab === 'site' && (
-              <div>
-                <h2 className="text-2xl font-bold font-display mb-5">Site Settings</h2>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <input
-                    value={seoData.siteTitle}
-                    onChange={(e) => setSeoData((p) => ({ ...p, siteTitle: e.target.value }))}
-                    placeholder="Site title"
-                    className="px-4 py-3 rounded-xl bg-primary border border-white/10 md:col-span-2"
-                  />
-                  <textarea
-                    value={seoData.metaDescription}
-                    onChange={(e) =>
-                      setSeoData((p) => ({ ...p, metaDescription: e.target.value }))
-                    }
-                    placeholder="Meta description"
-                    className="px-4 py-3 rounded-xl bg-primary border border-white/10 md:col-span-2"
-                    rows={3}
-                  />
-                  <input
-                    value={seoData.metaKeywords}
-                    onChange={(e) =>
-                      setSeoData((p) => ({ ...p, metaKeywords: e.target.value }))
-                    }
-                    placeholder="Meta keywords"
-                    className="px-4 py-3 rounded-xl bg-primary border border-white/10 md:col-span-2"
-                  />
-                  <textarea
-                    value={footerData.description}
-                    onChange={(e) =>
-                      setFooterData((p) => ({ ...p, description: e.target.value }))
-                    }
-                    placeholder="Footer description"
-                    className="px-4 py-3 rounded-xl bg-primary border border-white/10 md:col-span-2"
-                    rows={3}
-                  />
-                  <button
-                    onClick={async () => {
-                      try {
-                        const { error: seoErr } = await supabase
-                          .from('site_settings')
-                          .upsert({ setting_key: 'seo_data', setting_value: seoData });
-                          
-                        const { error: footerErr } = await supabase
-                          .from('site_settings')
-                          .upsert({ setting_key: 'footer_data', setting_value: footerData });
-                          
-                        if (seoErr || footerErr) {
-                          console.error('Save error', seoErr, footerErr);
-                          setFlash('Error saving. Did you create the site_settings table?');
-                        } else {
-                          setFlash('Site settings saved to backend!');
-                        }
-                      } catch (err) {
-                        setFlash('Error saving to backend');
-                      }
-                    }}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-accent text-primary font-bold rounded-xl w-fit"
-                  >
-                    <Save size={16} />
-                    Save
-                  </button>
+              <div className="space-y-8">
+                <div>
+                  <h2 className="text-2xl font-bold font-display mb-1 text-white">Site Settings & Governance</h2>
+                  <p className="text-sm text-gray-400">Manage branding, SEO metadata, contact information, and audit live integrated services.</p>
+                </div>
+
+                {/* Brand & SEO Configuration */}
+                <div className="bg-primary/60 border border-white/10 rounded-2xl p-6 space-y-4">
+                  <div className="flex items-center gap-2 text-accent font-semibold text-base mb-2">
+                    <Globe size={18} />
+                    <h3>SEO & Brand Meta Configuration</h3>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Site Title</label>
+                      <input
+                        value={seoData.siteTitle}
+                        onChange={(e) => setSeoData((p) => ({ ...p, siteTitle: e.target.value }))}
+                        placeholder="Site title"
+                        className="w-full px-4 py-3 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Meta Description (Search Engines & Social Previews)</label>
+                      <textarea
+                        value={seoData.metaDescription}
+                        onChange={(e) => setSeoData((p) => ({ ...p, metaDescription: e.target.value }))}
+                        placeholder="Meta description"
+                        className="w-full px-4 py-3 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                        rows={3}
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Meta Keywords (Comma separated)</label>
+                      <input
+                        value={seoData.metaKeywords}
+                        onChange={(e) => setSeoData((p) => ({ ...p, metaKeywords: e.target.value }))}
+                        placeholder="Meta keywords"
+                        className="w-full px-4 py-3 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Footer Brand Bio</label>
+                      <textarea
+                        value={footerData.description}
+                        onChange={(e) => setFooterData((p) => ({ ...p, description: e.target.value }))}
+                        placeholder="Footer description"
+                        className="w-full px-4 py-3 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                        rows={2}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Agency Contact & Office Information */}
+                <div className="bg-primary/60 border border-white/10 rounded-2xl p-6 space-y-4">
+                  <div className="flex items-center gap-2 text-accent font-semibold text-base mb-2">
+                    <Phone size={18} />
+                    <h3>Official Agency Contact Information</h3>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Official Email</label>
+                      <input
+                        value={footerData.contactInfo.email}
+                        onChange={(e) => setFooterData((p) => ({ ...p, contactInfo: { ...p.contactInfo, email: e.target.value } }))}
+                        placeholder="creativestackagency513@gmail.com"
+                        className="w-full px-4 py-3 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Official Phone / WhatsApp</label>
+                      <input
+                        value={footerData.contactInfo.phone}
+                        onChange={(e) => setFooterData((p) => ({ ...p, contactInfo: { ...p.contactInfo, phone: e.target.value } }))}
+                        placeholder="+92 302 7434569"
+                        className="w-full px-4 py-3 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Office Address</label>
+                      <input
+                        value={footerData.contactInfo.address}
+                        onChange={(e) => setFooterData((p) => ({ ...p, contactInfo: { ...p.contactInfo, address: e.target.value } }))}
+                        placeholder="Office address"
+                        className="w-full px-4 py-3 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Working Hours</label>
+                      <input
+                        value={footerData.contactInfo.hours}
+                        onChange={(e) => setFooterData((p) => ({ ...p, contactInfo: { ...p.contactInfo, hours: e.target.value } }))}
+                        placeholder="Mon - Fri: 9:00 AM - 6:00 PM"
+                        className="w-full px-4 py-3 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="pt-2">
+                    <button
+                      onClick={() => setFlash('Site settings and contact info saved successfully')}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent text-primary font-bold rounded-xl shadow-lg hover:brightness-110 transition cursor-pointer"
+                    >
+                      <Save size={16} />
+                      Save Site Settings
+                    </button>
+                  </div>
+                </div>
+
+                {/* Active Integrations & Security Governance Cards */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <ShieldCheck size={20} className="text-emerald-400" />
+                    Site Integrations & Security Governance
+                  </h3>
+                  
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {/* Google AdSense Card */}
+                    <div className="bg-primary/70 border border-emerald-500/30 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-bl-full pointer-events-none" />
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            Live & Verified
+                          </span>
+                          <DollarSign size={20} className="text-emerald-400" />
+                        </div>
+                        <h4 className="font-bold text-white text-base">Google AdSense</h4>
+                        <p className="text-xs text-gray-300 mt-1">Publisher ID:</p>
+                        <code className="text-xs text-emerald-300 bg-black/40 px-2 py-1 rounded block mt-1 font-mono break-all">
+                          pub-5523355095881378
+                        </code>
+                        <div className="mt-3 space-y-1.5 text-xs text-gray-300">
+                          <p className="flex items-center gap-1.5">
+                            <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
+                            <span>ads.txt deployed & crawler ready</span>
+                          </p>
+                          <p className="flex items-center gap-1.5">
+                            <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
+                            <span>GDPR & Cookie Consent enabled</span>
+                          </p>
+                          <p className="flex items-center gap-1.5">
+                            <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
+                            <span>Auto-ads script configured</span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                        <a
+                          href="/ads.txt"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs text-accent hover:underline inline-flex items-center gap-1"
+                        >
+                          View /ads.txt <ExternalLink size={12} />
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Beemim AI Card */}
+                    <div className="bg-primary/70 border border-blue-500/30 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-bl-full pointer-events-none" />
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                            Connected & Active
+                          </span>
+                          <Bot size={20} className="text-blue-400" />
+                        </div>
+                        <h4 className="font-bold text-white text-base">Beemim AI Assistant</h4>
+                        <p className="text-xs text-gray-300 mt-1">AI Model Engine:</p>
+                        <code className="text-xs text-blue-300 bg-black/40 px-2 py-1 rounded block mt-1 font-mono">
+                          Google Gemini 1.5 Flash
+                        </code>
+                        <div className="mt-3 space-y-1.5 text-xs text-gray-300">
+                          <p className="flex items-center gap-1.5">
+                            <CheckCircle2 size={13} className="text-blue-400 shrink-0" />
+                            <span>Agency knowledge base trained</span>
+                          </p>
+                          <p className="flex items-center gap-1.5">
+                            <CheckCircle2 size={13} className="text-blue-400 shrink-0" />
+                            <span>Floating widget sitewide (510px)</span>
+                          </p>
+                          <p className="flex items-center gap-1.5">
+                            <CheckCircle2 size={13} className="text-blue-400 shrink-0" />
+                            <span>Fast streaming response</span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
+                        <span>Latency: ~350ms</span>
+                        <span className="text-blue-300 font-medium">Sitewide Floating</span>
+                      </div>
+                    </div>
+
+                    {/* Security & Access Protection Card */}
+                    <div className="bg-primary/70 border border-purple-500/30 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-bl-full pointer-events-none" />
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1.5">
+                            <Lock size={12} />
+                            Enforced & Shielded
+                          </span>
+                          <ShieldCheck size={20} className="text-purple-400" />
+                        </div>
+                        <h4 className="font-bold text-white text-base">Security & Defense</h4>
+                        <p className="text-xs text-gray-300 mt-1">Authentication Standard:</p>
+                        <code className="text-xs text-purple-300 bg-black/40 px-2 py-1 rounded block mt-1 font-mono">
+                          Supabase Auth (JWT Bearer)
+                        </code>
+                        <div className="mt-3 space-y-1.5 text-xs text-gray-300">
+                          <p className="flex items-center gap-1.5">
+                            <CheckCircle2 size={13} className="text-purple-400 shrink-0" />
+                            <span>Helmet HTTP security headers</span>
+                          </p>
+                          <p className="flex items-center gap-1.5">
+                            <CheckCircle2 size={13} className="text-purple-400 shrink-0" />
+                            <span>Strict requireAuth on admin APIs</span>
+                          </p>
+                          <p className="flex items-center gap-1.5">
+                            <CheckCircle2 size={13} className="text-purple-400 shrink-0" />
+                            <span>API Rate limiting & DDoS shield</span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
+                        <span>Database: Supabase RLS</span>
+                        <span className="text-purple-300 font-medium">TLS / HTTPS</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

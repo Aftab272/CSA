@@ -1,11 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import ProjectModal from './ProjectModal';
-import { Search } from 'lucide-react';
+import { Search, ExternalLink, ArrowRight, Layers } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import type { ProjectContent } from '../types/content';
-import { supabase } from '../lib/supabase';
+import { fetchPublicProjects } from '../lib/api';
 
-export default function Projects() {
+interface ProjectsProps {
+  limit?: number;
+  showExploreLink?: boolean;
+}
+
+export default function Projects({ limit, showExploreLink }: ProjectsProps) {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [selectedProject, setSelectedProject] = useState<ProjectContent | null>(null);
@@ -15,27 +21,8 @@ export default function Projects() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const { data, error } = await supabase
-          .from('projects')
-          .select('*')
-          .eq('is_published', true);
-          
-        if (error) throw error;
-        
-        if (data && data.length > 0) {
-          const mapped = data.map(item => ({
-            ...item,
-            shortDescription: item.short_description,
-            techStack: item.tech_stack,
-            githubUrl: item.github_url,
-            liveUrl: item.live_url,
-            completionDate: item.completion_date,
-            isPublished: item.is_published
-          }));
-          setProjectsList(mapped as unknown as ProjectContent[]);
-        } else {
-          setProjectsList([]);
-        }
+        const data = await fetchPublicProjects();
+        setProjectsList(data as ProjectContent[]);
       } catch (error) {
         setProjectsList([]);
       } finally {
@@ -46,107 +33,168 @@ export default function Projects() {
     void fetchProjects();
   }, []);
 
-  const filteredProjects = useMemo(
-    () =>
-      projectsList.filter(
-        (p) =>
-          (filter === 'All' || p.category === filter) &&
-          (p.title.toLowerCase().includes(search.toLowerCase()) ||
-            p.category.toLowerCase().includes(search.toLowerCase()))
-      ),
-    [projectsList, filter, search]
-  );
+  const filteredProjects = useMemo(() => {
+    return projectsList.filter((p) => {
+      const matchesFilter = filter === 'All' || p.category === filter;
+      const matchesSearch =
+        p.title.toLowerCase().includes(search.toLowerCase()) ||
+        p.category.toLowerCase().includes(search.toLowerCase()) ||
+        (p.shortDescription && p.shortDescription.toLowerCase().includes(search.toLowerCase()));
+      return matchesFilter && matchesSearch;
+    });
+  }, [projectsList, filter, search]);
 
-  const categories = ['All', ...Array.from(new Set(projectsList.map((p) => p.category)))];
+  const displayedProjects = limit ? filteredProjects.slice(0, limit) : filteredProjects;
+  const categories = ['All', ...Array.from(new Set(projectsList.map((p) => p.category).filter(Boolean)))];
 
   return (
-    <section id="projects" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32 bg-primary font-sans text-white overflow-hidden">
+    <section id="projects" className="relative px-4 sm:px-6 lg:px-8 py-16 sm:py-24 bg-white dark:bg-primary font-sans text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
       {/* Background Glow */}
-      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none mix-blend-screen hidden dark:block"></div>
+      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none hidden dark:block"></div>
 
       <AnimatePresence>
         {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
       </AnimatePresence>
       
       <div className="relative z-10 max-w-7xl mx-auto">
-        <h2 className="text-center text-4xl sm:text-5xl md:text-6xl font-extrabold font-display text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 mb-16 sm:mb-20 tracking-tight">Featured Projects</h2>
-        {isLoading && <p className="text-center text-sm text-gray-400 mb-8">Loading projects...</p>}
-        
-        <div className="max-w-4xl mx-auto mb-16 flex flex-col md:flex-row gap-6 items-center justify-center">
-          <div className="relative w-full md:w-80 group">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
-            <Search className="absolute left-4 top-3.5 text-blue-400 z-10" size={20} />
-            <input 
-              type="text" 
-              placeholder="Search projects..." 
-              className="relative w-full bg-gray-100 dark:bg-white/5 backdrop-blur-md py-3 pl-12 pr-6 rounded-full border border-gray-300 dark:border-white/10 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900 dark:text-white placeholder-gray-500 transition-all shadow-[0_0_20px_rgba(0,0,0,0.1)] dark:shadow-[0_0_20px_rgba(0,0,0,0.2)]"
-              onChange={(e) => setSearch(e.target.value)}
-            />
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-xs font-semibold mb-3">
+              <Layers size={14} />
+              <span>Proven Track Record</span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-extrabold font-display tracking-tight text-gray-900 dark:text-white">
+              Featured Case Studies
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base mt-2 max-w-xl">
+              High-impact digital platforms, responsive applications, and custom enterprise tools engineered by our team.
+            </p>
           </div>
-          <div className="flex gap-3 flex-wrap justify-center">
-            {categories.map(c => (
-              <button 
-                key={c} 
-                onClick={() => setFilter(c)} 
-                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 border ${
-                  filter === c 
-                    ? 'bg-blue-600/20 border-blue-500 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]' 
-                    : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-white hover:border-white/20'
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+
+          {showExploreLink && (
+            <Link
+              to="/projects"
+              className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group shrink-0"
+            >
+              <span>View Full Portfolio</span>
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          )}
         </div>
 
-        <motion.div layout className="grid sm:grid-cols-2 xl:grid-cols-3 gap-8 sm:gap-10">
+        {/* Filters and search: Only show if not limited or if on dedicated page */}
+        {!limit && (
+          <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-12">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-secondary/80 backdrop-blur-md rounded-2xl border border-gray-200 dark:border-white/10 focus:border-blue-500 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none transition"
+              />
+            </div>
+            <div className="flex gap-2 flex-wrap justify-center sm:justify-end w-full sm:w-auto">
+              {categories.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setFilter(c)}
+                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
+                    filter === c
+                      ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]'
+                      : 'bg-gray-100 dark:bg-secondary/60 border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10'
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        )}
+
+        <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           <AnimatePresence>
-            {filteredProjects.map((project) => (
-              <motion.div 
+            {displayedProjects.map((project) => (
+              <motion.div
                 layout
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                transition={{ duration: 0.4 }}
-                key={project._id || project.id || project.title} 
-                className="group bg-white dark:bg-white/5 dark:backdrop-blur-xl rounded-[2rem] overflow-hidden border border-gray-200 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_0_40px_rgba(37,99,235,0.2)] hover:border-blue-500/30 transition-all duration-500 flex flex-col"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.3 }}
+                key={project._id || project.id || project.title}
+                className="group bg-white dark:bg-secondary/70 backdrop-blur-xl rounded-3xl overflow-hidden border border-gray-200/90 dark:border-white/10 hover:border-blue-500/40 shadow-[0_4px_25px_rgba(0,0,0,0.06)] dark:shadow-xl hover:shadow-[0_14px_35px_rgba(37,99,235,0.18)] transition-all flex flex-col h-full"
               >
-                <div className="relative overflow-hidden h-64 sm:h-72">
+                <div className="relative overflow-hidden h-52 sm:h-56 bg-gray-100 dark:bg-primary/40 shrink-0">
                   <img
-                    loading="eager"
-                    src={project.gallery?.[0]}
+                    loading="lazy"
+                    src={project.gallery?.[0] || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'}
                     alt={project.title}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/50 to-transparent opacity-80 hidden dark:block" />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-4 py-1.5 bg-blue-600/80 dark:backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                  <div className="absolute top-3.5 left-3.5 flex gap-2">
+                    <span className="px-3 py-1 bg-blue-600/95 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider rounded-full shadow-lg">
                       {project.category}
                     </span>
                   </div>
                 </div>
-                <div className="p-6 sm:p-8 flex-1 flex flex-col relative">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-                  <h3 className="text-2xl font-bold font-display text-gray-900 dark:text-white mt-2 mb-6 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{project.title}</h3>
-                  <div className="mt-auto flex flex-col sm:flex-row gap-3">
-                    {project.liveUrl && (
-                      <a 
-                        href={project.liveUrl} 
-                        target="_blank" 
+
+                <div className="p-6 flex-1 flex flex-col">
+                  <h3 className="text-xl font-bold font-display text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2">
+                    {project.title}
+                  </h3>
+
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 line-clamp-2 font-light">
+                    {project.shortDescription || project.description || 'Custom engineered digital experience.'}
+                  </p>
+
+                  {project.techStack && Object.values(project.techStack).flat().length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-6">
+                      {Object.values(project.techStack)
+                        .flat()
+                        .slice(0, 4)
+                        .map((tech, i) => (
+                          <span
+                            key={i}
+                            className="px-2.5 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-[11px] text-gray-700 dark:text-gray-300 font-medium"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                    </div>
+                  )}
+
+                  <div className="mt-auto pt-4 border-t border-gray-200 dark:border-white/10 flex items-center gap-3">
+                    {project.liveUrl ? (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
                         rel="noopener noreferrer"
-                        className="relative overflow-hidden group/btn flex-1 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 transform hover:-translate-y-0.5 text-center flex items-center justify-center"
+                        className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transform hover:-translate-y-0.5 flex items-center justify-center gap-1.5"
                       >
-                        <span className="relative z-10">Live Site</span>
-                        <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                        <span>Live Demo</span>
+                        <ExternalLink size={14} />
                       </a>
+                    ) : (
+                      <button
+                        onClick={() => setSelectedProject(project)}
+                        className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transform hover:-translate-y-0.5"
+                      >
+                        Case Study
+                      </button>
                     )}
-                    <button 
+                    <button
                       onClick={() => setSelectedProject(project)}
-                      className="relative overflow-hidden group/btn flex-1 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all duration-300 transform hover:-translate-y-0.5 text-center flex items-center justify-center"
+                      className="py-3 px-4 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 border border-gray-200 dark:border-white/15 text-gray-800 dark:text-white font-semibold rounded-xl text-xs sm:text-sm transition-all cursor-pointer"
                     >
-                      <span className="relative z-10">View Details</span>
-                      <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
+                      Details
                     </button>
                   </div>
                 </div>

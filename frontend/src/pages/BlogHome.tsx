@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import Newsletter from '../components/Newsletter';
+import BlogSection from '../components/BlogSection';
 import { useBlog } from '../context/BlogContext';
 import { Link } from 'react-router-dom';
-import { Search, Clock, User, ArrowRight, Tag, ChevronRight } from 'lucide-react';
+import { Search, Clock, ArrowRight, ChevronRight, BookOpen, User } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useAdmin } from '../context/AdminContext';
+
+const POSTS_PER_PAGE = 15;
 
 export default function BlogHome() {
   const { posts, categories, authors } = useBlog();
   const { footerData } = useAdmin();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsSectionRef = useRef<HTMLDivElement>(null);
 
   const publishedPosts = posts.filter(p => p.status === 'published');
   
   const featuredPost = publishedPosts.find(p => p.isFeatured) || publishedPosts[0];
-  const otherPosts = publishedPosts.filter(p => p.id !== featuredPost?.id);
 
   const filteredPosts = publishedPosts.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
@@ -25,152 +28,336 @@ export default function BlogHome() {
     return matchesSearch && matchesCategory;
   });
 
+  // Reset page to 1 whenever search query or category filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_PAGE));
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+
+  const startIndex = (safeCurrentPage - 1) * POSTS_PER_PAGE;
+  const endIndex = Math.min(startIndex + POSTS_PER_PAGE, filteredPosts.length);
+  const displayedPosts = filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages || page === safeCurrentPage) return;
+    setCurrentPage(page);
+    if (postsSectionRef.current) {
+      postsSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo({ top: 400, behavior: 'smooth' });
+    }
+  };
+
   const getAuthor = (id: string) => authors.find(a => a.id === id);
   const getCategory = (id: string) => categories.find(c => c.id === id);
 
   return (
-    <div className="min-h-screen bg-primary">
+    <div className="min-h-screen bg-slate-50 dark:bg-primary text-gray-900 dark:text-white font-sans transition-colors duration-300 flex flex-col justify-between">
       <Helmet>
-        <title>Blog - Creative Stack Agency</title>
-        <meta name="description" content="Read the latest articles on web development, UI/UX design, and digital marketing from Creative Stack Agency." />
+        <title>Blog &amp; Tech Insights - Creative Stack Agency</title>
+        <meta name="description" content="Read the latest in-depth articles on full stack web development, modern cloud architecture, UI/UX design, and digital business strategies from Creative Stack Agency." />
       </Helmet>
       
-      <div className="bg-primary pt-24 pb-4 px-4 shadow-md">
-        <Navbar />
-      </div>
+      <div>
+        <div className="bg-white/80 dark:bg-primary/90 backdrop-blur-md pt-24 pb-4 px-4 border-b border-gray-200/80 dark:border-white/10 shadow-sm transition-colors duration-300">
+          <Navbar />
+        </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-display text-white mb-10 sm:mb-12 text-center">The Stack Blog</h1>
-        
-        {/* Horizontal Search and Categories Bar */}
-        <div className="mb-12 space-y-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="relative w-full md:w-1/3">
-              <input 
-                type="text" 
-                placeholder="Search articles..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-secondary border border-white/10 rounded-2xl text-white focus:ring-2 focus:ring-accent focus:border-transparent outline-none transition shadow-lg"
-              />
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-            </div>
-            
-            <div className="w-full md:w-2/3 overflow-x-auto no-scrollbar">
-              <div className="flex gap-2 sm:gap-3 pb-2">
-                <button 
-                  onClick={() => setSelectedCategory(null)}
-                  className={`px-4 sm:px-6 py-3 sm:py-4 rounded-2xl whitespace-nowrap transition font-bold shadow-lg ${selectedCategory === null ? 'bg-accent text-primary' : 'bg-secondary text-gray-300 hover:bg-white/5 border border-white/10'}`}
-                >
-                  All Articles
-                </button>
-                {categories.filter(c => !c.isHidden).map(cat => (
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+            <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-cyan-400 border border-blue-500/20 inline-block mb-3">
+              Agency Publication &amp; Guides
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-display text-gray-900 dark:text-white leading-tight">
+              The Stack Blog
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mt-3 leading-relaxed">
+              Explore in-depth engineering breakdowns, architecture guides, UX strategies, and digital industry insights written by the Creative Stack Agency team.
+            </p>
+          </div>
+          
+          {/* Search & Categories Filter Bar */}
+          <div className="mb-12 space-y-4">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+              <div className="relative w-full md:w-1/3">
+                <input 
+                  type="text" 
+                  placeholder="Search articles..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-secondary/70 border border-gray-200 dark:border-white/10 rounded-2xl text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition shadow-sm text-sm"
+                />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              </div>
+              
+              <div className="w-full md:w-2/3 overflow-x-auto no-scrollbar">
+                <div className="flex gap-2 sm:gap-2.5 pb-2">
                   <button 
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-4 sm:px-6 py-3 sm:py-4 rounded-2xl whitespace-nowrap transition font-bold shadow-lg ${selectedCategory === cat.id ? 'bg-accent text-primary' : 'bg-secondary text-gray-300 hover:bg-white/5 border border-white/10'}`}
+                    onClick={() => setSelectedCategory(null)}
+                    className={`px-4 sm:px-5 py-2.5 rounded-xl whitespace-nowrap text-xs sm:text-sm font-bold transition-all shadow-sm ${
+                      selectedCategory === null 
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/20 shadow-md' 
+                        : 'bg-white dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10'
+                    }`}
                   >
-                    {cat.name}
+                    All Articles ({publishedPosts.length})
                   </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Featured Post Hero (Only show when not searching/filtering) */}
-        {!searchQuery && !selectedCategory && featuredPost && (
-          <div className="mb-14 sm:mb-16 bg-secondary rounded-3xl overflow-hidden grid md:grid-cols-2 gap-8 shadow-2xl items-center border border-white/5">
-            <div className="h-full relative overflow-hidden group">
-              <img src={featuredPost.featuredImage} alt={featuredPost.title} className="w-full h-80 md:h-full object-cover group-hover:scale-105 transition duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
-            </div>
-            <div className="p-6 sm:p-8 md:p-12 flex flex-col justify-center">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="bg-accent/20 text-accent px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-accent/30">{getCategory(featuredPost.categoryId)?.name}</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-6 font-display leading-tight">
-                <Link to={`/blog/${featuredPost.slug}`} className="hover:text-accent transition duration-300">{featuredPost.title}</Link>
-              </h2>
-              <p className="text-gray-400 mb-8 line-clamp-3 text-lg leading-relaxed">{featuredPost.excerpt}</p>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-auto gap-4">
-                <div className="flex items-center gap-4">
-                  <img src={getAuthor(featuredPost.authorId)?.image} alt="Author" className="w-12 h-12 rounded-full object-cover ring-2 ring-accent/20" />
-                  <div>
-                    <p className="text-sm font-bold text-white">{getAuthor(featuredPost.authorId)?.name}</p>
-                    <p className="text-xs text-gray-500 font-medium">{new Date(featuredPost.publishedAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                  </div>
+                  {categories.filter(c => !c.isHidden).map(cat => {
+                    const count = publishedPosts.filter(p => p.categoryId === cat.id).length;
+                    return (
+                      <button 
+                        key={cat.id}
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`px-4 sm:px-5 py-2.5 rounded-xl whitespace-nowrap text-xs sm:text-sm font-bold transition-all shadow-sm ${
+                          selectedCategory === cat.id 
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/20 shadow-md' 
+                            : 'bg-white dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10'
+                        }`}
+                      >
+                        {cat.name} {count > 0 && `(${count})`}
+                      </button>
+                    );
+                  })}
                 </div>
-                <Link to={`/blog/${featuredPost.slug}`} className="bg-accent text-primary px-5 sm:px-6 py-3 rounded-xl font-black flex items-center gap-2 hover:shadow-[0_0_20px_rgba(0,212,255,0.4)] transition duration-300">
-                  Read Article <ArrowRight size={18} />
-                </Link>
               </div>
             </div>
           </div>
-        )}
 
-        <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-10 border-b border-white/5 pb-6 gap-3">
-          <h3 className="text-2xl sm:text-3xl font-bold font-display text-white">
-            {searchQuery ? 'Search Results' : selectedCategory ? `${getCategory(selectedCategory)?.name}` : 'Latest Stories'}
-          </h3>
-          <span className="bg-secondary px-4 py-2 rounded-xl text-gray-400 text-sm font-bold border border-white/5">{filteredPosts.length} Articles</span>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
-          {filteredPosts.map(post => (
-            <div key={post.id} className="bg-secondary/40 border border-white/5 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 group flex flex-col hover:-translate-y-2">
-              <div className="relative overflow-hidden h-64">
-                <img src={post.featuredImage} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-primary/80 backdrop-blur-md text-accent px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-white/10">
-                    {getCategory(post.categoryId)?.name}
+          {/* Featured Post Hero (Only show when on page 1 and not filtering/searching) */}
+          {!searchQuery && !selectedCategory && safeCurrentPage === 1 && featuredPost && (
+            <div className="mb-14 sm:mb-16 bg-white dark:bg-secondary/70 rounded-3xl overflow-hidden grid md:grid-cols-2 gap-8 shadow-xl dark:shadow-2xl items-center border border-gray-200 dark:border-white/10">
+              <div className="h-full relative overflow-hidden group">
+                <img 
+                  loading="lazy"
+                  src={featuredPost.featuredImage} 
+                  alt={featuredPost.title} 
+                  className="w-full h-72 md:h-full object-cover group-hover:scale-105 transition duration-700" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              </div>
+              <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="bg-blue-500/10 text-blue-600 dark:text-cyan-400 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider border border-blue-500/20">
+                    {getCategory(featuredPost.categoryId)?.name || 'Featured Story'}
+                  </span>
+                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                    {featuredPost.readTime} min read
                   </span>
                 </div>
-              </div>
-              <div className="p-6 sm:p-8 flex flex-col flex-grow">
-                <div className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
-                  <Clock size={12} className="text-accent" />
-                  <span>{post.readTime} min read</span>
-                  <span className="mx-1">•</span>
-                  <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 font-display leading-tight">
+                  <Link to={`/blog/${featuredPost.slug}`} className="hover:text-blue-600 dark:hover:text-cyan-400 transition duration-300">
+                    {featuredPost.title}
+                  </Link>
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 text-sm sm:text-base leading-relaxed">
+                  {featuredPost.excerpt}
+                </p>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-auto gap-4 pt-4 border-t border-gray-100 dark:border-white/10">
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src={getAuthor(featuredPost.authorId)?.image || 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png'} 
+                      alt={getAuthor(featuredPost.authorId)?.name || 'Author'} 
+                      className="w-11 h-11 rounded-full object-cover ring-2 ring-blue-500/20 shadow-sm"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png';
+                      }}
+                    />
+                    <div>
+                      <p className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
+                        {getAuthor(featuredPost.authorId)?.name || 'Creative Stack Editorial'}
+                      </p>
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
+                        {getAuthor(featuredPost.authorId)?.position || 'Team Author'} • {new Date(featuredPost.publishedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                    </div>
+                  </div>
+                  <Link 
+                    to={`/blog/${featuredPost.slug}`} 
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-5 sm:px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md transition duration-300"
+                  >
+                    <span>Read Article</span>
+                    <ArrowRight size={15} />
+                  </Link>
                 </div>
-                <h4 className="text-xl font-bold text-white mb-4 font-display line-clamp-2 leading-snug group-hover:text-accent transition duration-300">
-                  <Link to={`/blog/${post.slug}`}>{post.title}</Link>
-                </h4>
-                <p className="text-gray-400 text-sm mb-6 line-clamp-3 flex-grow leading-relaxed">{post.excerpt}</p>
-                <Link to={`/blog/${post.slug}`} className="w-full text-center py-4 bg-white/5 rounded-2xl text-white font-bold text-sm hover:bg-accent hover:text-primary transition duration-300 border border-white/5">
-                  Read Full Story
-                </Link>
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Section Header: Stories Count & Pagination Summary */}
+          <div ref={postsSectionRef} className="flex flex-col sm:flex-row justify-between sm:items-center mb-8 border-b border-gray-200 dark:border-white/10 pb-5 gap-3">
+            <div>
+              <h3 className="text-2xl sm:text-3xl font-bold font-display text-gray-900 dark:text-white">
+                {searchQuery ? 'Search Results' : selectedCategory ? `${getCategory(selectedCategory)?.name}` : 'All Articles'}
+              </h3>
+              {filteredPosts.length > 0 && (
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Showing <span className="font-bold text-gray-800 dark:text-gray-200">{startIndex + 1}–{endIndex}</span> of <span className="font-bold text-gray-800 dark:text-gray-200">{filteredPosts.length}</span> articles (Page {safeCurrentPage} of {totalPages})
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <span className="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-cyan-400 px-3 py-1.5 rounded-xl text-xs font-bold border border-blue-200 dark:border-blue-500/20">
+                15 Posts Per Page
+              </span>
+              <span className="bg-white dark:bg-white/5 px-3 py-1.5 rounded-xl text-gray-700 dark:text-gray-300 text-xs font-bold border border-gray-200 dark:border-white/10">
+                {filteredPosts.length} Total
+              </span>
+            </div>
+          </div>
+
+          {/* Posts Grid - 15 posts per page */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {displayedPosts.map(post => {
+              const author = getAuthor(post.authorId);
+              const category = getCategory(post.categoryId);
+              
+              return (
+                <article 
+                  key={post.id} 
+                  className="bg-white dark:bg-secondary/70 border border-gray-200 dark:border-white/10 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl dark:shadow-none dark:hover:shadow-2xl transition-all duration-300 group flex flex-col hover:-translate-y-1"
+                >
+                  <Link to={`/blog/${post.slug}`} className="relative block overflow-hidden h-52 sm:h-56">
+                    <img 
+                      loading="lazy"
+                      src={post.featuredImage} 
+                      alt={post.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
+                    />
+                    <div className="absolute top-3.5 left-3.5">
+                      <span className="bg-white/95 dark:bg-primary/90 backdrop-blur-md text-blue-600 dark:text-cyan-400 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider border border-gray-200 dark:border-white/10 shadow-sm">
+                        {category?.name || 'Technology'}
+                      </span>
+                    </div>
+                  </Link>
+
+                  <div className="p-6 flex flex-col flex-grow justify-between space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <Clock size={12} className="text-blue-500 dark:text-cyan-400" />
+                        <span>{post.readTime} min read</span>
+                        <span className="mx-1">•</span>
+                        <span>{new Date(post.publishedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      </div>
+
+                      <h4 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white font-display line-clamp-2 leading-snug group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition duration-300">
+                        <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+                      </h4>
+
+                      <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm line-clamp-3 leading-relaxed">
+                        {post.excerpt}
+                      </p>
+                    </div>
+
+                    {/* Real Author Section & Read Story CTA */}
+                    <div className="pt-4 border-t border-gray-100 dark:border-white/10 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <img 
+                            src={author?.image || 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png'} 
+                            alt={author?.name || 'Author'} 
+                            className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-500/20 shadow-sm"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png';
+                            }}
+                          />
+                          <div className="leading-tight">
+                            <p className="text-xs font-bold text-gray-900 dark:text-white line-clamp-1">
+                              {author?.name || 'Creative Stack Author'}
+                            </p>
+                            <p className="text-[10px] text-gray-500 dark:text-gray-400 line-clamp-1">
+                              {author?.position || 'Agency Contributor'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Link 
+                        to={`/blog/${post.slug}`} 
+                        className="w-full text-center py-2.5 px-4 bg-blue-50 dark:bg-white/5 hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 text-blue-600 dark:text-cyan-400 hover:text-white dark:hover:text-white rounded-xl font-bold text-xs sm:text-sm border border-blue-200 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center gap-1.5"
+                      >
+                        <span>Read Full Story</span>
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          {filteredPosts.length === 0 && (
+            <div className="text-center py-24 bg-white dark:bg-secondary/20 rounded-3xl border border-dashed border-gray-300 dark:border-white/10 my-8">
+              <Search size={44} className="mx-auto text-gray-400 mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No matching articles found</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm max-w-sm mx-auto">
+                Try searching for a different keyword or choose another category from the filters above.
+              </p>
+            </div>
+          )}
+
+          {/* Interactive Working Pagination: 15 posts per page */}
+          {totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-16 pt-8 border-t border-gray-200 dark:border-white/10">
+              <div className="flex items-center gap-2 flex-wrap justify-center">
+                <button 
+                  onClick={() => handlePageChange(safeCurrentPage - 1)}
+                  disabled={safeCurrentPage === 1}
+                  className={`px-4 py-2.5 flex items-center gap-1.5 border rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-sm ${
+                    safeCurrentPage === 1 
+                      ? 'opacity-40 cursor-not-allowed border-gray-200 dark:border-white/5 bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500'
+                      : 'border-gray-200 dark:border-white/10 bg-white dark:bg-secondary text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-white hover:border-blue-500 cursor-pointer shadow-sm'
+                  }`}
+                  aria-label="Previous page"
+                >
+                  <ChevronRight size={16} className="rotate-180" />
+                  <span>Previous</span>
+                </button>
+
+                <div className="flex items-center gap-1.5">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                    const isActive = pageNum === safeCurrentPage;
+                    return (
+                      <button 
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`w-11 h-11 flex items-center justify-center rounded-2xl text-xs sm:text-sm font-bold transition-all ${
+                          isActive
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-extrabold shadow-md shadow-blue-500/25 scale-105'
+                            : 'bg-white dark:bg-secondary border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:border-blue-500 shadow-sm'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button 
+                  onClick={() => handlePageChange(safeCurrentPage + 1)}
+                  disabled={safeCurrentPage === totalPages}
+                  className={`px-4 py-2.5 flex items-center gap-1.5 border rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-sm ${
+                    safeCurrentPage === totalPages 
+                      ? 'opacity-40 cursor-not-allowed border-gray-200 dark:border-white/5 bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500'
+                      : 'border-gray-200 dark:border-white/10 bg-white dark:bg-secondary text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-white hover:border-blue-500 cursor-pointer shadow-sm'
+                  }`}
+                  aria-label="Next page"
+                >
+                  <span>Next</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+        </main>
+
+        {/* Shifted Insights & Updates compact section */}
+        <div className="border-t border-gray-200 dark:border-white/10">
+          <BlogSection showViewAll={false} />
         </div>
-
-        {filteredPosts.length === 0 && (
-          <div className="text-center py-32 bg-secondary/20 rounded-3xl border border-dashed border-white/10">
-            <Search size={48} className="mx-auto text-gray-600 mb-6 opacity-20" />
-            <h3 className="text-2xl font-bold text-white mb-2">No matches found</h3>
-            <p className="text-gray-500 max-w-xs mx-auto">Try a different keyword or explore our categories above.</p>
-          </div>
-        )}
-
-        {/* Pagination */}
-        {filteredPosts.length > 0 && (
-          <div className="flex justify-center items-center gap-4 mt-24">
-            <button className="w-14 h-14 flex items-center justify-center border border-white/10 rounded-2xl text-gray-400 hover:bg-accent hover:text-primary hover:border-accent transition-all duration-300 shadow-lg group">
-              <ChevronRight size={24} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
-            </button>
-            <button className="w-14 h-14 flex items-center justify-center bg-accent text-primary rounded-2xl font-black shadow-[0_0_20px_rgba(0,212,255,0.4)] transform hover:scale-105 transition-all">1</button>
-            <button className="w-14 h-14 flex items-center justify-center bg-secondary border border-white/10 text-gray-400 rounded-2xl font-bold hover:bg-white/10 hover:text-white transition-all duration-300">2</button>
-            <button className="w-14 h-14 flex items-center justify-center bg-secondary border border-white/10 text-gray-400 rounded-2xl font-bold hover:bg-white/10 hover:text-white transition-all duration-300">3</button>
-            <button className="w-14 h-14 flex items-center justify-center border border-white/10 rounded-2xl text-gray-400 hover:bg-accent hover:text-primary hover:border-accent transition-all duration-300 shadow-lg group">
-              <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-        )}
-      </main>
-
-      {footerData.sections.newsletter && <Newsletter />}
+      </div>
+      
       <Footer />
     </div>
   );

@@ -28,16 +28,20 @@ const CookiePolicy: React.FC = () => {
       <section>
         <h2>4. Types of cookies we use</h2>
         <ul>
-          <li><strong>Essential website cookies:</strong> These cookies are strictly necessary to provide you with services available through our website.</li>
+          <li><strong>Essential website cookies:</strong> These cookies are strictly necessary to provide you with services available through our website (e.g. security and theme settings).</li>
           <li><strong>Performance and functionality cookies:</strong> These cookies are used to enhance the performance and functionality of our website but are non-essential to their use.</li>
-          <li><strong>Analytics and customization cookies:</strong> These cookies collect information that is used either in aggregate form to help us understand how our website is being used.</li>
+          <li><strong>Analytics and customization cookies:</strong> These cookies collect information that is used in aggregate form to help us understand how our website is being used (e.g. Google Analytics).</li>
+          <li><strong>Advertising and targeting cookies:</strong> These cookies are used to make advertising messages more relevant to you. They perform functions like preventing the same ad from continuously reappearing, ensuring that ads are properly displayed for advertisers, and in some cases selecting advertisements that are based on your interests. Third parties, such as <strong>Google AdSense</strong>, may place cookies (such as DoubleClick DART cookies) to serve personalized ads based on your visits to our site and other sites on the web.</li>
         </ul>
       </section>
 
       <section>
         <h2>5. How can I control cookies?</h2>
         <p>
-          You have the right to decide whether to accept or reject cookies. You can set or amend your web browser controls to accept or refuse cookies. If you choose to reject cookies, you may still use our website though your access to some functionality and areas of our website may be restricted.
+          You have the right to decide whether to accept or reject cookies. You can set or amend your web browser controls to accept or refuse cookies. You can also customize your consent preferences anytime via our Cookie Consent banner.
+        </p>
+        <p>
+          To opt out of personalized Google advertising, you can visit <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Google Ads Settings</a>. For broader industry opt-outs, visit <a href="https://optout.aboutads.info/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">www.aboutads.info</a> or <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Your Online Choices</a>.
         </p>
       </section>
 
