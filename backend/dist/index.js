@@ -15,7 +15,8 @@ import { authRouter } from './routes/authRoutes.js';
 import { publicDataRouter } from './routes/publicDataRoutes.js';
 const app = express();
 // Security Headers
-app.use(helmet());
+const helmetMiddleware = typeof helmet === 'function' ? helmet : helmet.default || helmet;
+app.use(helmetMiddleware());
 // CORS configuration (Allows frontend from localhost and production domains)
 app.use(cors({
     origin: (origin, callback) => {
