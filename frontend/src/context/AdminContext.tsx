@@ -103,8 +103,6 @@ type AdminContextType = {
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-import { supabase } from '../lib/supabase';
-
 export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [footerData, setFooterData] = useState<FooterData>(() => {
     const saved = localStorage.getItem('csa_footer_data');
@@ -129,35 +127,6 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     }
     return defaultSeoData;
   });
-
-  useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const { data: seoRow } = await supabase
-          .from('site_settings')
-          .select('setting_value')
-          .eq('setting_key', 'seo_data')
-          .single();
-          
-        if (seoRow?.setting_value) {
-          setSeoData((prev) => ({ ...prev, ...seoRow.setting_value }));
-        }
-
-        const { data: footerRow } = await supabase
-          .from('site_settings')
-          .select('setting_value')
-          .eq('setting_key', 'footer_data')
-          .single();
-          
-        if (footerRow?.setting_value) {
-          setFooterData((prev) => ({ ...prev, ...footerRow.setting_value }));
-        }
-      } catch (err) {
-        console.error('Could not load site_settings from backend', err);
-      }
-    };
-    loadSettings();
-  }, []);
 
   useEffect(() => {
     localStorage.setItem('csa_footer_data', JSON.stringify(footerData));
