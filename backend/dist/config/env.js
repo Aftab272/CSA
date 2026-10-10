@@ -11,6 +11,6 @@ export const ENV = {
     RATE_LIMIT_WINDOW_MS: process.env.RATE_LIMIT_WINDOW_MS ? parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) : 15 * 60 * 1000,
     MAX_FILE_SIZE_MB: process.env.MAX_FILE_SIZE_MB ? parseInt(process.env.MAX_FILE_SIZE_MB, 10) : 15,
     SUPABASE_URL: process.env.SUPABASE_URL || 'https://gfjyvagcwwyqgfhnckdb.supabase.co',
-    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || 'sb_publishable_8hErrYdk3LA2p8eU47U0hQ_BmFYMXzv',
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdmanl2YWdjd3d5cWdmaG5ja2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NTYxODQsImV4cCI6MjEwMzEzMjE4NH0.Qlth_UCidwRTruTpjDr_PD4NsRTk5c3tRQp8lcgC3SI',
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
 };

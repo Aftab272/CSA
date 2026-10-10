@@ -4,6 +4,7 @@
     "backend": {
       "root": "backend",
       "framework": "express",
+      "entrypoint": "dist/index.js",
       "buildCommand": "npm run build"
     },
     "frontend": {
@@ -22,6 +23,13 @@
       "source": "/api",
       "destination": {
         "service": "backend"
+      }
+    },
+    {
+      "source": "/((?!api|assets|favicon|logo|videos|images|.*\\..*).*)",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
       }
     },
     {

@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { GeminiService } from '../ai/services/geminiService.js';
 import { ImageGenService } from '../ai/services/imageGenService.js';
 import { upload } from '../middleware/upload.js';
-import pdfParse from 'pdf-parse';
 
 export const aiRouter = Router();
 
@@ -76,7 +75,8 @@ aiRouter.post('/pdf', upload.single('document'), async (req: Request, res: Respo
 
     if (req.file) {
       if (req.file.mimetype === 'application/pdf') {
-        const parsed = await pdfParse(req.file.buffer);
+        const { default: pdfParse } = await import('pdf-parse');
+        const parsed = await (pdfParse as any)(req.file.buffer);
         extractedText = parsed.text;
       } else if (req.file.mimetype === 'text/plain') {
         extractedText = req.file.buffer.toString('utf-8');

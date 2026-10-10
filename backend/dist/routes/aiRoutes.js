@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { GeminiService } from '../ai/services/geminiService.js';
 import { ImageGenService } from '../ai/services/imageGenService.js';
 import { upload } from '../middleware/upload.js';
-import pdfParse from 'pdf-parse';
 export const aiRouter = Router();
 /**
  * 1. POST /api/ai/chat
@@ -68,6 +67,7 @@ aiRouter.post('/pdf', upload.single('document'), async (req, res, next) => {
         let extractedText = documentText || '';
         if (req.file) {
             if (req.file.mimetype === 'application/pdf') {
+                const { default: pdfParse } = await import('pdf-parse');
                 const parsed = await pdfParse(req.file.buffer);
                 extractedText = parsed.text;
             }
