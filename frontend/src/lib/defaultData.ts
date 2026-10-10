@@ -245,29 +245,6 @@ export const defaultTeam = [
     portfolio: 'https://creativestackagency.dev',
     isActive: true,
   },
-  {
-    _id: 'tm-5',
-    id: 5,
-    name: 'Shumaila Zulfqar',
-    position: 'WordPress Developer & CMS Specialist',
-    role: 'WordPress Developer',
-    experience: '3+ Years',
-    rating: 5,
-    testimonial: 'Shumaila delivers high-converting custom WordPress websites, WooCommerce stores, and speed-optimized CMS portals tailored to client businesses.',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=400',
-    intro: 'Specializing in custom WordPress development, WooCommerce store architectures, and speed optimization for international brands.',
-    education: 'Bachelor of Science in English (2nd Semester)',
-    projects: '35+ WordPress & CMS Portals',
-    achievements: 'Delivered bespoke business sites scoring 95+ on Google PageSpeed insights.',
-    skills: ['WordPress', 'Elementor', 'WooCommerce', 'Custom Theming', 'SEO & Speed Optimization'],
-    certificates: ['WordPress Certified Professional', 'CMS Optimization'],
-    social: {
-      email: 'shumaila@creativestackagency.dev',
-      linkedin: 'https://linkedin.com',
-    },
-    portfolio: 'https://creativestackagency.dev',
-    isActive: true,
-  },
 ];
 
 export const defaultCourses = [

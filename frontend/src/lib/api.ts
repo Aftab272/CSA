@@ -13,14 +13,6 @@ export interface ApiResponse<T = any> {
   [key: string]: any;
 }
 
-import { 
-  defaultServices, 
-  defaultProjects, 
-  defaultTeam, 
-  defaultCourses, 
-  defaultReviews 
-} from './defaultData';
-
 // -------------------------------------------------------------
 // PUBLIC DATA APIS (Services, Projects, Team, Courses, Reviews)
 // -------------------------------------------------------------
@@ -29,11 +21,9 @@ export const fetchPublicServices = async (): Promise<any[]> => {
     const res = await fetch(getUrl('/api/public/services'));
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    return data.success && Array.isArray(data.services) && data.services.length > 0 
-      ? data.services 
-      : defaultServices;
+    return data.success && Array.isArray(data.services) ? data.services : [];
   } catch (err) {
-    return defaultServices;
+    return [];
   }
 };
 
@@ -42,11 +32,9 @@ export const fetchPublicProjects = async (): Promise<any[]> => {
     const res = await fetch(getUrl('/api/public/projects'));
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    return data.success && Array.isArray(data.projects) && data.projects.length > 0 
-      ? data.projects 
-      : defaultProjects;
+    return data.success && Array.isArray(data.projects) ? data.projects : [];
   } catch (err) {
-    return defaultProjects;
+    return [];
   }
 };
 
@@ -55,11 +43,9 @@ export const fetchPublicTeam = async (): Promise<any[]> => {
     const res = await fetch(getUrl('/api/public/team'));
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    return data.success && Array.isArray(data.team) && data.team.length > 0 
-      ? data.team 
-      : defaultTeam;
+    return data.success && Array.isArray(data.team) ? data.team : [];
   } catch (err) {
-    return defaultTeam;
+    return [];
   }
 };
 
@@ -68,11 +54,9 @@ export const fetchPublicCourses = async (): Promise<any[]> => {
     const res = await fetch(getUrl('/api/public/courses'));
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    return data.success && Array.isArray(data.courses) && data.courses.length > 0 
-      ? data.courses 
-      : defaultCourses;
+    return data.success && Array.isArray(data.courses) ? data.courses : [];
   } catch (err) {
-    return defaultCourses;
+    return [];
   }
 };
 
@@ -81,11 +65,9 @@ export const fetchVerifiedReviews = async (): Promise<any[]> => {
     const response = await fetch(getUrl('/api/reviews'));
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    return data.success && Array.isArray(data.reviews) && data.reviews.length > 0 
-      ? data.reviews 
-      : defaultReviews;
+    return data.success && Array.isArray(data.reviews) ? data.reviews : [];
   } catch (err) {
-    return defaultReviews;
+    return [];
   }
 };
 
