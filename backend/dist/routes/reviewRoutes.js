@@ -46,15 +46,16 @@ reviewRouter.get('/', async (_req, res) => {
         const { data, error } = await supabase
             .from('reviews')
             .select('*')
-            .order('created_at', { ascending: false });
-        if (error || !data || data.length === 0) {
-            res.json({ success: true, reviews: fallbackReviews });
+            .order('createdAt', { ascending: false });
+        if (error) {
+            console.error('Supabase reviews fetch error:', error);
+            res.status(500).json({ success: false, error: 'Cannot fetch reviews from database' });
             return;
         }
-        res.json({ success: true, reviews: data });
+        res.json({ success: true, reviews: data || [] });
     }
     catch (err) {
-        res.json({ success: true, reviews: fallbackReviews });
+        res.status(500).json({ success: false, error: 'Cannot fetch reviews from database' });
     }
 });
 // PUBLIC: Submit a client review
@@ -89,15 +90,13 @@ reviewRouter.post('/', reviewLimiter, async (req, res) => {
             rating,
             comment: rawComment,
             image: imageUrl,
-            created_at: new Date().toISOString(),
             createdAt: new Date().toISOString(),
             date: new Date().toISOString().split('T')[0],
-            status: 'approved',
         };
         const { data, error } = await supabase.from('reviews').insert([newReview]).select();
         if (error) {
             console.error('Supabase review insert error:', error);
-            res.status(500).json({ success: false, error: 'Failed to record review.' });
+            res.status(500).json({ success: false, error: error.message || 'Failed to record review.' });
             return;
         }
         res.status(201).json({

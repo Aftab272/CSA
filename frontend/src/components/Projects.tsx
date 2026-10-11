@@ -5,6 +5,7 @@ import { Search, ExternalLink, ArrowRight, Layers } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { ProjectContent } from '../types/content';
 import { fetchPublicProjects } from '../lib/api';
+import { CardSkeletonGrid, DataErrorState, EmptyDataState } from './DataStateFeedback';
 
 interface ProjectsProps {
   limit?: number;
@@ -17,20 +18,24 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
   const [selectedProject, setSelectedProject] = useState<ProjectContent | null>(null);
   const [projectsList, setProjectsList] = useState<ProjectContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const loadProjects = async () => {
+    setIsLoading(true);
+    setFetchError(null);
+    try {
+      const data = await fetchPublicProjects();
+      setProjectsList(data as ProjectContent[]);
+    } catch (error: any) {
+      setProjectsList([]);
+      setFetchError(error?.message || 'Cannot fetch projects from server.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const data = await fetchPublicProjects();
-        setProjectsList(data as ProjectContent[]);
-      } catch (error) {
-        setProjectsList([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void fetchProjects();
+    void loadProjects();
   }, []);
 
   const filteredProjects = useMemo(() => {
@@ -113,12 +118,28 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
           </div>
         )}
 
+
+
         {isLoading && (
-          <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
+          <CardSkeletonGrid count={limit || 6} />
         )}
 
+        {!isLoading && fetchError && (
+          <DataErrorState
+            title="Cannot Fetch Projects"
+            message={fetchError}
+            onRetry={loadProjects}
+          />
+        )}
+
+        {!isLoading && !fetchError && filteredProjects.length === 0 && (
+          <EmptyDataState
+            title="No Projects Found"
+            message="No projects matched your criteria on the server."
+          />
+        )}
+
+        {!isLoading && !fetchError && filteredProjects.length > 0 && (
         <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           <AnimatePresence>
             {displayedProjects.map((project) => (
@@ -136,6 +157,12 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
                     loading="lazy"
                     src={project.gallery?.[0] || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'}
                     alt={project.title}
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.src.includes('photo-1460925895917-afdab827c52f')) {
+                        target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+                      }
+                    }}
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
@@ -202,6 +229,7 @@ export default function Projects({ limit, showExploreLink }: ProjectsProps) {
             ))}
           </AnimatePresence>
         </motion.div>
+        )}
       </div>
     </section>
   );

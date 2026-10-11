@@ -293,6 +293,15 @@ export default function AdminDashboardPage() {
   const [courseForm, setCourseForm] = useState(initialCourseForm);
   const [editingCourseId, setEditingCourseId] = useState<string | null>(null);
 
+  const [adminUser, setAdminUser] = useState<{ id?: string; email?: string; role?: string } | null>(null);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+
   const getToken = () => localStorage.getItem('csa_admin_token') || '';
 
   useEffect(() => {
@@ -306,6 +315,7 @@ export default function AdminDashboardPage() {
     authApi.getSession(token).then((res) => {
       if (res.success && res.user) {
         setIsAuthenticated(true);
+        setAdminUser(res.user);
         void Promise.all([
           fetchInquiries(),
           fetchServices(),
@@ -333,6 +343,7 @@ export default function AdminDashboardPage() {
       if (res.success && res.token) {
         localStorage.setItem('csa_admin_token', res.token);
         setIsAuthenticated(true);
+        if (res.user) setAdminUser(res.user);
         void Promise.all([
           fetchInquiries(),
           fetchServices(),
@@ -550,8 +561,77 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleSyncEtsyCourse = async () => {
+    setIsLoading(true);
+    try {
+      const res = await adminApi.seedEtsyCourse(getToken());
+      if (res.success) {
+        setFlash(res.message || 'Etsy Course synced to Database successfully!');
+        await fetchCourses();
+      } else {
+        setFlash(res.error || 'Failed to sync Etsy Course.');
+      }
+    } catch (err: any) {
+      setFlash(err.message || 'Sync failed.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleExportData = () => {
+    const backup = {
+      exportedAt: new Date().toISOString(),
+      inquiries,
+      services,
+      projects,
+      team,
+      courses,
+      seoData,
+      footerData,
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `csa-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    setFlash('Full system data backup exported successfully!');
+  };
+
+  const handleChangePassword = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!passwordForm.newPassword || passwordForm.newPassword.length < 6) {
+      setPasswordMessage({ text: 'New password must be at least 6 characters.', type: 'error' });
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordMessage({ text: 'New passwords do not match.', type: 'error' });
+      return;
+    }
+
+    setPasswordLoading(true);
+    setPasswordMessage(null);
+    try {
+      const res = await authApi.changePassword(
+        getToken(),
+        passwordForm.newPassword,
+        passwordForm.currentPassword || undefined
+      );
+      if (res.success) {
+        setPasswordMessage({ text: res.message || 'Password updated successfully!', type: 'success' });
+        setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      } else {
+        setPasswordMessage({ text: res.error || 'Failed to update password.', type: 'error' });
+      }
+    } catch (err: any) {
+      setPasswordMessage({ text: err.message || 'Error updating password.', type: 'error' });
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
   const seedExistingContent = async () => {
-    setFlash('Seeding is managed securely from server backend.');
+    await handleSyncEtsyCourse();
   };
 
   const handleLogout = async () => {
@@ -1193,18 +1273,72 @@ export default function AdminDashboardPage() {
             {activeTab === 'overview' && (
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold font-display mb-6">Overview</h2>
-                <div className="mb-6 bg-primary border border-white/10 rounded-2xl p-4 sm:p-5">
-                  <p className="text-sm text-gray-300 mb-4">
-                    Use GitHub raw image links in admin forms. Existing site data (services,
-                    projects, team, and courses) can be synced into MongoDB with one click.
-                  </p>
-                  <button
-                    onClick={() => void seedExistingContent()}
-                    className="relative overflow-hidden group/btn inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] hover:-translate-y-0.5 transition-all duration-300"
-                  >
-                    <Database size={16} />
-                    Sync Current Site Data to Database
-                  </button>
+                <div className="mb-6 bg-primary/60 border border-white/10 rounded-2xl p-5 space-y-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                      <h3 className="font-bold text-white text-base flex items-center gap-2">
+                        <Sparkles size={18} className="text-accent" />
+                        <span>Agency Control &amp; Quick Operations</span>
+                      </h3>
+                      <p className="text-xs text-slate-300 mt-0.5">
+                        Central management for live database records, course catalogs, backups, and security settings.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        Supabase Database Live
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3 pt-1">
+                    <button
+                      onClick={() => void handleSyncEtsyCourse()}
+                      disabled={isLoading}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md hover:shadow-lg transition cursor-pointer"
+                    >
+                      <Sparkles size={14} />
+                      Sync Etsy Course to DB
+                    </button>
+
+                    <button
+                      onClick={handleExportData}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-100 font-bold text-xs border border-white/15 transition cursor-pointer"
+                    >
+                      <Database size={14} />
+                      Export Data Backup (JSON)
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsLoading(true);
+                        Promise.all([
+                          fetchInquiries(),
+                          fetchServices(),
+                          fetchProjects(),
+                          fetchTeam(),
+                          fetchCourses(),
+                        ]).then(() => {
+                          setFlash('All live data refreshed from backend!');
+                          setIsLoading(false);
+                        });
+                      }}
+                      disabled={isLoading}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-100 font-bold text-xs border border-white/15 transition cursor-pointer"
+                    >
+                      <Clock size={14} />
+                      Refresh Live Data
+                    </button>
+
+                    <button
+                      onClick={() => navigateToTab('site')}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent/20 hover:bg-accent/30 text-accent font-bold text-xs border border-accent/30 transition cursor-pointer"
+                    >
+                      <Lock size={14} />
+                      Change Password &amp; Security
+                    </button>
+                  </div>
                 </div>
                 <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
                   {[
@@ -1714,14 +1848,30 @@ export default function AdminDashboardPage() {
 
             {activeTab === 'courses' && (
               <div>
-                <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-2xl font-bold font-display text-white">
-                    {isCourseEditor ? 'Course Editor' : 'Courses Management'}
-                  </h2>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-3">
+                  <div>
+                    <h2 className="text-2xl font-bold font-display text-white">
+                      {isCourseEditor ? 'Course Editor' : 'Courses Management'}
+                    </h2>
+                    <p className="text-xs text-slate-300 mt-0.5">
+                      Configure academy courses, instructors, fees, syllabus modules, and certifications.
+                    </p>
+                  </div>
                   {!isCourseEditor && (
-                    <button onClick={() => openCreatePage('courses')} className="px-4 py-2 rounded-xl bg-accent text-primary font-bold">
-                      Add Course
-                    </button>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button 
+                        onClick={handleSyncEtsyCourse} 
+                        disabled={isLoading}
+                        className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md hover:shadow-lg transition cursor-pointer"
+                        title="Ensure Etsy Course is seeded into Supabase database"
+                      >
+                        <Sparkles size={14} />
+                        <span>Sync Etsy Course to DB</span>
+                      </button>
+                      <button onClick={() => openCreatePage('courses')} className="px-4 py-2 rounded-xl bg-accent text-primary font-bold text-xs">
+                        Add Course
+                      </button>
+                    </div>
                   )}
                 </div>
                 {isCourseEditor && (
@@ -1802,7 +1952,89 @@ export default function AdminDashboardPage() {
               <div className="space-y-8">
                 <div>
                   <h2 className="text-2xl font-bold font-display mb-1 text-white">Site Settings & Governance</h2>
-                  <p className="text-sm text-gray-400">Manage branding, SEO metadata, contact information, and audit live integrated services.</p>
+                  <p className="text-sm text-gray-400">Manage branding, SEO metadata, contact information, credentials, and audit live integrated services.</p>
+                </div>
+
+                {/* Admin Credentials & Password Management */}
+                <div className="bg-primary/60 border border-white/10 rounded-2xl p-6 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 text-accent font-semibold text-base">
+                      <Lock size={18} />
+                      <h3>Admin Security &amp; Password Management</h3>
+                    </div>
+                    {adminUser?.email && (
+                      <span className="text-xs bg-accent/20 text-accent px-3 py-1 rounded-full font-bold self-start sm:self-auto">
+                        Logged in: {adminUser.email}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-300">
+                    Change your admin credentials securely. Passwords must be at least 6 characters long.
+                  </p>
+
+                  {passwordMessage && (
+                    <div className={`p-3 rounded-xl border text-xs font-semibold ${
+                      passwordMessage.type === 'success' 
+                        ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400' 
+                        : 'bg-rose-500/15 border-rose-500/40 text-rose-400'
+                    }`}>
+                      {passwordMessage.text}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleChangePassword} className="grid md:grid-cols-3 gap-4 pt-1">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                        Current Password
+                      </label>
+                      <input
+                        type="password"
+                        value={passwordForm.currentPassword}
+                        onChange={(e) => setPasswordForm((p) => ({ ...p, currentPassword: e.target.value }))}
+                        placeholder="Current password"
+                        className="w-full px-4 py-2.5 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                        New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={passwordForm.newPassword}
+                        onChange={(e) => setPasswordForm((p) => ({ ...p, newPassword: e.target.value }))}
+                        placeholder="Min 6 characters"
+                        className="w-full px-4 py-2.5 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                        Confirm New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={passwordForm.confirmPassword}
+                        onChange={(e) => setPasswordForm((p) => ({ ...p, confirmPassword: e.target.value }))}
+                        placeholder="Repeat new password"
+                        className="w-full px-4 py-2.5 rounded-xl bg-secondary/40 border border-white/10 text-white focus:outline-none focus:border-accent text-sm"
+                        required
+                      />
+                    </div>
+
+                    <div className="md:col-span-3 flex justify-end pt-1">
+                      <button
+                        type="submit"
+                        disabled={passwordLoading}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-primary font-bold rounded-xl shadow-lg hover:brightness-110 transition cursor-pointer text-xs disabled:opacity-50"
+                      >
+                        <Lock size={14} />
+                        {passwordLoading ? 'Updating Password...' : 'Update Password'}
+                      </button>
+                    </div>
+                  </form>
                 </div>
 
                 {/* Brand & SEO Configuration */}
@@ -1930,7 +2162,7 @@ export default function AdminDashboardPage() {
                         <h4 className="font-bold text-white text-base">Google AdSense</h4>
                         <p className="text-xs text-gray-300 mt-1">Publisher ID:</p>
                         <code className="text-xs text-emerald-300 bg-black/40 px-2 py-1 rounded block mt-1 font-mono break-all">
-                          pub-5523355095881378
+                          pub-9472065859777644
                         </code>
                         <div className="mt-3 space-y-1.5 text-xs text-gray-300">
                           <p className="flex items-center gap-1.5">

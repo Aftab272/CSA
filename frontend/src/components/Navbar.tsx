@@ -42,11 +42,14 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 font-sans px-4 md:px-8 py-4 ${
-        isScrolled 
-          ? 'bg-white/85 dark:bg-primary/85 backdrop-blur-xl border-b border-gray-200/80 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]' 
-          : 'bg-transparent'
-      }`}>
+      <nav 
+        data-google-ad-ignore="true"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 font-sans px-4 md:px-8 py-4 ${
+          isScrolled 
+            ? 'bg-white/85 dark:bg-primary/85 backdrop-blur-xl border-b border-gray-200/80 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.2)]' 
+            : 'bg-transparent'
+        }`}
+      >
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3.5 hover:opacity-90 transition duration-300">
             <img 

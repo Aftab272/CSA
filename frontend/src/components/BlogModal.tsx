@@ -39,8 +39,14 @@ export default function BlogModal({ post, onClose }: BlogModalProps) {
           
           <img 
             loading="lazy" 
-            src={post.image} 
+            src={post.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'} 
             alt={post.title} 
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.src.includes('photo-1460925895917-afdab827c52f')) {
+                target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+              }
+            }}
             className="w-full h-60 sm:h-72 object-cover rounded-2xl mb-6 shadow-md border border-gray-100 dark:border-white/5" 
           />
           

@@ -111,7 +111,15 @@ export default function Footer() {
             <div className="lg:col-span-4 space-y-5">
               <div className="flex items-center gap-3">
                 {footerData.logoUrl && footerData.logoUrl !== '/logo.png' && footerData.logoUrl !== '/logo-white.png' ? (
-                  <img loading="lazy" src={footerData.logoUrl} alt="Logo" className="w-12 h-12 object-contain" />
+                  <img 
+                    loading="lazy" 
+                    src={footerData.logoUrl} 
+                    alt="Logo" 
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = theme === 'dark' ? logoDark : logoLight;
+                    }}
+                    className="w-12 h-12 object-contain" 
+                  />
                 ) : (
                   <img 
                     loading="lazy" 

@@ -254,7 +254,7 @@ export default function Hero() {
             setIsVideoLoaded(true);
             setIsPlaying(true);
           }}
-          className="hero-bg-video absolute inset-0 w-full h-full min-w-full min-h-full object-cover scale-105 transform opacity-40 sm:opacity-25 dark:opacity-45 sm:dark:opacity-30 motion-safe:transition-transform duration-1000 filter contrast-125"
+          className="hero-bg-video absolute inset-0 w-full h-full min-w-full min-h-full object-cover scale-105 transform opacity-50 sm:opacity-40 dark:opacity-85 sm:dark:opacity-75 motion-safe:transition-transform duration-1000 filter contrast-130 brightness-110 dark:brightness-125"
         >
           {/* Verified High-Performance Developer Code Streams */}
           <source 
@@ -273,9 +273,9 @@ export default function Hero() {
           className="absolute inset-0 w-full h-full pointer-events-none z-[1]"
         />
 
-        {/* 3. Theme-Adaptive Backdrop Overlay for 100% Readability while preserving video motion */}
+        {/* 3. Theme-Adaptive Backdrop Overlay tuned for vibrant motion video visibility and crystal-clear text readability */}
         <div 
-          className="absolute inset-0 transition-colors duration-500 bg-gradient-to-b from-white/70 via-white/80 to-white/95 dark:from-primary/75 dark:via-primary/85 dark:to-primary/95 backdrop-blur-[2px] sm:backdrop-blur-[4px] z-[2]"
+          className="absolute inset-0 transition-colors duration-500 bg-gradient-to-b from-white/60 via-white/70 to-white/90 dark:from-primary/35 dark:via-primary/50 dark:to-primary/80 backdrop-blur-[1px] sm:backdrop-blur-[2px] z-[2]"
         />
 
         {/* Ambient Gradient Glows (Subtle Cyber Meshes) */}

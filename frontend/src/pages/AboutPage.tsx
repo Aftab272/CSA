@@ -75,6 +75,12 @@ export default function AboutPage() {
               <img 
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" 
                 alt="Our History" 
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('photo-1522071820081-009f0129c71c')) {
+                    target.src = 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80';
+                  }
+                }}
                 className="relative z-10 rounded-3xl shadow-2xl border border-gray-200 dark:border-white/10"
               />
             </div>
@@ -138,6 +144,12 @@ export default function AboutPage() {
               <img 
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" 
                 alt="Why Choose Us" 
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('photo-1551288049-bebda4e38f71')) {
+                    target.src = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80';
+                  }
+                }}
                 className="rounded-3xl shadow-2xl border border-gray-200 dark:border-white/10"
               />
             </div>

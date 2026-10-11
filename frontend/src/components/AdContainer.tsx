@@ -1,30 +1,93 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface AdContainerProps {
   id: string;
+  slot?: string; // Optional Google AdSense Ad Slot ID
+  format?: 'auto' | 'fluid' | 'rectangle' | 'horizontal';
+  responsive?: boolean;
   className?: string;
-  label?: string;
 }
 
-const AdContainer: React.FC<AdContainerProps> = ({ id, className = '', label = 'Advertisement' }) => {
-  // Enhanced Ad Slot with Brand Integration
+const ADSENSE_CLIENT_ID = 'ca-pub-9472065859777644';
+
+const AdContainer: React.FC<AdContainerProps> = ({
+  id,
+  slot,
+  format = 'auto',
+  responsive = true,
+  className = '',
+}) => {
+  const adRef = useRef<HTMLModElement | null>(null);
+  const isRequestedRef = useRef(false);
+  const [isFilled, setIsFilled] = useState(false);
+
+  useEffect(() => {
+    if (isRequestedRef.current) return;
+
+    // Trigger Google AdSense ad request once mounted
+    const timer = setTimeout(() => {
+      try {
+        if (typeof window !== 'undefined' && adRef.current) {
+          const status = adRef.current.getAttribute('data-ad-status');
+          if (!status) {
+            ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+            isRequestedRef.current = true;
+          }
+        }
+      } catch (e) {
+        // Silently handle adblock or duplicate push
+      }
+    }, 150);
+
+    // Watch for AdSense to fill the slot with an ad iframe or status attribute
+    const el = adRef.current;
+    let observer: MutationObserver | null = null;
+    if (el) {
+      observer = new MutationObserver(() => {
+        const status = el.getAttribute('data-ad-status');
+        const hasIframe = el.querySelector('iframe') !== null;
+        if (status === 'filled' || hasIframe) {
+          setIsFilled(true);
+        } else if (status === 'unfilled') {
+          setIsFilled(false);
+        }
+      });
+
+      observer.observe(el, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+        attributeFilter: ['data-ad-status', 'data-adsbygoogle-status'],
+      });
+    }
+
+    return () => {
+      clearTimeout(timer);
+      if (observer) observer.disconnect();
+    };
+  }, [id, slot]);
+
   return (
-    <div 
-      id={id} 
-      className={`ad-container my-12 border border-accent/20 bg-accent/[0.02] rounded-3xl overflow-hidden flex items-center justify-center min-h-[140px] transition-all duration-500 hover:border-accent/40 group relative ${className}`}
+    <div
+      id={id}
+      className={`ad-container w-full text-center transition-all duration-300 ${
+        isFilled ? 'my-6 sm:my-8 block opacity-100' : 'h-0 m-0 p-0 border-0 opacity-0 pointer-events-none overflow-hidden'
+      } ${className}`}
+      style={!isFilled ? { minHeight: 0, height: 0, padding: 0, margin: 0, border: 'none' } : undefined}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-accent/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="flex flex-col items-center gap-3 relative z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent/60 group-hover:text-accent transition-colors duration-300">{label}</span>
-          <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-        </div>
-        <div className="w-12 h-[1px] bg-white/10 group-hover:w-24 group-hover:bg-accent/40 transition-all duration-500" />
-        <p className="text-xs text-gray-500 font-medium italic opacity-60 group-hover:opacity-100 transition-opacity duration-300">
-          Premium Advertising Space Available
-        </p>
-      </div>
+      <ins
+        ref={adRef}
+        className="adsbygoogle"
+        style={{
+          display: 'block',
+          width: '100%',
+          textAlign: 'center',
+        }}
+        data-ad-client={ADSENSE_CLIENT_ID}
+        {...(slot ? { 'data-ad-slot': slot } : {})}
+        data-ad-format={format}
+        data-full-width-responsive={responsive ? 'true' : 'false'}
+      />
     </div>
   );
 };

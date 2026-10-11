@@ -1,0 +1,86 @@
+[
+  {
+    "id": "c1",
+    "name": "Web Development",
+    "slug": "web-development",
+    "order": 1,
+    "isHidden": false
+  },
+  {
+    "id": "c2",
+    "name": "React.js",
+    "slug": "react-js",
+    "order": 2,
+    "isHidden": false
+  },
+  {
+    "id": "c3",
+    "name": "JavaScript",
+    "slug": "javascript",
+    "order": 3,
+    "isHidden": false
+  },
+  {
+    "id": "c4",
+    "name": "Node.js",
+    "slug": "node-js",
+    "order": 4,
+    "isHidden": false
+  },
+  {
+    "id": "c5",
+    "name": "Express.js",
+    "slug": "express-js",
+    "order": 5,
+    "isHidden": false
+  },
+  {
+    "id": "c6",
+    "name": "MongoDB & SQL",
+    "slug": "mongodb-sql",
+    "order": 6,
+    "isHidden": false
+  },
+  {
+    "id": "c7",
+    "name": "WordPress",
+    "slug": "wordpress",
+    "order": 7,
+    "isHidden": false
+  },
+  {
+    "id": "c8",
+    "name": "Shopify",
+    "slug": "shopify",
+    "order": 8,
+    "isHidden": false
+  },
+  {
+    "id": "c11",
+    "name": "UI/UX Design",
+    "slug": "ui-ux-design",
+    "order": 9,
+    "isHidden": false
+  },
+  {
+    "id": "c13",
+    "name": "SEO & Speed",
+    "slug": "seo-speed",
+    "order": 10,
+    "isHidden": false
+  },
+  {
+    "id": "c18",
+    "name": "Freelancing",
+    "slug": "freelancing",
+    "order": 11,
+    "isHidden": false
+  },
+  {
+    "id": "c21",
+    "name": "DevOps & Cloud",
+    "slug": "devops-cloud",
+    "order": 12,
+    "isHidden": false
+  }
+]

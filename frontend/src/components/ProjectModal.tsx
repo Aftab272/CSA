@@ -37,6 +37,12 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
           loading="lazy" 
           src={project.gallery?.[0] || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'} 
           alt={project.title} 
+          onError={(e) => {
+            const target = e.currentTarget;
+            if (!target.src.includes('photo-1460925895917-afdab827c52f')) {
+              target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+            }
+          }}
           className="w-full h-64 sm:h-72 object-cover rounded-2xl mb-6 shadow-md border border-gray-100 dark:border-white/5" 
         />
         

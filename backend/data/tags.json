@@ -1,0 +1,37 @@
+[
+  {
+    "id": "t1",
+    "name": "Full Stack",
+    "slug": "full-stack"
+  },
+  {
+    "id": "t2",
+    "name": "React 19",
+    "slug": "react-19"
+  },
+  {
+    "id": "t3",
+    "name": "TypeScript",
+    "slug": "typescript"
+  },
+  {
+    "id": "t4",
+    "name": "Backend Security",
+    "slug": "backend-security"
+  },
+  {
+    "id": "t5",
+    "name": "SEO Optimization",
+    "slug": "seo-optimization"
+  },
+  {
+    "id": "t6",
+    "name": "DevOps & CI/CD",
+    "slug": "devops-ci-cd"
+  },
+  {
+    "id": "t7",
+    "name": "Career & Freelancing",
+    "slug": "career-freelancing"
+  }
+]

@@ -59,7 +59,18 @@ export default function ServiceModal({ service, onClose }: ServiceModalProps) {
             </ol>
           </nav>
 
-          <img loading="lazy" src={service.image} alt={service.title} className="w-full h-56 md:h-64 object-cover rounded-2xl mb-6 shadow-md border border-gray-100 dark:border-white/5" />
+          <img 
+            loading="lazy" 
+            src={service.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'} 
+            alt={service.title} 
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.src.includes('photo-1460925895917-afdab827c52f')) {
+                target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+              }
+            }}
+            className="w-full h-56 md:h-64 object-cover rounded-2xl mb-6 shadow-md border border-gray-100 dark:border-white/5" 
+          />
           
           <div className="space-y-4">
             <span className="bg-blue-500/10 text-blue-600 dark:text-cyan-400 text-xs font-extrabold uppercase tracking-wider px-3.5 py-1 rounded-full inline-block border border-blue-500/20">

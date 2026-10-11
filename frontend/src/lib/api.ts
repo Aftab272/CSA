@@ -17,58 +17,76 @@ export interface ApiResponse<T = any> {
 // PUBLIC DATA APIS (Services, Projects, Team, Courses, Reviews)
 // -------------------------------------------------------------
 export const fetchPublicServices = async (): Promise<any[]> => {
-  try {
-    const res = await fetch(getUrl('/api/public/services'));
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data.success && Array.isArray(data.services) ? data.services : [];
-  } catch (err) {
-    return [];
+  const res = await fetch(getUrl('/api/public/services'));
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.success === false) {
+    throw new Error(data.error || `Failed to fetch services (HTTP ${res.status})`);
   }
+  return Array.isArray(data.services) ? data.services : [];
 };
 
 export const fetchPublicProjects = async (): Promise<any[]> => {
-  try {
-    const res = await fetch(getUrl('/api/public/projects'));
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data.success && Array.isArray(data.projects) ? data.projects : [];
-  } catch (err) {
-    return [];
+  const res = await fetch(getUrl('/api/public/projects'));
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.success === false) {
+    throw new Error(data.error || `Failed to fetch projects (HTTP ${res.status})`);
   }
+  return Array.isArray(data.projects) ? data.projects : [];
 };
 
 export const fetchPublicTeam = async (): Promise<any[]> => {
-  try {
-    const res = await fetch(getUrl('/api/public/team'));
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data.success && Array.isArray(data.team) ? data.team : [];
-  } catch (err) {
-    return [];
+  const res = await fetch(getUrl('/api/public/team'));
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.success === false) {
+    throw new Error(data.error || `Failed to fetch team members (HTTP ${res.status})`);
   }
+  return Array.isArray(data.team) ? data.team : [];
 };
 
 export const fetchPublicCourses = async (): Promise<any[]> => {
-  try {
-    const res = await fetch(getUrl('/api/public/courses'));
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data.success && Array.isArray(data.courses) ? data.courses : [];
-  } catch (err) {
-    return [];
+  const res = await fetch(getUrl('/api/public/courses'));
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.success === false) {
+    throw new Error(data.error || `Failed to fetch courses (HTTP ${res.status})`);
   }
+  return Array.isArray(data.courses) ? data.courses : [];
 };
 
 export const fetchVerifiedReviews = async (): Promise<any[]> => {
-  try {
-    const response = await fetch(getUrl('/api/reviews'));
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    return data.success && Array.isArray(data.reviews) ? data.reviews : [];
-  } catch (err) {
-    return [];
+  const response = await fetch(getUrl('/api/reviews'));
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data.success === false) {
+    throw new Error(data.error || `Failed to fetch reviews (HTTP ${response.status})`);
   }
+  return Array.isArray(data.reviews) ? data.reviews : [];
+};
+
+export const fetchPublicBlogs = async (): Promise<{
+  posts: any[];
+  categories: any[];
+  authors: any[];
+  tags: any[];
+}> => {
+  const res = await fetch(getUrl('/api/public/blogs'));
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.success === false) {
+    throw new Error(data.error || `Failed to fetch blogs (HTTP ${res.status})`);
+  }
+  return {
+    posts: Array.isArray(data.posts) ? data.posts : [],
+    categories: Array.isArray(data.categories) ? data.categories : [],
+    authors: Array.isArray(data.authors) ? data.authors : [],
+    tags: Array.isArray(data.tags) ? data.tags : [],
+  };
+};
+
+export const fetchPublicBlogBySlug = async (slug: string): Promise<any> => {
+  const res = await fetch(getUrl(`/api/public/blogs/${slug}`));
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.success === false) {
+    throw new Error(data.error || `Failed to fetch article (HTTP ${res.status})`);
+  }
+  return data;
 };
 
 // -------------------------------------------------------------
@@ -149,6 +167,17 @@ export const authApi = {
   getSession: async (token: string): Promise<{ success: boolean; user?: any; error?: string }> => {
     const res = await fetch(getUrl('/api/auth/session'), {
       headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.json();
+  },
+  changePassword: async (token: string, newPassword: string, currentPassword?: string): Promise<{ success: boolean; message?: string; error?: string }> => {
+    const res = await fetch(getUrl('/api/auth/change-password'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ newPassword, currentPassword }),
     });
     return res.json();
   },
@@ -312,6 +341,13 @@ export const adminApi = {
     });
     return res.json();
   },
+  seedEtsyCourse: async (token: string) => {
+    const res = await fetch(getUrl('/api/admin/courses/seed-etsy'), {
+      method: 'POST',
+      headers: adminApi.getAuthHeaders(token),
+    });
+    return res.json();
+  },
 
   // Newsletter Subscribers
   getSubscribers: async (token: string) => {
@@ -322,6 +358,52 @@ export const adminApi = {
   },
   deleteSubscriber: async (id: string, token: string) => {
     const res = await fetch(getUrl(`/api/newsletter/subscribers/${id}`), {
+      method: 'DELETE',
+      headers: adminApi.getAuthHeaders(token),
+    });
+    return res.json();
+  },
+
+  // Blogs Management
+  getAdminBlogs: async (token: string) => {
+    const res = await fetch(getUrl('/api/admin/blogs'), {
+      headers: adminApi.getAuthHeaders(token),
+    });
+    return res.json();
+  },
+  createBlog: async (payload: any, token: string) => {
+    const res = await fetch(getUrl('/api/admin/blogs'), {
+      method: 'POST',
+      headers: adminApi.getAuthHeaders(token),
+      body: JSON.stringify(payload),
+    });
+    return res.json();
+  },
+  updateBlog: async (id: string, payload: any, token: string) => {
+    const res = await fetch(getUrl(`/api/admin/blogs/${id}`), {
+      method: 'PUT',
+      headers: adminApi.getAuthHeaders(token),
+      body: JSON.stringify(payload),
+    });
+    return res.json();
+  },
+  deleteBlog: async (id: string, token: string) => {
+    const res = await fetch(getUrl(`/api/admin/blogs/${id}`), {
+      method: 'DELETE',
+      headers: adminApi.getAuthHeaders(token),
+    });
+    return res.json();
+  },
+  createCategory: async (payload: any, token: string) => {
+    const res = await fetch(getUrl('/api/admin/blogs/categories'), {
+      method: 'POST',
+      headers: adminApi.getAuthHeaders(token),
+      body: JSON.stringify(payload),
+    });
+    return res.json();
+  },
+  deleteCategory: async (id: string, token: string) => {
+    const res = await fetch(getUrl(`/api/admin/blogs/categories/${id}`), {
       method: 'DELETE',
       headers: adminApi.getAuthHeaders(token),
     });

@@ -268,7 +268,69 @@ adminRouter.get('/courses', async (req: AuthenticatedRequest, res: Response): Pr
       res.status(500).json({ success: false, error: error.message });
       return;
     }
-    res.json({ success: true, courses: data || [] });
+    const courses = (data || []).map((item: any) => ({
+      ...item,
+      hasCertificate: item.has_certificate,
+      isActive: item.is_active,
+    }));
+    res.json({ success: true, courses });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+adminRouter.post('/courses/seed-etsy', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const client = getClient(req);
+    const { data: existing } = await client.from('courses').select('id, title');
+    const hasEtsy = (existing || []).some((c: any) => c.title && c.title.toLowerCase().includes('etsy'));
+    if (hasEtsy) {
+      res.json({ success: true, message: 'Etsy course is already in the database' });
+      return;
+    }
+
+    const etsyPayload = {
+      title: 'Etsy Digital Products Mastery',
+      image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80',
+      duration: '4 Weeks',
+      instructor: {
+        name: 'Creative Stack Agency Faculty',
+        designation: 'Etsy & Digital Products Mentors',
+        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&h=200',
+      },
+      level: 'Beginner',
+      syllabus: [
+        'MODULE 1: Introduction to Etsy & Marketplace Basics',
+        'MODULE 2: Shop Creation & Brand Identity Setup',
+        'MODULE 3: Payoneer, Bank & Payment Methods',
+        'MODULE 4: Digital Product Research & Niches',
+        'MODULE 5: Keyword Research & Etsy SEO',
+        'MODULE 6: Canva Mastery for Digital Assets',
+        'MODULE 7: AI Tools & Image Generation',
+        'MODULE 8: Product Creation & PDF Templates',
+        'MODULE 9: Professional Mockups & Listing Covers',
+        'MODULE 10: Listing Creation & File Uploads',
+        'MODULE 11: Pricing Strategy & Platform Fees',
+        'MODULE 12: Shop Growth, Stats & 30-Day Plan',
+      ],
+      seats: 25,
+      has_certificate: true,
+      features: [
+        '10 Hands-on Practical Projects',
+        '100% Online Classes',
+        'Etsy Shop & Payoneer Setup Guidance',
+      ],
+      price: 'PKR 4,999',
+      description: 'Master Etsy shop creation, payment setup, Canva, AI product generation, SEO, and professional mockups in a 1-month intensive live training.',
+      is_active: true,
+    };
+
+    const { data, error } = await client.from('courses').insert([etsyPayload]).select();
+    if (error) {
+      res.status(500).json({ success: false, error: error.message });
+      return;
+    }
+    res.status(201).json({ success: true, message: 'Etsy course seeded into database successfully', course: data?.[0] });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }

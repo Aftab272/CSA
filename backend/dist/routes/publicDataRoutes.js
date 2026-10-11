@@ -355,18 +355,18 @@ publicDataRouter.get('/services', async (_req, res) => {
             .select('*')
             .eq('is_active', true)
             .order('created_at', { ascending: false });
-        if (error || !data || data.length === 0) {
-            res.json({ success: true, services: fallbackServices });
+        if (error) {
+            res.status(500).json({ success: false, error: `Cannot fetch services: ${error.message}` });
             return;
         }
-        const services = data.map(item => ({
+        const services = (data || []).map(item => ({
             ...item,
             isActive: item.is_active,
         }));
         res.json({ success: true, services });
     }
     catch (err) {
-        res.json({ success: true, services: fallbackServices });
+        res.status(500).json({ success: false, error: `Cannot fetch services: ${err.message || 'Server error'}` });
     }
 });
 // GET /api/public/projects: Published projects
@@ -377,11 +377,11 @@ publicDataRouter.get('/projects', async (_req, res) => {
             .select('*')
             .eq('is_published', true)
             .order('created_at', { ascending: false });
-        if (error || !data || data.length === 0) {
-            res.json({ success: true, projects: fallbackProjects });
+        if (error) {
+            res.status(500).json({ success: false, error: `Cannot fetch projects: ${error.message}` });
             return;
         }
-        const projects = data.map(item => ({
+        const projects = (data || []).map(item => ({
             ...item,
             shortDescription: item.short_description,
             techStack: item.tech_stack,
@@ -393,7 +393,7 @@ publicDataRouter.get('/projects', async (_req, res) => {
         res.json({ success: true, projects });
     }
     catch (err) {
-        res.json({ success: true, projects: fallbackProjects });
+        res.status(500).json({ success: false, error: `Cannot fetch projects: ${err.message || 'Server error'}` });
     }
 });
 // GET /api/public/team: Active team members
@@ -404,11 +404,11 @@ publicDataRouter.get('/team', async (_req, res) => {
             .select('*')
             .eq('is_active', true)
             .order('created_at', { ascending: false });
-        if (error || !data || data.length === 0) {
-            res.json({ success: true, team: fallbackTeam });
+        if (error) {
+            res.status(500).json({ success: false, error: `Cannot fetch team: ${error.message}` });
             return;
         }
-        const team = data.map(item => ({
+        const team = (data || []).map(item => ({
             ...item,
             isActive: item.is_active,
             order: item.order ?? item.social?.order ?? 999,
@@ -417,7 +417,7 @@ publicDataRouter.get('/team', async (_req, res) => {
         res.json({ success: true, team });
     }
     catch (err) {
-        res.json({ success: true, team: fallbackTeam });
+        res.status(500).json({ success: false, error: `Cannot fetch team: ${err.message || 'Server error'}` });
     }
 });
 // GET /api/public/courses: Active courses
@@ -428,11 +428,11 @@ publicDataRouter.get('/courses', async (_req, res) => {
             .select('*')
             .eq('is_active', true)
             .order('created_at', { ascending: false });
-        if (error || !data || data.length === 0) {
-            res.json({ success: true, courses: fallbackCourses });
+        if (error) {
+            res.status(500).json({ success: false, error: `Cannot fetch courses: ${error.message}` });
             return;
         }
-        const courses = data.map(item => ({
+        const courses = (data || []).map(item => ({
             ...item,
             isActive: item.is_active,
             originalPrice: item.original_price,
@@ -441,6 +441,6 @@ publicDataRouter.get('/courses', async (_req, res) => {
         res.json({ success: true, courses });
     }
     catch (err) {
-        res.json({ success: true, courses: fallbackCourses });
+        res.status(500).json({ success: false, error: `Cannot fetch courses: ${err.message || 'Server error'}` });
     }
 });

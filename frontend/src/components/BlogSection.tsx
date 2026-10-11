@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
-import { blogPosts, BlogPost } from '../data/blog';
+import { useBlog } from '../context/BlogContext';
 import { Link } from 'react-router-dom';
-import BlogModal from './BlogModal';
+import { ArrowRight, Clock } from 'lucide-react';
 
 interface BlogSectionProps {
   showViewAll?: boolean;
 }
 
 export default function BlogSection({ showViewAll = true }: BlogSectionProps) {
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const { posts, categories, isLoading } = useBlog();
+
+  const published = posts.filter(p => p.status === 'published').slice(0, 3);
+
+  const getCategoryName = (catId: string) => {
+    return categories.find(c => c.id === catId)?.name || 'Engineering';
+  };
 
   return (
     <section id="blog" className="px-6 py-16 md:px-8 md:py-24 bg-slate-50/50 dark:bg-primary text-gray-900 dark:text-white font-sans transition-colors duration-300">
-      {selectedPost && <BlogModal post={selectedPost} onClose={() => setSelectedPost(null)} />}
-
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-12 sm:mb-16 gap-6">
           <div>
@@ -32,49 +36,74 @@ export default function BlogSection({ showViewAll = true }: BlogSectionProps) {
             </Link>
           )}
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogPosts.map((post, index) => (
-            <motion.div 
-              key={post.id}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.08, duration: 0.3 }}
-              whileHover={{ y: -4 }}
-              onClick={() => setSelectedPost(post)}
-              className="group rounded-2xl bg-white dark:bg-white/4 border border-gray-200 dark:border-white/10 hover:border-blue-500/50 dark:hover:border-blue-500/50 shadow-sm hover:shadow-lg transition-all duration-300 p-6 flex flex-col justify-between cursor-pointer"
-            >
-              <div className="space-y-3">
-                {/* Meta Header: Category Badge + Read Time */}
-                <div className="flex items-center justify-between gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-600 dark:text-cyan-400 border border-blue-500/20">
-                    {post.category}
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                    {post.readTime}
-                  </span>
+
+        {/* Skeleton loading state */}
+        {isLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div key={idx} className="rounded-2xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 space-y-4 animate-pulse">
+                <div className="flex justify-between">
+                  <div className="w-20 h-5 bg-slate-200 dark:bg-white/10 rounded-full" />
+                  <div className="w-16 h-5 bg-slate-200 dark:bg-white/10 rounded-full" />
+                </div>
+                <div className="w-3/4 h-6 bg-slate-200 dark:bg-white/10 rounded-md" />
+                <div className="w-full h-12 bg-slate-200 dark:bg-white/10 rounded-md" />
+                <div className="pt-4 border-t border-gray-100 dark:border-white/5 w-1/3 h-4 bg-slate-200 dark:bg-white/10 rounded" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Dynamic Published Articles from Backend */}
+        {!isLoading && published.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {published.map((post, index) => (
+              <motion.div 
+                key={post.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08, duration: 0.3 }}
+                whileHover={{ y: -4 }}
+                className="group rounded-2xl bg-white dark:bg-white/4 border border-gray-200 dark:border-white/10 hover:border-blue-500/50 dark:hover:border-blue-500/50 shadow-sm hover:shadow-lg transition-all duration-300 p-6 flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  {/* Meta Header */}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-600 dark:text-cyan-400 border border-blue-500/20">
+                      {getCategoryName(post.categoryId)}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1">
+                      <Clock size={12} className="text-blue-500" />
+                      {post.readTime} min read
+                    </span>
+                  </div>
+
+                  {/* Article Title */}
+                  <h3 className="text-lg sm:text-xl font-bold font-display text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors leading-snug">
+                    <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+                  </h3>
+
+                  {/* Short Excerpt */}
+                  <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm line-clamp-2 leading-relaxed">
+                    {post.excerpt}
+                  </p>
                 </div>
 
-                {/* Article Title */}
-                <h3 className="text-lg sm:text-xl font-bold font-display text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors leading-snug">
-                  {post.title}
-                </h3>
-
-                {/* Short Excerpt */}
-                <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm line-clamp-2 leading-relaxed">
-                  {post.excerpt}
-                </p>
-              </div>
-
-              {/* Bottom Action: Compact text link with arrow */}
-              <div className="pt-4 mt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs font-semibold text-blue-600 dark:text-cyan-400">
-                <span>Read Full Article</span>
-                <span className="transform group-hover:translate-x-1.5 transition-transform duration-200">→</span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                {/* Bottom Action */}
+                <div className="pt-4 mt-4 border-t border-gray-100 dark:border-white/5">
+                  <Link 
+                    to={`/blog/${post.slug}`} 
+                    className="flex items-center justify-between text-xs font-semibold text-blue-600 dark:text-cyan-400 hover:underline"
+                  >
+                    <span>Read Full Article</span>
+                    <ArrowRight size={14} className="transform group-hover:translate-x-1.5 transition-transform duration-200" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

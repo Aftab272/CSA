@@ -39,7 +39,18 @@ export default function Team4Stack() {
               whileHover={{ scale: 1.05 }}
               className="rounded-2xl overflow-hidden border border-white/10 shadow-xl"
             >
-              <img loading="lazy" src={item.img} alt={item.title} className="w-full h-48 object-cover" />
+              <img 
+                loading="lazy" 
+                src={item.img || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'} 
+                alt={item.title} 
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('photo-1460925895917-afdab827c52f')) {
+                    target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+                  }
+                }}
+                className="w-full h-48 object-cover" 
+              />
               <div className="p-4 bg-secondary text-center text-sm font-bold">{item.title}</div>
             </motion.div>
           ))}

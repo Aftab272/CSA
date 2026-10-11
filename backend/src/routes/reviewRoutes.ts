@@ -49,16 +49,17 @@ reviewRouter.get('/', async (_req: Request, res: Response): Promise<void> => {
     const { data, error } = await supabase
       .from('reviews')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('createdAt', { ascending: false });
 
-    if (error || !data || data.length === 0) {
-      res.json({ success: true, reviews: fallbackReviews });
+    if (error) {
+      console.error('Supabase reviews fetch error:', error);
+      res.status(500).json({ success: false, error: 'Cannot fetch reviews from database' });
       return;
     }
 
-    res.json({ success: true, reviews: data });
+    res.json({ success: true, reviews: data || [] });
   } catch (err: any) {
-    res.json({ success: true, reviews: fallbackReviews });
+    res.status(500).json({ success: false, error: 'Cannot fetch reviews from database' });
   }
 });
 
@@ -99,17 +100,15 @@ reviewRouter.post('/', reviewLimiter, async (req: Request, res: Response): Promi
       rating,
       comment: rawComment,
       image: imageUrl,
-      created_at: new Date().toISOString(),
       createdAt: new Date().toISOString(),
       date: new Date().toISOString().split('T')[0],
-      status: 'approved',
     };
 
     const { data, error } = await supabase.from('reviews').insert([newReview]).select();
 
     if (error) {
       console.error('Supabase review insert error:', error);
-      res.status(500).json({ success: false, error: 'Failed to record review.' });
+      res.status(500).json({ success: false, error: error.message || 'Failed to record review.' });
       return;
     }
 

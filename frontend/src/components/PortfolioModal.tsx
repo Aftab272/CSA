@@ -61,8 +61,14 @@ export default function PortfolioModal({ member, onClose }: PortfolioModalProps)
             <div className="relative p-1.5 rounded-2xl sm:rounded-3xl border border-gray-200 dark:border-white/20 bg-gray-100/80 dark:bg-white/5 shadow-2xl overflow-hidden group">
               <img
                 loading="lazy"
-                src={getOptimizedTeamImage(member.image)}
+                src={getOptimizedTeamImage(member.image) || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&h=800'}
                 alt={member.name}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('photo-1534528741775-53994a69daeb')) {
+                    target.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&h=800';
+                  }
+                }}
                 className="w-full aspect-[3/4] object-cover object-top rounded-xl sm:rounded-2xl transform group-hover:scale-102 transition-transform duration-500"
               />
               {/* Subtle sheen highlight */}

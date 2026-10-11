@@ -20,8 +20,8 @@ export default function ReviewForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !comment || !imageFile) {
-      alert("Please fill all required fields including the profile image.");
+    if (!name.trim() || !comment.trim()) {
+      alert("Please fill in your name and feedback comment.");
       return;
     }
     setIsSubmitting(true);
@@ -30,42 +30,41 @@ export default function ReviewForm() {
       let finalImageUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120'; // Default avatar
 
       if (imageFile) {
-         try {
-             const formData = new FormData();
-             formData.append('file', imageFile);
-             
-             // Hardcoded to avoid Vite server restart issues
-             const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-             const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-             
-             formData.append('upload_preset', preset);
-             const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                method: 'POST',
-                body: formData
-             });
-             const data = await res.json();
-             if (data.secure_url) {
-                finalImageUrl = data.secure_url;
-             } else {
-                throw new Error(data.error?.message || "Cloudinary Image upload failed");
-             }
-         } catch (err: any) {
-             console.error("Cloudinary fetch error:", err);
-             throw new Error(`Cloudinary Error: ${err.message}`);
-         }
+        try {
+          const formData = new FormData();
+          formData.append('file', imageFile);
+          
+          const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'csa_reviews_preset';
+          const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'z6sk8xam';
+          
+          formData.append('upload_preset', preset);
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: 'POST',
+            body: formData,
+          });
+          const data = await res.json();
+          if (data.secure_url) {
+            finalImageUrl = data.secure_url;
+          } else {
+            console.warn("Cloudinary upload issue, proceeding with avatar:", data.error?.message);
+          }
+        } catch (err: any) {
+          console.warn("Cloudinary fetch error, proceeding with avatar:", err);
+        }
       }
 
       // Review data secure backend API ke zariye submit karein
       await submitReview({
-        name,
+        name: name.trim(),
         company: 'Verified Client',
         image: finalImageUrl,
         service,
         rating,
-        comment,
+        comment: comment.trim(),
       });
       
       setIsSubmitted(true);
+      window.dispatchEvent(new CustomEvent('review-submitted'));
     } catch (error: any) {
       console.error("Error adding review: ", error);
       alert(`Error submitting review: ${error.message || 'Please try again.'}`);
@@ -79,6 +78,7 @@ export default function ReviewForm() {
     setService('Web Development');
     setComment('');
     setRating(5);
+    setImageFile(null);
     setIsSubmitted(false);
   };
 
@@ -126,11 +126,10 @@ export default function ReviewForm() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider mb-2">Profile Image *</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider mb-2">Profile Image (Optional)</label>
                 <input 
                   type="file" 
                   accept="image/*" 
-                  required
                   onChange={handleImageChange}
                   className="w-full p-4 bg-gray-50 dark:bg-primary border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 dark:file:bg-accent/10 dark:file:text-accent hover:file:bg-blue-100" 
                 />

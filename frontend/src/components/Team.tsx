@@ -4,6 +4,7 @@ import { Sparkles } from 'lucide-react';
 import PortfolioModal from './PortfolioModal';
 import type { TeamMemberContent } from '../types/content';
 import { fetchPublicTeam } from '../lib/api';
+import { CardSkeletonGrid, DataErrorState, EmptyDataState } from './DataStateFeedback';
 
 interface MemberCardProps {
   member: TeamMemberContent;
@@ -62,8 +63,14 @@ const MemberCard: React.FC<MemberCardProps> = ({ member, onSelect }) => {
       {/* 1. Full-Bleed Member Photo */}
       <img
         loading="lazy"
-        src={getOptimizedTeamImage(member.image)}
+        src={getOptimizedTeamImage(member.image) || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&h=800'}
         alt={member.name}
+        onError={(e) => {
+          const target = e.currentTarget;
+          if (!target.src.includes('photo-1534528741775-53994a69daeb')) {
+            target.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&h=800';
+          }
+        }}
         className="absolute inset-0 w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700 ease-out"
       />
 
@@ -114,21 +121,24 @@ export default function Team() {
   const [teamMembers, setTeamMembers] = useState<TeamMemberContent[]>([]);
   const [selectedMember, setSelectedMember] = useState<TeamMemberContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const loadTeam = async () => {
+    setIsLoading(true);
+    setFetchError(null);
+    try {
+      const data = await fetchPublicTeam();
+      setTeamMembers((data || []) as TeamMemberContent[]);
+    } catch (error: any) {
+      setTeamMembers([]);
+      setFetchError(error?.message || 'Cannot fetch team members from server.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTeam = async () => {
-      try {
-        const data = await fetchPublicTeam();
-        setTeamMembers(data as TeamMemberContent[]);
-      } catch (error) {
-        console.error('Team fetch failed:', error);
-        setTeamMembers([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void fetchTeam();
+    void loadTeam();
   }, []);
 
   // Sort Team Members by admin defined order (1, 2, 3...) then leadership weight
@@ -170,22 +180,46 @@ export default function Team() {
           </p>
         </div>
 
+        {/* Loading State */}
         {isLoading && (
-          <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500" />
+          <div className="py-6">
+            <CardSkeletonGrid count={4} />
+          </div>
+        )}
+
+        {/* Error State */}
+        {!isLoading && fetchError && (
+          <div className="py-6">
+            <DataErrorState
+              title="Cannot Fetch Team Members"
+              message={fetchError}
+              onRetry={loadTeam}
+            />
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && !fetchError && teamMembers.length === 0 && (
+          <div className="py-6">
+            <EmptyDataState
+              title="No Team Members Found"
+              message="Active team members will appear once published."
+            />
           </div>
         )}
 
         {/* Team Members Responsive Gallery Grid with Leads at the Top */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 justify-center">
-          {sortedTeam.map((member) => (
-            <MemberCard
-              key={member._id || member.id || member.name}
-              member={member}
-              onSelect={setSelectedMember}
-            />
-          ))}
-        </div>
+        {!isLoading && !fetchError && teamMembers.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 justify-center">
+            {sortedTeam.map((member) => (
+              <MemberCard
+                key={member._id || member.id || member.name}
+                member={member}
+                onSelect={setSelectedMember}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

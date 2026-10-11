@@ -5,12 +5,12 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Helmet } from 'react-helmet-async';
 import { useAdmin } from '../context/AdminContext';
-import { ArrowLeft, Clock, Calendar, Facebook, Twitter, Linkedin, Link as LinkIcon, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Clock, Calendar, Facebook, Twitter, Linkedin, Link as LinkIcon, MessageSquare, ServerOff, RefreshCw } from 'lucide-react';
 import AdContainer from '../components/AdContainer';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
-  const { posts, categories, authors, tags, comments, setComments } = useBlog();
+  const { posts, categories, authors, tags, comments, setComments, isLoading, fetchError, reloadBlogs } = useBlog();
   const { footerData } = useAdmin();
   
   const post = posts.find(p => p.slug === slug);
@@ -35,17 +35,55 @@ export default function BlogPostPage() {
     }
   }, [post]);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-primary text-gray-900 dark:text-white flex flex-col justify-between">
+        <div className="bg-white/80 dark:bg-primary/90 pt-24 pb-4 px-4 border-b border-gray-200 dark:border-white/10"><Navbar /></div>
+        <div className="max-w-4xl mx-auto px-4 py-12 w-full animate-pulse space-y-6">
+          <div className="w-28 h-6 bg-slate-200 dark:bg-white/10 rounded-full" />
+          <div className="w-4/5 h-12 bg-slate-200 dark:bg-white/10 rounded-2xl" />
+          <div className="w-full h-80 bg-slate-200 dark:bg-white/10 rounded-3xl" />
+          <div className="space-y-3 pt-4">
+            <div className="w-full h-4 bg-slate-200 dark:bg-white/10 rounded" />
+            <div className="w-5/6 h-4 bg-slate-200 dark:bg-white/10 rounded" />
+            <div className="w-4/6 h-4 bg-slate-200 dark:bg-white/10 rounded" />
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   if (!post) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-primary text-gray-900 dark:text-white flex flex-col justify-between">
         <div className="bg-white/80 dark:bg-primary/90 pt-24 pb-4 px-4 border-b border-gray-200 dark:border-white/10"><Navbar /></div>
         <div className="grow flex items-center justify-center p-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4 font-display">Article Not Found</h1>
-            <p className="text-gray-500 mb-6 text-sm">The article you are looking for does not exist or has been removed.</p>
-            <Link to="/blog" className="px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-500 transition">
-              Return to Blog
-            </Link>
+          <div className="text-center max-w-md">
+            {fetchError ? (
+              <div className="space-y-4">
+                <div className="w-16 h-16 rounded-2xl bg-rose-500/20 text-rose-500 flex items-center justify-center mx-auto">
+                  <ServerOff size={32} />
+                </div>
+                <h1 className="text-2xl font-bold font-display">Cannot Connect to Backend</h1>
+                <p className="text-gray-500 text-sm">Please make sure the backend server is running on port 3001.</p>
+                <button 
+                  onClick={() => reloadBlogs()}
+                  className="px-6 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-500 transition inline-flex items-center gap-2 cursor-pointer shadow-md"
+                >
+                  <RefreshCw size={15} />
+                  <span>Retry Connection</span>
+                </button>
+              </div>
+            ) : (
+              <div>
+                <h1 className="text-3xl font-bold mb-4 font-display">Article Not Found</h1>
+                <p className="text-gray-500 mb-6 text-sm">The article you are looking for does not exist or has been removed.</p>
+                <Link to="/blog" className="px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-500 transition inline-block">
+                  Return to Blog
+                </Link>
+              </div>
+            )}
           </div>
         </div>
         <Footer />
@@ -112,7 +150,17 @@ export default function BlogPostPage() {
             <div className="flex flex-wrap items-center gap-6 text-gray-500 dark:text-gray-400 text-xs sm:text-sm border-b border-gray-200 dark:border-white/10 pb-6">
               {author && (
                 <div className="flex items-center gap-3">
-                  <img src={author.image || 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png'} alt={author.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/20" />
+                  <img 
+                    src={author.image || 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png'} 
+                    alt={author.name} 
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.src.includes('fi3dmmdk8xed5zbkew3s')) {
+                        target.src = 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png';
+                      }
+                    }}
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/20" 
+                  />
                   <div>
                     <p className="font-bold text-gray-900 dark:text-white">{author.name}</p>
                     <p className="text-[11px] text-gray-500 dark:text-gray-400">{author.position}</p>
@@ -131,19 +179,25 @@ export default function BlogPostPage() {
           </div>
 
           <img 
-            src={post.featuredImage} 
+            src={post.featuredImage || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'} 
             alt={post.title} 
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.src.includes('photo-1460925895917-afdab827c52f')) {
+                target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
+              }
+            }}
             className="w-full h-auto max-h-[460px] object-cover rounded-3xl mb-10 shadow-lg border border-gray-200 dark:border-white/10" 
           />
           
-          <AdContainer id="ad-post-top" label="Advertisement - Story Start" />
+          <AdContainer id="ad-post-top" />
 
           <div 
             className="prose prose-lg dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 font-sans leading-relaxed pt-4" 
             dangerouslySetInnerHTML={{ __html: post.content }} 
           />
           
-          <AdContainer id="ad-post-bottom" label="Advertisement - Related Content" />
+          <AdContainer id="ad-post-bottom" />
           
           <div className="mt-12 pt-8 border-t border-gray-200 dark:border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex flex-wrap gap-2">
@@ -168,7 +222,17 @@ export default function BlogPostPage() {
           
           {author && (
             <div className="mt-12 bg-white dark:bg-secondary/70 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 border border-gray-200 dark:border-white/10 shadow-sm">
-              <img src={author.image || 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png'} alt={author.name} className="w-20 h-20 rounded-full object-cover shadow-sm ring-2 ring-blue-500/20" />
+              <img 
+                src={author.image || 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png'} 
+                alt={author.name} 
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('fi3dmmdk8xed5zbkew3s')) {
+                    target.src = 'https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png';
+                  }
+                }}
+                className="w-20 h-20 rounded-full object-cover shadow-sm ring-2 ring-blue-500/20" 
+              />
               <div>
                 <h4 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-1.5">Written by {author.name}</h4>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{author.bio}</p>
@@ -182,7 +246,17 @@ export default function BlogPostPage() {
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
               {posts.filter(p => p.id !== post.id && p.status === 'published' && p.categoryId === post.categoryId).slice(0, 3).map(related => (
                 <div key={related.id} className="bg-white dark:bg-secondary/70 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 group border border-gray-200 dark:border-white/10">
-                  <img src={related.featuredImage} alt={related.title} className="w-full h-36 object-cover group-hover:scale-105 transition duration-500" />
+                  <img 
+                    src={related.featuredImage || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80'} 
+                    alt={related.title} 
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.src.includes('photo-1460925895917-afdab827c52f')) {
+                        target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80';
+                      }
+                    }}
+                    className="w-full h-36 object-cover group-hover:scale-105 transition duration-500" 
+                  />
                   <div className="p-4">
                     <h4 className="font-bold text-sm text-gray-900 dark:text-white line-clamp-2 mb-2 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition">
                       <Link to={`/blog/${related.slug}`}>{related.title}</Link>

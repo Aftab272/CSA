@@ -351,3 +351,14 @@ video:not(.hero-bg-video) {
     display: none !important;
   }
 }
+
+/* Google AdSense Dynamic Collapse for Unfilled / Empty Ads */
+ins.adsbygoogle[data-ad-status="unfilled"],
+.ad-container:not(:has(iframe)),
+.ad-container:has(ins[data-ad-status="unfilled"]) {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+

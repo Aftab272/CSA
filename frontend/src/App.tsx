@@ -25,7 +25,7 @@ import CookieConsentBanner from './components/CookieConsentBanner';
 import { Rocket, Sparkles, ShieldCheck, Zap, ArrowRight, Code2, CheckCircle2 } from 'lucide-react';
 
 
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { BlogProvider } from './context/BlogContext';
 import BlogHome from './pages/BlogHome';
 import BlogPostPage from './pages/BlogPostPage';
@@ -44,6 +44,11 @@ import ServicesPage from './pages/ServicesPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ContactPage from './pages/ContactPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import NotFoundPage from './pages/NotFoundPage';
+import OfflinePage from './pages/OfflinePage';
+import OfflineNoticeBanner, { useNetworkStatus } from './components/OfflineNoticeBanner';
+import ErrorBoundary from './components/ErrorBoundary';
+import { WifiOff } from 'lucide-react';
 
 function RouteScrollReset() {
   const { pathname } = useLocation();
@@ -58,6 +63,7 @@ function RouteScrollReset() {
 function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
   const { footerData, seoData } = useAdmin();
+  const isOnline = useNetworkStatus();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2000);
@@ -110,6 +116,42 @@ function AppContent() {
       <ScrollToTop />
       <Navbar />
       <Hero />
+      {/* Offline Mode Alert Box on Home Page */}
+      {!isOnline && (
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 my-4 sm:my-6">
+          <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 bg-gradient-to-r from-amber-500/10 via-amber-600/10 to-rose-500/10 border-2 border-amber-500/30 flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg backdrop-blur-xl">
+            <div className="flex items-center gap-3.5 text-left">
+              <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-500 shrink-0">
+                <WifiOff className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-amber-600 dark:text-amber-400 text-sm sm:text-base">
+                  Offline Mode Active
+                </h4>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-0.5">
+                  You are browsing cached pages. Direct phone &amp; WhatsApp inquiries remain available: <strong className="text-gray-900 dark:text-white">+92 319 4642953</strong>
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5 w-full md:w-auto justify-end">
+              <a
+                href="https://wa.me/923194642953"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 md:flex-initial text-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition cursor-pointer"
+              >
+                WhatsApp Helpline
+              </a>
+              <Link
+                to="/offline"
+                className="flex-1 md:flex-initial text-center px-4 py-2.5 rounded-xl bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/15 text-gray-900 dark:text-white font-bold text-xs border border-gray-300 dark:border-white/20 transition"
+              >
+                Offline Center
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6"><AdContainer id="ad-below-hero" /></div>
       <Services limit={3} showExploreLink={true} />
       <About />
@@ -232,34 +274,40 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AdminProvider>
-      <BlogProvider>
-        <Router>
-          <RouteScrollReset />
-          <CookieConsentBanner />
-          <Routes>
-            <Route path="/" element={<AppContent />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/projects" element={<ProjectsPage />} />
-            <Route path="/team" element={<TeamPage />} />
-            <Route path="/courses" element={<CoursesPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/admin/login/*" element={<AdminDashboardPage />} />
-            <Route path="/admin/*" element={<AdminDashboardPage />} />
-            <Route path="/blog" element={<BlogHome />} />
-            <Route path="/blog/:slug" element={<BlogPostPage />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-            <Route path="/disclaimer" element={<Disclaimer />} />
-            <Route path="/cookie-policy" element={<CookiePolicy />} />
-            <Route path="/refund-policy" element={<RefundPolicy />} />
-            <Route path="/cancellation-policy" element={<CancellationPolicy />} />
-            <Route path="/copyright-policy" element={<CopyrightPolicy />} />
-            <Route path="/acceptable-use-policy" element={<AcceptableUsePolicy />} />
-          </Routes>
-        </Router>
-      </BlogProvider>
-    </AdminProvider>
+    <ErrorBoundary>
+      <AdminProvider>
+        <BlogProvider>
+          <Router>
+            <RouteScrollReset />
+            <OfflineNoticeBanner />
+            <CookieConsentBanner />
+            <Routes>
+              <Route path="/" element={<AppContent />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/team" element={<TeamPage />} />
+              <Route path="/courses" element={<CoursesPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/admin/login/*" element={<AdminDashboardPage />} />
+              <Route path="/admin/*" element={<AdminDashboardPage />} />
+              <Route path="/blog" element={<BlogHome />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
+              <Route path="/offline" element={<OfflinePage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
+              <Route path="/cookie-policy" element={<CookiePolicy />} />
+              <Route path="/refund-policy" element={<RefundPolicy />} />
+              <Route path="/cancellation-policy" element={<CancellationPolicy />} />
+              <Route path="/copyright-policy" element={<CopyrightPolicy />} />
+              <Route path="/acceptable-use-policy" element={<AcceptableUsePolicy />} />
+              {/* Catch-all 404 Route for SEO & AdSense compliance */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Router>
+        </BlogProvider>
+      </AdminProvider>
+    </ErrorBoundary>
   );
 }

@@ -13,6 +13,7 @@ import { newsletterRouter } from './routes/newsletterRoutes.js';
 import { adminRouter } from './routes/adminRoutes.js';
 import { authRouter } from './routes/authRoutes.js';
 import { publicDataRouter } from './routes/publicDataRoutes.js';
+import { publicBlogRouter, adminBlogRouter } from './routes/blogRoutes.js';
 
 const app = express();
 
@@ -56,8 +57,10 @@ app.use('/api/inquiries', inquiryRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/newsletter', newsletterRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/admin/blogs', adminBlogRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/public', publicDataRouter);
+app.use('/api/public/blogs', publicBlogRouter);
 
 // Global Error Handler
 app.use(errorHandler);

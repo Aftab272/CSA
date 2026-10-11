@@ -1,0 +1,56 @@
+[
+  {
+    "id": "auth-sami",
+    "name": "M. Sami Ullah",
+    "position": "Full Stack Systems Architect & Team Lead",
+    "bio": "Lead Engineer with 5+ years architecting enterprise web systems, high-concurrency Node.js APIs, and scalable React applications. Alumnus of COMSATS University Islamabad.",
+    "image": "https://res.cloudinary.com/z6sk8xam/image/upload/v1791571654/fi3dmmdk8xed5zbkew3s.png",
+    "socials": {
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    }
+  },
+  {
+    "id": "auth-aftab",
+    "name": "M. Aftab Akram",
+    "position": "Full Stack Developer · Cloud & CI/CD Lead",
+    "bio": "Specialist in cloud deployment automation, Docker containers, automated CI/CD pipelines, and high-performance full-stack architectures. Focuses on zero-downtime server setups.",
+    "image": "https://res.cloudinary.com/z6sk8xam/image/upload/v1791571656/coewr6c0n33uytwifryt.png",
+    "socials": {
+      "github": "https://github.com/Aftab272",
+      "linkedin": "https://www.linkedin.com/in/aftab-akram-3a297b407"
+    }
+  },
+  {
+    "id": "auth-fiaz",
+    "name": "Fiaz Ahmad",
+    "position": "Backend Architect & Security Specialist",
+    "bio": "Backend engineer focused on database optimization, RESTful API security, JWT authentication protocols, and rigorous quality assurance across production deliverables.",
+    "image": "https://res.cloudinary.com/z6sk8xam/image/upload/v1791571658/bhw6qkd9iakzpxdaly2z.png",
+    "socials": {
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    }
+  },
+  {
+    "id": "auth-hasnain",
+    "name": "M. Hasnain",
+    "position": "Frontend Lead & UI/UX Specialist",
+    "bio": "Frontend specialist crafting pixel-perfect, accessible user interfaces with React, Next.js, and modern CSS. Experienced in user psychology, conversion rate optimization, and interaction design.",
+    "image": "https://res.cloudinary.com/z6sk8xam/image/upload/v1791571661/isjb7s3h9inxrsyruugu.png",
+    "socials": {
+      "github": "https://github.com",
+      "linkedin": "https://linkedin.com"
+    }
+  },
+  {
+    "id": "auth-shumaila",
+    "name": "Shumaila Zulfqar",
+    "position": "WordPress Architect & Technical SEO Lead",
+    "bio": "Specialist in custom CMS implementations, Core Web Vitals speed optimization, semantic schema markup, and search engine visibility for global digital businesses.",
+    "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=400",
+    "socials": {
+      "linkedin": "https://linkedin.com"
+    }
+  }
+]
