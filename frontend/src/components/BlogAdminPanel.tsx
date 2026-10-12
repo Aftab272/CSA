@@ -150,6 +150,8 @@ export default function BlogAdminPanel() {
       id: `cat_${Date.now()}`,
       name: newCategoryName.trim(),
       slug,
+      order: categories.length + 1,
+      isHidden: false,
       description: newCategoryDesc.trim() || `${newCategoryName.trim()} articles and updates.`
     };
 

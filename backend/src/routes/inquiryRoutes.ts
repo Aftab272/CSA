@@ -1,7 +1,7 @@
-﻿import { Router, Request, Response } from 'express';
-import { supabase } from '../config/supabase.js';
+import { Router, Request, Response } from 'express';
 import { inquiryLimiter } from '../middleware/rateLimiter.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
+import { inquiryService, Inquiry } from '../services/inquiryService.js';
 
 export const inquiryRouter = Router();
 
@@ -38,27 +38,19 @@ inquiryRouter.post('/', inquiryLimiter, async (req: Request, res: Response): Pro
       return;
     }
 
-    const newInquiry = {
+    const savedInquiry = inquiryService.createInquiry({
       name: rawName,
       email: rawEmail,
       service: rawService,
       message: rawMessage,
       status: 'new',
       createdAt: new Date().toISOString(),
-    };
-
-    const { data, error } = await supabase.from('inquiries').insert([newInquiry]).select();
-
-    if (error) {
-      console.error('Supabase inquiries insert error:', error);
-      res.status(500).json({ success: false, error: 'Failed to record inquiry in database.' });
-      return;
-    }
+    });
 
     res.status(201).json({
       success: true,
       message: 'Thank you! Your inquiry has been received. Our team will contact you shortly.',
-      data: data?.[0] || newInquiry,
+      data: savedInquiry,
     });
   } catch (err: any) {
     console.error('Inquiry submission exception:', err);
@@ -69,17 +61,8 @@ inquiryRouter.post('/', inquiryLimiter, async (req: Request, res: Response): Pro
 // ADMIN ONLY: Get all inquiries
 inquiryRouter.get('/', requireAuth, async (_req: Request, res: Response): Promise<void> => {
   try {
-    const { data, error } = await supabase
-      .from('inquiries')
-      .select('*')
-      .order('createdAt', { ascending: false });
-
-    if (error) {
-      res.status(500).json({ success: false, error: error.message });
-      return;
-    }
-
-    res.json({ success: true, inquiries: data || [] });
+    const inquiries = inquiryService.getInquiries();
+    res.json({ success: true, inquiries });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -88,28 +71,23 @@ inquiryRouter.get('/', requireAuth, async (_req: Request, res: Response): Promis
 // ADMIN ONLY: Update inquiry status / details
 inquiryRouter.patch('/:id', requireAuth, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { status, name, email, service, message } = req.body;
 
-    const updates: Record<string, any> = {};
-    if (status) updates.status = status;
+    const updates: Partial<Inquiry> = {};
+    if (status) updates.status = status as Inquiry['status'];
     if (name) updates.name = sanitize(name);
     if (email && isValidEmail(email)) updates.email = sanitize(email).toLowerCase();
     if (service) updates.service = sanitize(service);
     if (message) updates.message = sanitize(message);
 
-    const { data, error } = await supabase
-      .from('inquiries')
-      .update(updates)
-      .eq('id', id)
-      .select();
-
-    if (error) {
-      res.status(500).json({ success: false, error: error.message });
+    const updated = inquiryService.updateInquiry(id, updates);
+    if (!updated) {
+      res.status(404).json({ success: false, error: 'Inquiry not found' });
       return;
     }
 
-    res.json({ success: true, inquiry: data?.[0] });
+    res.json({ success: true, inquiry: updated });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -118,11 +96,11 @@ inquiryRouter.patch('/:id', requireAuth, async (req: Request, res: Response): Pr
 // ADMIN ONLY: Delete inquiry
 inquiryRouter.delete('/:id', requireAuth, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
-    const { error } = await supabase.from('inquiries').delete().eq('id', id);
+    const id = String(req.params.id);
+    const deleted = inquiryService.deleteInquiry(id);
 
-    if (error) {
-      res.status(500).json({ success: false, error: error.message });
+    if (!deleted) {
+      res.status(404).json({ success: false, error: 'Inquiry not found' });
       return;
     }
 

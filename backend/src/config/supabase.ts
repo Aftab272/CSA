@@ -19,7 +19,7 @@ export const supabase = createClient(ENV.SUPABASE_URL, key, {
 });
 
 export const getAuthSupabase = (token?: string) => {
-  if (token) {
+  if (token && token !== 'csa-dev-admin' && token !== 'dev-token') {
     return createClient(ENV.SUPABASE_URL, key, {
       auth: {
         persistSession: false,

@@ -98,18 +98,61 @@ export const submitInquiry = async (inquiryData: {
   service: string;
   message: string;
 }): Promise<ApiResponse> => {
-  const response = await fetch(getUrl('/api/inquiries'), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(inquiryData),
-  });
+  try {
+    const response = await fetch(getUrl('/api/inquiries'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(inquiryData),
+    });
 
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok || !data.success) {
-    throw new Error(data.error || 'Failed to submit inquiry. Please try again.');
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || 'Failed to submit inquiry. Please try again.');
+    }
+    return data;
+  } catch (err: any) {
+    if (typeof window !== 'undefined') {
+      try {
+        const queueKey = 'csa_offline_inquiries';
+        const raw = localStorage.getItem(queueKey);
+        const list = raw ? JSON.parse(raw) : [];
+        list.push({ ...inquiryData, queuedAt: new Date().toISOString() });
+        localStorage.setItem(queueKey, JSON.stringify(list));
+        return {
+          success: true,
+          message: 'Thank you! Your inquiry has been saved and will sync automatically once connected.',
+          offline: true,
+        };
+      } catch {
+        // ignore
+      }
+    }
+    throw err;
   }
-  return data;
 };
+
+// Automatic sync of offline inquiries when connection is restored
+if (typeof window !== 'undefined') {
+  window.addEventListener('online', async () => {
+    try {
+      const queueKey = 'csa_offline_inquiries';
+      const raw = localStorage.getItem(queueKey);
+      if (!raw) return;
+      const list = JSON.parse(raw);
+      if (!Array.isArray(list) || list.length === 0) return;
+      localStorage.removeItem(queueKey);
+      for (const item of list) {
+        await fetch(getUrl('/api/inquiries'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item),
+        }).catch(() => {});
+      }
+    } catch {
+      // ignore
+    }
+  });
+}
 
 // -------------------------------------------------------------
 // PUBLIC REVIEWS API

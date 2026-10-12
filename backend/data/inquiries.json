@@ -1,0 +1,11 @@
+[
+  {
+    "id": "inq-welcome-01",
+    "name": "Muhammad Aftab",
+    "email": "creativestackagency513@gmail.com",
+    "service": "Full Stack Web Development",
+    "message": "Welcome to Creative Stack Agency messages portal! Any inquiry or quote submitted from the website Contact form will show up here with 1-click email response options.",
+    "status": "resolved",
+    "createdAt": "2026-10-12T10:00:00.000Z"
+  }
+]

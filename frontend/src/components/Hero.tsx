@@ -238,7 +238,7 @@ export default function Hero() {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center pt-24 sm:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8 font-sans overflow-hidden">
+    <section id="home" className="relative min-h-[90vh] sm:min-h-screen flex items-center justify-center pt-20 sm:pt-28 pb-10 sm:pb-16 px-3 sm:px-6 lg:px-8 font-sans overflow-hidden">
       {/* 1. Cinematic Background Video Layer */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <video
@@ -292,16 +292,16 @@ export default function Hero() {
         />
       </div>
 
-      {/* Video Control Floating Pill (Bottom Right - fully visible & tap-friendly on mobile) */}
-      <div className="absolute bottom-3.5 right-3.5 sm:bottom-6 sm:right-6 z-20 flex items-center gap-2">
+      {/* Video Control Floating Pill (Bottom Right - compact & tap-friendly on mobile) */}
+      <div className="absolute bottom-2.5 right-2.5 sm:bottom-6 sm:right-6 z-20 flex items-center gap-2">
         <button
           onClick={toggleVideoPlayback}
-          className="p-2 sm:p-2.5 rounded-full bg-white/80 dark:bg-black/60 backdrop-blur-md border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all shadow-md text-xs font-semibold flex items-center gap-1.5"
+          className="p-1.5 sm:p-2.5 rounded-full bg-white/85 dark:bg-black/70 backdrop-blur-md border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all shadow-md text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
           title={isPlaying ? 'Pause background video' : 'Play background video'}
           aria-label="Toggle background video"
         >
-          {isPlaying ? <Pause size={13} className="text-blue-600 dark:text-blue-400" /> : <Play size={13} />}
-          <span className="text-[10px] sm:text-[11px] pr-1 font-medium">{isPlaying ? 'AI Motion Live' : 'Paused'}</span>
+          {isPlaying ? <Pause size={12} className="text-blue-600 dark:text-blue-400" /> : <Play size={12} />}
+          <span className="text-[9.5px] sm:text-[11px] pr-1 font-medium">{isPlaying ? 'AI Motion Live' : 'Paused'}</span>
         </button>
       </div>
 
@@ -309,26 +309,26 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto w-full grid lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-8 items-center pt-2 sm:pt-4">
         
         {/* Left Column: Headlines & Call to Actions */}
-        <div className="lg:col-span-7 space-y-5 sm:space-y-7 text-center lg:text-left">
+        <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
           
           {/* Badge: AI / Tech Innovation */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-blue-400 text-[11px] sm:text-xs md:text-sm font-semibold shadow-[0_0_20px_rgba(59,130,246,0.15)] max-w-full"
+            className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-blue-400 text-[10.5px] xs:text-xs md:text-sm font-semibold shadow-[0_0_20px_rgba(59,130,246,0.15)] max-w-full"
           >
             <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
-            <Sparkles size={14} className="animate-pulse shrink-0" />
+            <Sparkles size={13} className="animate-pulse shrink-0" />
             <span className="truncate">AI-Driven Software &amp; Digital Engineering</span>
           </motion.div>
 
           {/* Main Headline */}
-          <div className="min-h-[80px] xs:min-h-[105px] sm:min-h-[135px] lg:min-h-[160px] flex items-center justify-center lg:justify-start">
-            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-[1.18] sm:leading-[1.12] tracking-tight text-gray-900 dark:text-white drop-shadow-sm">
+          <div className="min-h-[75px] xs:min-h-[95px] sm:min-h-[130px] lg:min-h-[155px] flex items-center justify-center lg:justify-start">
+            <h1 className="text-[1.65rem] xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-[1.18] sm:leading-[1.12] tracking-tight text-gray-900 dark:text-white drop-shadow-sm">
               {text}
               <span className="animate-pulse text-blue-600 dark:text-accent font-light">|</span>
             </h1>
@@ -339,7 +339,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-200 max-w-2xl font-normal leading-relaxed mx-auto lg:mx-0"
+            className="text-xs xs:text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-200 max-w-2xl font-normal leading-relaxed mx-auto lg:mx-0 px-1 sm:px-0"
           >
             We combine artificial intelligence, cutting-edge full-stack architecture, and high-conversion UI/UX strategy to turn ambitious concepts into market-defining digital products.
           </motion.p>
@@ -349,12 +349,12 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-wrap gap-1.5 sm:gap-2 justify-center lg:justify-start"
+            className="flex flex-wrap gap-1.5 sm:gap-2 justify-center lg:justify-start px-1 sm:px-0"
           >
-            {['Generative AI Integration', 'Enterprise Cloud & DevOps', 'Full-Stack Web & Mobile', 'Autonomous Agent Solutions'].map((chip, i) => (
+            {['Generative AI Integration', 'Enterprise Cloud & DevOps', 'Full-Stack Web & Mobile', 'Autonomous Agents'].map((chip, i) => (
               <span 
                 key={i} 
-                className="px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-medium bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300"
+                className="px-2.5 py-1 rounded-lg text-[10px] xs:text-[11px] sm:text-xs font-medium bg-gray-100/90 dark:bg-white/5 border border-gray-200/80 dark:border-white/10 text-gray-700 dark:text-gray-300 backdrop-blur-xs whitespace-nowrap"
               >
                 {chip}
               </span>
@@ -366,11 +366,11 @@ export default function Hero() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start pt-2 w-full max-w-md mx-auto lg:mx-0"
+            className="flex flex-col sm:flex-row gap-2.5 sm:gap-4 justify-center lg:justify-start pt-2 w-full max-w-md mx-auto lg:mx-0 px-1 sm:px-0"
           >
             <Link
               to="/contact"
-              className="relative overflow-hidden group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-bold shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:shadow-[0_0_35px_rgba(37,99,235,0.6)] transition-all duration-300 text-center transform hover:-translate-y-0.5 text-sm sm:text-base flex items-center justify-center gap-2"
+              className="relative overflow-hidden group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-white w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-bold shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:shadow-[0_0_35px_rgba(37,99,235,0.6)] transition-all duration-300 text-center transform hover:-translate-y-0.5 text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer"
             >
               <span className="relative z-10">Start Your Project</span>
               <ArrowRight size={18} className="relative z-10 group-hover:translate-x-1 transition-transform" />
@@ -379,7 +379,7 @@ export default function Hero() {
 
             <Link
               to="/projects"
-              className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-bold border border-gray-300 dark:border-white/15 bg-white/80 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-gray-900 dark:text-white transition-all duration-300 text-center transform hover:-translate-y-0.5 text-sm sm:text-base shadow-sm backdrop-blur-md flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-bold border border-gray-300 dark:border-white/15 bg-white/80 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 active:scale-[0.98] text-gray-900 dark:text-white transition-all duration-300 text-center transform hover:-translate-y-0.5 text-sm sm:text-base shadow-sm backdrop-blur-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Explore Case Studies</span>
               <ExternalLink size={16} />
@@ -391,25 +391,25 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="pt-5 sm:pt-6 border-t border-gray-200 dark:border-white/10 grid grid-cols-3 gap-2 sm:gap-4 max-w-lg mx-auto lg:mx-0 text-center sm:text-left"
+            className="pt-4 sm:pt-6 border-t border-gray-200 dark:border-white/10 grid grid-cols-3 gap-2 sm:gap-4 max-w-lg mx-auto lg:mx-0 text-center sm:text-left px-1 sm:px-0"
           >
-            <div>
-              <div className="text-lg xs:text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-accent font-display">50+</div>
-              <div className="text-[10px] xs:text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">Shipped Products</div>
+            <div className="p-1 sm:p-0">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-blue-600 dark:text-accent font-display">50+</div>
+              <div className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 font-medium leading-tight mt-0.5">Shipped Products</div>
             </div>
-            <div>
-              <div className="text-lg xs:text-2xl sm:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 font-display">99.8%</div>
-              <div className="text-[10px] xs:text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">Client Success</div>
+            <div className="p-1 sm:p-0">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 font-display">99.8%</div>
+              <div className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 font-medium leading-tight mt-0.5">Client Success</div>
             </div>
-            <div>
-              <div className="text-lg xs:text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-display">&lt;15ms</div>
-              <div className="text-[10px] xs:text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">Engineered Latency</div>
+            <div className="p-1 sm:p-0">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-display">&lt;15ms</div>
+              <div className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 font-medium leading-tight mt-0.5">Engineered Latency</div>
             </div>
           </motion.div>
         </div>
 
         {/* Right Column: High-Tech Interactive AI Studio Terminal */}
-        <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+        <div className="lg:col-span-5 relative mt-6 lg:mt-0 w-full max-w-lg mx-auto lg:max-w-none px-1 sm:px-0">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -419,17 +419,17 @@ export default function Hero() {
             <div className="bg-white/95 dark:bg-secondary/95 rounded-[14px] sm:rounded-[2.3rem] overflow-hidden border border-gray-200 dark:border-white/10">
               
               {/* Window Header */}
-              <div className="px-3.5 sm:px-5 py-2.5 sm:py-4 border-b border-gray-200 dark:border-white/10 bg-gray-50/80 dark:bg-white/5 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-400 inline-block" />
-                  <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-400 inline-block" />
-                  <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-400 inline-block" />
-                  <span className="ml-1 sm:ml-2 text-[11px] sm:text-xs font-mono text-gray-500 dark:text-gray-400 truncate max-w-[85px] xs:max-w-none">csa-ai-engine.sh</span>
+              <div className="px-3 sm:px-5 py-2.5 sm:py-3.5 border-b border-gray-200 dark:border-white/10 bg-gray-50/80 dark:bg-white/5 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-400 inline-block shrink-0" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 inline-block shrink-0" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shrink-0" />
+                  <span className="ml-1 text-[10px] sm:text-xs font-mono text-gray-500 dark:text-gray-400 truncate max-w-[85px] xs:max-w-[120px] sm:max-w-none">csa-ai-engine.sh</span>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1 shrink-0">
                   <button
                     onClick={() => setActiveTab('ai')}
-                    className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition ${
+                    className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition cursor-pointer ${
                       activeTab === 'ai' 
                         ? 'bg-blue-600 text-white shadow-sm' 
                         : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -439,7 +439,7 @@ export default function Hero() {
                   </button>
                   <button
                     onClick={() => setActiveTab('code')}
-                    className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition ${
+                    className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition cursor-pointer ${
                       activeTab === 'code' 
                         ? 'bg-blue-600 text-white shadow-sm' 
                         : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -449,7 +449,7 @@ export default function Hero() {
                   </button>
                   <button
                     onClick={() => setActiveTab('metrics')}
-                    className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition ${
+                    className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition cursor-pointer ${
                       activeTab === 'metrics' 
                         ? 'bg-blue-600 text-white shadow-sm' 
                         : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -461,7 +461,7 @@ export default function Hero() {
               </div>
 
               {/* Window Body Content */}
-              <div className="p-3.5 sm:p-6 text-xs sm:text-sm font-sans min-h-[290px] sm:min-h-[330px] flex flex-col justify-between">
+              <div className="p-3.5 sm:p-6 text-xs sm:text-sm font-sans min-h-[250px] sm:min-h-[310px] flex flex-col justify-between">
                 {activeTab === 'ai' && (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -505,7 +505,7 @@ export default function Hero() {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="font-mono text-[11px] sm:text-xs space-y-1.5 sm:space-y-2 bg-gray-950 text-emerald-400 p-3 sm:p-4 rounded-xl sm:rounded-2xl overflow-x-auto"
+                    className="font-mono text-[10px] xs:text-[11px] sm:text-xs space-y-1 sm:space-y-1.5 bg-gray-950 text-emerald-400 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl overflow-x-auto"
                   >
                     <div className="text-gray-500">// Creative Stack Agency Architecture</div>
                     <div><span className="text-blue-400">const</span> stack = &#123;</div>
@@ -524,15 +524,15 @@ export default function Hero() {
                     animate={{ opacity: 1 }}
                     className="space-y-2 sm:space-y-3"
                   >
-                    <div className="p-2.5 sm:p-3 bg-gray-100 dark:bg-white/5 rounded-lg sm:rounded-xl border border-gray-200 dark:border-white/10 flex justify-between items-center text-[11px] sm:text-xs">
+                    <div className="p-2.5 sm:p-3 bg-gray-100 dark:bg-white/5 rounded-lg sm:rounded-xl border border-gray-200 dark:border-white/10 flex justify-between items-center text-[10px] sm:text-xs">
                       <span className="text-gray-600 dark:text-gray-400 font-mono">Core Web Vitals</span>
                       <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono">100 / 100 Score</span>
                     </div>
-                    <div className="p-2.5 sm:p-3 bg-gray-100 dark:bg-white/5 rounded-lg sm:rounded-xl border border-gray-200 dark:border-white/10 flex justify-between items-center text-[11px] sm:text-xs">
+                    <div className="p-2.5 sm:p-3 bg-gray-100 dark:bg-white/5 rounded-lg sm:rounded-xl border border-gray-200 dark:border-white/10 flex justify-between items-center text-[10px] sm:text-xs">
                       <span className="text-gray-600 dark:text-gray-400 font-mono">API Response Speed</span>
                       <span className="text-blue-600 dark:text-blue-400 font-bold font-mono">&lt; 14ms (P99)</span>
                     </div>
-                    <div className="p-2.5 sm:p-3 bg-gray-100 dark:bg-white/5 rounded-lg sm:rounded-xl border border-gray-200 dark:border-white/10 flex justify-between items-center text-[11px] sm:text-xs">
+                    <div className="p-2.5 sm:p-3 bg-gray-100 dark:bg-white/5 rounded-lg sm:rounded-xl border border-gray-200 dark:border-white/10 flex justify-between items-center text-[10px] sm:text-xs">
                       <span className="text-gray-600 dark:text-gray-400 font-mono">Security Grade</span>
                       <span className="text-indigo-600 dark:text-indigo-400 font-bold font-mono">A+ Rated (Strict CSP)</span>
                     </div>
@@ -540,9 +540,9 @@ export default function Hero() {
                 )}
 
                 {/* Footer of Terminal */}
-                <div className="pt-3 sm:pt-4 mt-auto border-t border-gray-200 dark:border-white/10 flex items-center justify-between text-[11px] sm:text-xs">
+                <div className="pt-2.5 sm:pt-4 mt-auto border-t border-gray-200 dark:border-white/10 flex items-center justify-between text-[10px] sm:text-xs">
                   <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
-                    <ShieldCheck size={14} className="text-blue-500 shrink-0" />
+                    <ShieldCheck size={13} className="text-blue-500 shrink-0" />
                     <span className="truncate">Certified Quality Delivery</span>
                   </div>
                   <Link 
@@ -550,7 +550,7 @@ export default function Hero() {
                     className="text-blue-600 dark:text-accent font-semibold hover:underline flex items-center gap-1 shrink-0"
                   >
                     <span>Company Story</span>
-                    <ArrowRight size={12} />
+                    <ArrowRight size={11} />
                   </Link>
                 </div>
               </div>

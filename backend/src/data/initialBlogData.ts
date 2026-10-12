@@ -13,6 +13,7 @@ export interface Category {
   slug: string;
   order: number;
   isHidden: boolean;
+  description?: string;
 }
 
 export interface Tag {

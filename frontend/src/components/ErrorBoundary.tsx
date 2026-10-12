@@ -11,6 +11,9 @@ interface State {
 }
 
 export default class ErrorBoundary extends Component<Props, State> {
+  public declare props: Props;
+  public declare setState: (state: Partial<State> | ((prevState: State) => Partial<State>), callback?: () => void) => void;
+
   public state: State = {
     hasError: false,
   };

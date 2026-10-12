@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
   Mail, MapPin, Clock, MessageCircle, Linkedin,
   ExternalLink, MessageSquare, 
-  Sun, Moon, Shield, Info, FileText, Scale, RotateCcw, X 
+  Sun, Moon, Shield, Info, FileText, Scale, RotateCcw, X, Lock 
 } from 'lucide-react';
 import { 
   SiFacebook, SiInstagram, SiGithub, SiYoutube, 
@@ -363,6 +363,14 @@ export default function Footer() {
                 {doc.name}
               </Link>
             ))}
+            <Link
+              to="/admin"
+              className="text-gray-400 hover:text-blue-600 dark:hover:text-accent transition-colors duration-200 inline-flex items-center gap-1 opacity-75 hover:opacity-100"
+              title="Staff & Management Portal"
+            >
+              <Lock size={11} />
+              <span>Admin</span>
+            </Link>
           </div>
 
         </div>
