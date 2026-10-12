@@ -31,7 +31,7 @@ inquiryRouter.post('/', inquiryLimiter, async (req, res) => {
             res.status(400).json({ success: false, error: 'Message must be between 5 and 5000 characters.' });
             return;
         }
-        const savedInquiry = inquiryService.createInquiry({
+        const savedInquiry = await inquiryService.createInquiryAsync({
             name: rawName,
             email: rawEmail,
             service: rawService,
@@ -53,7 +53,7 @@ inquiryRouter.post('/', inquiryLimiter, async (req, res) => {
 // ADMIN ONLY: Get all inquiries
 inquiryRouter.get('/', requireAuth, async (_req, res) => {
     try {
-        const inquiries = inquiryService.getInquiries();
+        const inquiries = await inquiryService.getInquiriesAsync();
         res.json({ success: true, inquiries });
     }
     catch (err) {
@@ -76,7 +76,7 @@ inquiryRouter.patch('/:id', requireAuth, async (req, res) => {
             updates.service = sanitize(service);
         if (message)
             updates.message = sanitize(message);
-        const updated = inquiryService.updateInquiry(id, updates);
+        const updated = await inquiryService.updateInquiryAsync(id, updates);
         if (!updated) {
             res.status(404).json({ success: false, error: 'Inquiry not found' });
             return;
@@ -91,7 +91,7 @@ inquiryRouter.patch('/:id', requireAuth, async (req, res) => {
 inquiryRouter.delete('/:id', requireAuth, async (req, res) => {
     try {
         const id = String(req.params.id);
-        const deleted = inquiryService.deleteInquiry(id);
+        const deleted = await inquiryService.deleteInquiryAsync(id);
         if (!deleted) {
             res.status(404).json({ success: false, error: 'Inquiry not found' });
             return;

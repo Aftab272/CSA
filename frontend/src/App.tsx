@@ -46,7 +46,7 @@ import ContactPage from './pages/ContactPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
 import OfflinePage from './pages/OfflinePage';
-import OfflineNoticeBanner, { useNetworkStatus } from './components/OfflineNoticeBanner';
+import { useNetworkStatus } from './components/OfflineNoticeBanner';
 import ErrorBoundary from './components/ErrorBoundary';
 import { WifiOff } from 'lucide-react';
 
@@ -279,7 +279,6 @@ export default function App() {
         <BlogProvider>
           <Router>
             <RouteScrollReset />
-            <OfflineNoticeBanner />
             <CookieConsentBanner />
             <Routes>
               <Route path="/" element={<AppContent />} />

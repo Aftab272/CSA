@@ -18825,14 +18825,14 @@ var require_etag = __commonJS({
   "node_modules/etag/index.js"(exports, module) {
     "use strict";
     module.exports = etag;
-    var crypto2 = __require("crypto");
+    var crypto3 = __require("crypto");
     var Stats = __require("fs").Stats;
     var toString = Object.prototype.toString;
     function entitytag(entity) {
       if (entity.length === 0) {
         return '"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk"';
       }
-      var hash = crypto2.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
+      var hash = crypto3.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
       var len = typeof entity === "string" ? Buffer.byteLength(entity, "utf8") : entity.length;
       return '"' + len.toString(16) + "-" + hash + '"';
     }
@@ -21741,11 +21741,11 @@ var require_request = __commonJS({
 // node_modules/cookie-signature/index.js
 var require_cookie_signature = __commonJS({
   "node_modules/cookie-signature/index.js"(exports) {
-    var crypto2 = __require("crypto");
+    var crypto3 = __require("crypto");
     exports.sign = function(val, secret) {
       if ("string" !== typeof val) throw new TypeError("Cookie value must be provided as a string.");
       if (null == secret) throw new TypeError("Secret key must be provided.");
-      return val + "." + crypto2.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
+      return val + "." + crypto3.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
     };
     exports.unsign = function(val, secret) {
       if ("string" !== typeof val) throw new TypeError("Signed cookie string must be provided.");
@@ -21754,7 +21754,7 @@ var require_cookie_signature = __commonJS({
       return sha1(mac) == sha1(val) ? str : false;
     };
     function sha1(str) {
-      return crypto2.createHash("sha1").update(str).digest("hex");
+      return crypto3.createHash("sha1").update(str).digest("hex");
     }
   }
 });
@@ -23073,8 +23073,8 @@ var require_main = __commonJS({
   "node_modules/dotenv/lib/main.js"(exports, module) {
     var fs3 = __require("fs");
     var path3 = __require("path");
-    var os = __require("os");
-    var crypto2 = __require("crypto");
+    var os2 = __require("os");
+    var crypto3 = __require("crypto");
     var packageJson = require_package();
     var version3 = packageJson.version;
     var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
@@ -23196,7 +23196,7 @@ var require_main = __commonJS({
       return null;
     }
     function _resolveHome(envPath) {
-      return envPath[0] === "~" ? path3.join(os.homedir(), envPath.slice(1)) : envPath;
+      return envPath[0] === "~" ? path3.join(os2.homedir(), envPath.slice(1)) : envPath;
     }
     function _configVault(options) {
       const debug = Boolean(options && options.debug);
@@ -23293,7 +23293,7 @@ var require_main = __commonJS({
       const authTag = ciphertext.subarray(-16);
       ciphertext = ciphertext.subarray(12, -16);
       try {
-        const aesgcm = crypto2.createDecipheriv("aes-256-gcm", key2, nonce);
+        const aesgcm = crypto3.createDecipheriv("aes-256-gcm", key2, nonce);
         aesgcm.setAuthTag(authTag);
         return `${aesgcm.update(ciphertext)}${aesgcm.final()}`;
       } catch (error) {
@@ -27634,17 +27634,17 @@ var require_mkdirp = __commonJS({
 var require_disk = __commonJS({
   "node_modules/multer/storage/disk.js"(exports, module) {
     var fs3 = __require("fs");
-    var os = __require("os");
+    var os2 = __require("os");
     var path3 = __require("path");
-    var crypto2 = __require("crypto");
+    var crypto3 = __require("crypto");
     var mkdirp = require_mkdirp();
     function getFilename(req, file, cb) {
-      crypto2.randomBytes(16, function(err, raw) {
+      crypto3.randomBytes(16, function(err, raw) {
         cb(err, err ? void 0 : raw.toString("hex"));
       });
     }
     function getDestination(req, file, cb) {
-      cb(null, os.tmpdir());
+      cb(null, os2.tmpdir());
     }
     function DiskStorage(opts) {
       this.getFilename = opts.filename || getFilename;
@@ -321302,21 +321302,23 @@ var requireAuth = async (req, res, next) => {
 // src/services/inquiryService.ts
 import fs from "fs";
 import path from "path";
+import os from "os";
+import crypto2 from "crypto";
 import { fileURLToPath } from "url";
 var __filename = fileURLToPath(import.meta.url);
 var __dirname = path.dirname(__filename);
 var DATA_DIR = path.resolve(__dirname, "../../data");
 var INQUIRIES_FILE = path.join(DATA_DIR, "inquiries.json");
-if (!fs.existsSync(DATA_DIR)) {
-  try {
+var TMP_INQUIRIES_FILE = path.join(os.tmpdir(), "csa_inquiries.json");
+try {
+  if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
-  } catch (err) {
-    console.error("Failed to create data directory:", err);
   }
+} catch {
 }
 var initialInquiries = [
   {
-    id: "inq-welcome-01",
+    id: "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
     name: "Muhammad Aftab",
     email: "creativestackagency513@gmail.com",
     service: "Full Stack Web Development",
@@ -321330,12 +321332,20 @@ var InquiryService = class {
   constructor() {
     this.init();
   }
+  getActiveFilePath() {
+    try {
+      if (fs.existsSync(INQUIRIES_FILE)) return INQUIRIES_FILE;
+    } catch {
+    }
+    return TMP_INQUIRIES_FILE;
+  }
   init() {
-    if (fs.existsSync(INQUIRIES_FILE)) {
+    const file = this.getActiveFilePath();
+    if (fs.existsSync(file)) {
       try {
-        const raw = fs.readFileSync(INQUIRIES_FILE, "utf-8");
+        const raw = fs.readFileSync(file, "utf-8");
         const parsed = JSON.parse(raw);
-        this.inquiries = Array.isArray(parsed) ? parsed : [...initialInquiries];
+        this.inquiries = Array.isArray(parsed) && parsed.length > 0 ? parsed : [...initialInquiries];
       } catch {
         this.inquiries = [...initialInquiries];
         this.persistInquiries();
@@ -321344,22 +321354,31 @@ var InquiryService = class {
       this.inquiries = [...initialInquiries];
       this.persistInquiries();
     }
-    this.syncWithSupabaseAsync();
+    void this.syncWithSupabaseAsync();
   }
   persistInquiries() {
     try {
       fs.writeFileSync(INQUIRIES_FILE, JSON.stringify(this.inquiries, null, 2), "utf-8");
-    } catch (err) {
-      console.error("Failed to persist inquiries file:", err);
+      return;
+    } catch {
+      try {
+        fs.writeFileSync(TMP_INQUIRIES_FILE, JSON.stringify(this.inquiries, null, 2), "utf-8");
+      } catch (err) {
+        console.error("Failed to persist inquiries to tmp file:", err);
+      }
     }
   }
   async syncWithSupabaseAsync() {
     try {
-      const { data, error } = await supabase.from("inquiries").select("*").order("createdAt", { ascending: false }).limit(50);
-      if (!error && data && data.length > 0) {
+      const { data, error } = await supabase.from("inquiries").select("*").order("createdAt", { ascending: false }).limit(100);
+      if (error) {
+        console.warn("Supabase inquiries fetch info:", error.message);
+        return;
+      }
+      if (data && data.length > 0) {
         const localMap = new Map(this.inquiries.map((i) => [i.id, i]));
         for (const item of data) {
-          const id = item.id || `inq-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+          const id = item.id || crypto2.randomUUID();
           localMap.set(id, {
             id,
             name: item.name || "Anonymous",
@@ -321367,7 +321386,7 @@ var InquiryService = class {
             service: item.service || "General Inquiry",
             message: item.message || "",
             status: item.status || "new",
-            createdAt: item.createdAt || item.created_at || (/* @__PURE__ */ new Date()).toISOString()
+            createdAt: item.createdAt || (/* @__PURE__ */ new Date()).toISOString()
           });
         }
         this.inquiries = Array.from(localMap.values()).sort(
@@ -321375,8 +321394,13 @@ var InquiryService = class {
         );
         this.persistInquiries();
       }
-    } catch {
+    } catch (err) {
+      console.warn("Supabase inquiries sync error:", err.message);
     }
+  }
+  async getInquiriesAsync() {
+    await this.syncWithSupabaseAsync();
+    return this.getInquiries();
   }
   getInquiries() {
     return [...this.inquiries].sort(
@@ -321386,9 +321410,9 @@ var InquiryService = class {
   getInquiryById(id) {
     return this.inquiries.find((i) => i.id === id) || null;
   }
-  createInquiry(data) {
+  async createInquiryAsync(data) {
     const newInquiry = {
-      id: `inq-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      id: crypto2.randomUUID(),
       name: data.name,
       email: data.email,
       service: data.service || "General Inquiry",
@@ -321398,8 +321422,8 @@ var InquiryService = class {
     };
     this.inquiries.unshift(newInquiry);
     this.persistInquiries();
-    void Promise.resolve(
-      supabase.from("inquiries").insert([{
+    try {
+      const { error } = await supabase.from("inquiries").insert([{
         id: newInquiry.id,
         name: newInquiry.name,
         email: newInquiry.email,
@@ -321407,12 +321431,18 @@ var InquiryService = class {
         message: newInquiry.message,
         status: newInquiry.status,
         createdAt: newInquiry.createdAt
-      }])
-    ).catch(() => {
-    });
+      }]);
+      if (error) {
+        console.error("Supabase inquiry insert policy error:", error.message, error.code);
+      } else {
+        console.log("\u2713 Successfully saved inquiry to Supabase cloud database:", newInquiry.id);
+      }
+    } catch (err) {
+      console.error("Supabase inquiry insert exception:", err.message);
+    }
     return newInquiry;
   }
-  updateInquiry(id, updates) {
+  async updateInquiryAsync(id, updates) {
     const idx = this.inquiries.findIndex((i) => i.id === id);
     if (idx === -1) return null;
     this.inquiries[idx] = {
@@ -321421,19 +321451,21 @@ var InquiryService = class {
       updatedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
     this.persistInquiries();
-    void Promise.resolve(
-      supabase.from("inquiries").update(this.inquiries[idx]).eq("id", id)
-    ).catch(() => {
-    });
+    try {
+      await supabase.from("inquiries").update(this.inquiries[idx]).eq("id", id);
+    } catch {
+    }
     return this.inquiries[idx];
   }
-  deleteInquiry(id) {
+  async deleteInquiryAsync(id) {
     const idx = this.inquiries.findIndex((i) => i.id === id);
     if (idx === -1) return false;
     this.inquiries.splice(idx, 1);
     this.persistInquiries();
-    void Promise.resolve(supabase.from("inquiries").delete().eq("id", id)).catch(() => {
-    });
+    try {
+      await supabase.from("inquiries").delete().eq("id", id);
+    } catch {
+    }
     return true;
   }
 };
@@ -321466,7 +321498,7 @@ inquiryRouter.post("/", inquiryLimiter, async (req, res) => {
       res.status(400).json({ success: false, error: "Message must be between 5 and 5000 characters." });
       return;
     }
-    const savedInquiry = inquiryService.createInquiry({
+    const savedInquiry = await inquiryService.createInquiryAsync({
       name: rawName,
       email: rawEmail,
       service: rawService,
@@ -321486,7 +321518,7 @@ inquiryRouter.post("/", inquiryLimiter, async (req, res) => {
 });
 inquiryRouter.get("/", requireAuth, async (_req, res) => {
   try {
-    const inquiries = inquiryService.getInquiries();
+    const inquiries = await inquiryService.getInquiriesAsync();
     res.json({ success: true, inquiries });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -321502,7 +321534,7 @@ inquiryRouter.patch("/:id", requireAuth, async (req, res) => {
     if (email && isValidEmail(email)) updates.email = sanitize(email).toLowerCase();
     if (service) updates.service = sanitize(service);
     if (message) updates.message = sanitize(message);
-    const updated = inquiryService.updateInquiry(id, updates);
+    const updated = await inquiryService.updateInquiryAsync(id, updates);
     if (!updated) {
       res.status(404).json({ success: false, error: "Inquiry not found" });
       return;
@@ -321515,7 +321547,7 @@ inquiryRouter.patch("/:id", requireAuth, async (req, res) => {
 inquiryRouter.delete("/:id", requireAuth, async (req, res) => {
   try {
     const id = String(req.params.id);
-    const deleted = inquiryService.deleteInquiry(id);
+    const deleted = await inquiryService.deleteInquiryAsync(id);
     if (!deleted) {
       res.status(404).json({ success: false, error: "Inquiry not found" });
       return;

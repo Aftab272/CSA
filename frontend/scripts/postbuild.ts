@@ -27,6 +27,14 @@ console.log('✓ Created dist/404.html (Vercel SPA fallback)');
 // 2. Pre-generate physical folders with index.html for instant 200 OK static delivery
 const routes = [
   'admin',
+  'admin/login',
+  'admin/projects',
+  'admin/inquiries',
+  'admin/services',
+  'admin/team',
+  'admin/courses',
+  'admin/site',
+  'admin/blog',
   'about',
   'services',
   'projects',

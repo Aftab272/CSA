@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
+import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { supabase } from '../config/supabase.js';
 
@@ -18,19 +20,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DATA_DIR = path.resolve(__dirname, '../../data');
 const INQUIRIES_FILE = path.join(DATA_DIR, 'inquiries.json');
+const TMP_INQUIRIES_FILE = path.join(os.tmpdir(), 'csa_inquiries.json');
 
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  try {
+// Ensure data directory exists if possible
+try {
+  if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
-  } catch (err) {
-    console.error('Failed to create data directory:', err);
   }
+} catch {
+  // Read-only filesystem in Vercel serverless environment
 }
 
 const initialInquiries: Inquiry[] = [
   {
-    id: 'inq-welcome-01',
+    id: 'b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d',
     name: 'Muhammad Aftab',
     email: 'creativestackagency513@gmail.com',
     service: 'Full Stack Web Development',
@@ -47,12 +50,22 @@ class InquiryService {
     this.init();
   }
 
+  private getActiveFilePath(): string {
+    try {
+      if (fs.existsSync(INQUIRIES_FILE)) return INQUIRIES_FILE;
+    } catch {
+      // ignore
+    }
+    return TMP_INQUIRIES_FILE;
+  }
+
   private init() {
-    if (fs.existsSync(INQUIRIES_FILE)) {
+    const file = this.getActiveFilePath();
+    if (fs.existsSync(file)) {
       try {
-        const raw = fs.readFileSync(INQUIRIES_FILE, 'utf-8');
+        const raw = fs.readFileSync(file, 'utf-8');
         const parsed = JSON.parse(raw);
-        this.inquiries = Array.isArray(parsed) ? parsed : [...initialInquiries];
+        this.inquiries = Array.isArray(parsed) && parsed.length > 0 ? parsed : [...initialInquiries];
       } catch {
         this.inquiries = [...initialInquiries];
         this.persistInquiries();
@@ -62,26 +75,41 @@ class InquiryService {
       this.persistInquiries();
     }
 
-    // Attempt to sync from Supabase if table exists and has rows
-    this.syncWithSupabaseAsync();
+    // Trigger initial sync with cloud database
+    void this.syncWithSupabaseAsync();
   }
 
   private persistInquiries() {
     try {
       fs.writeFileSync(INQUIRIES_FILE, JSON.stringify(this.inquiries, null, 2), 'utf-8');
-    } catch (err) {
-      console.error('Failed to persist inquiries file:', err);
+      return;
+    } catch {
+      // Fallback for Vercel Serverless environment
+      try {
+        fs.writeFileSync(TMP_INQUIRIES_FILE, JSON.stringify(this.inquiries, null, 2), 'utf-8');
+      } catch (err) {
+        console.error('Failed to persist inquiries to tmp file:', err);
+      }
     }
   }
 
-  private async syncWithSupabaseAsync() {
+  public async syncWithSupabaseAsync(): Promise<void> {
     try {
-      const { data, error } = await supabase.from('inquiries').select('*').order('createdAt', { ascending: false }).limit(50);
-      if (!error && data && data.length > 0) {
-        // Merge Supabase entries with local entries
+      const { data, error } = await supabase
+        .from('inquiries')
+        .select('*')
+        .order('createdAt', { ascending: false })
+        .limit(100);
+
+      if (error) {
+        console.warn('Supabase inquiries fetch info:', error.message);
+        return;
+      }
+
+      if (data && data.length > 0) {
         const localMap = new Map(this.inquiries.map((i) => [i.id, i]));
         for (const item of data) {
-          const id = item.id || `inq-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+          const id = item.id || crypto.randomUUID();
           localMap.set(id, {
             id,
             name: item.name || 'Anonymous',
@@ -89,17 +117,23 @@ class InquiryService {
             service: item.service || 'General Inquiry',
             message: item.message || '',
             status: item.status || 'new',
-            createdAt: item.createdAt || item.created_at || new Date().toISOString(),
+            createdAt: item.createdAt || new Date().toISOString(),
           });
         }
+
         this.inquiries = Array.from(localMap.values()).sort(
           (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         this.persistInquiries();
       }
-    } catch {
-      // Supabase inquiries table may not exist yet; backend local storage operates smoothly
+    } catch (err: any) {
+      console.warn('Supabase inquiries sync error:', err.message);
     }
+  }
+
+  public async getInquiriesAsync(): Promise<Inquiry[]> {
+    await this.syncWithSupabaseAsync();
+    return this.getInquiries();
   }
 
   public getInquiries(): Inquiry[] {
@@ -112,16 +146,16 @@ class InquiryService {
     return this.inquiries.find((i) => i.id === id) || null;
   }
 
-  public createInquiry(data: {
+  public async createInquiryAsync(data: {
     name: string;
     email: string;
     service: string;
     message: string;
     status?: Inquiry['status'];
     createdAt?: string;
-  }): Inquiry {
+  }): Promise<Inquiry> {
     const newInquiry: Inquiry = {
-      id: `inq-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      id: crypto.randomUUID(),
       name: data.name,
       email: data.email,
       service: data.service || 'General Inquiry',
@@ -130,13 +164,13 @@ class InquiryService {
       createdAt: data.createdAt || new Date().toISOString(),
     };
 
-    // Prepend to list
+    // Prepend to local memory and persist
     this.inquiries.unshift(newInquiry);
     this.persistInquiries();
 
-    // Async sync to Supabase if available
-    void Promise.resolve(
-      supabase.from('inquiries').insert([{
+    // Persist to Supabase cloud database
+    try {
+      const { error } = await supabase.from('inquiries').insert([{
         id: newInquiry.id,
         name: newInquiry.name,
         email: newInquiry.email,
@@ -144,13 +178,21 @@ class InquiryService {
         message: newInquiry.message,
         status: newInquiry.status,
         createdAt: newInquiry.createdAt,
-      }])
-    ).catch(() => {});
+      }]);
+
+      if (error) {
+        console.error('Supabase inquiry insert policy error:', error.message, error.code);
+      } else {
+        console.log('✓ Successfully saved inquiry to Supabase cloud database:', newInquiry.id);
+      }
+    } catch (err: any) {
+      console.error('Supabase inquiry insert exception:', err.message);
+    }
 
     return newInquiry;
   }
 
-  public updateInquiry(id: string, updates: Partial<Inquiry>): Inquiry | null {
+  public async updateInquiryAsync(id: string, updates: Partial<Inquiry>): Promise<Inquiry | null> {
     const idx = this.inquiries.findIndex((i) => i.id === id);
     if (idx === -1) return null;
 
@@ -162,23 +204,27 @@ class InquiryService {
 
     this.persistInquiries();
 
-    // Async sync to Supabase
-    void Promise.resolve(
-      supabase.from('inquiries').update(this.inquiries[idx]).eq('id', id)
-    ).catch(() => {});
+    try {
+      await supabase.from('inquiries').update(this.inquiries[idx]).eq('id', id);
+    } catch {
+      // ignore
+    }
 
     return this.inquiries[idx];
   }
 
-  public deleteInquiry(id: string): boolean {
+  public async deleteInquiryAsync(id: string): Promise<boolean> {
     const idx = this.inquiries.findIndex((i) => i.id === id);
     if (idx === -1) return false;
 
     this.inquiries.splice(idx, 1);
     this.persistInquiries();
 
-    // Async sync to Supabase
-    void Promise.resolve(supabase.from('inquiries').delete().eq('id', id)).catch(() => {});
+    try {
+      await supabase.from('inquiries').delete().eq('id', id);
+    } catch {
+      // ignore
+    }
 
     return true;
   }

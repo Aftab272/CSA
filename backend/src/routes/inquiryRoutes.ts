@@ -38,7 +38,7 @@ inquiryRouter.post('/', inquiryLimiter, async (req: Request, res: Response): Pro
       return;
     }
 
-    const savedInquiry = inquiryService.createInquiry({
+    const savedInquiry = await inquiryService.createInquiryAsync({
       name: rawName,
       email: rawEmail,
       service: rawService,
@@ -61,7 +61,7 @@ inquiryRouter.post('/', inquiryLimiter, async (req: Request, res: Response): Pro
 // ADMIN ONLY: Get all inquiries
 inquiryRouter.get('/', requireAuth, async (_req: Request, res: Response): Promise<void> => {
   try {
-    const inquiries = inquiryService.getInquiries();
+    const inquiries = await inquiryService.getInquiriesAsync();
     res.json({ success: true, inquiries });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
@@ -81,7 +81,7 @@ inquiryRouter.patch('/:id', requireAuth, async (req: Request, res: Response): Pr
     if (service) updates.service = sanitize(service);
     if (message) updates.message = sanitize(message);
 
-    const updated = inquiryService.updateInquiry(id, updates);
+    const updated = await inquiryService.updateInquiryAsync(id, updates);
     if (!updated) {
       res.status(404).json({ success: false, error: 'Inquiry not found' });
       return;
@@ -97,7 +97,7 @@ inquiryRouter.patch('/:id', requireAuth, async (req: Request, res: Response): Pr
 inquiryRouter.delete('/:id', requireAuth, async (req: Request, res: Response): Promise<void> => {
   try {
     const id = String(req.params.id);
-    const deleted = inquiryService.deleteInquiry(id);
+    const deleted = await inquiryService.deleteInquiryAsync(id);
 
     if (!deleted) {
       res.status(404).json({ success: false, error: 'Inquiry not found' });
